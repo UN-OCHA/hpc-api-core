@@ -139,12 +139,12 @@ export const defineVersionedModel =
       tableName: name,
       idField: 'id',
       fields: rootFields,
-      paranoid: false,
+      softDeletionEnabled: false,
     })(conn);
 
     const versionModel = defineSequelizeModel({
       tableName: `${name}Version`,
-      paranoid: false,
+      softDeletionEnabled: false,
       fields: {
         required: {
           root: {

@@ -49,5 +49,5 @@ export default defineSequelizeModel({
       },
     },
   },
-  paranoid: false,
+  softDeletionEnabled: false,
 });

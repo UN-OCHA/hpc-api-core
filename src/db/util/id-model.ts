@@ -55,16 +55,19 @@ export const defineIDModel =
   <
     F extends FieldDefinition,
     IDField extends keyof F['generated'],
-    Paranoid extends boolean
+    SoftDeletionEnabled extends boolean
   >(opts: {
     tableName: string;
     fields: F;
     idField: IDField;
-    paranoid: Paranoid;
-  }): ModelWithIdInitializer<FieldsWithSequelize<F, Paranoid>, IDField> =>
+    softDeletionEnabled: SoftDeletionEnabled;
+  }): ModelWithIdInitializer<
+    FieldsWithSequelize<F, SoftDeletionEnabled>,
+    IDField
+  > =>
   (conn) => {
     const { idField } = opts;
-    type Fields = FieldsWithSequelize<F, Paranoid>;
+    type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
     type ID = IdOf<Fields, IDField>;
     type Instance = InstanceDataOf<Fields>;
 

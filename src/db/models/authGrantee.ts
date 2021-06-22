@@ -40,5 +40,5 @@ export default defineIDModel({
     },
   },
   idField: 'id',
-  paranoid: false,
+  softDeletionEnabled: false,
 });

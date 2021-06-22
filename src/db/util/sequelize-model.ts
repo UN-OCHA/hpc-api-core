@@ -13,16 +13,17 @@ import {
 } from './raw-model';
 import { FieldDefinition } from './model-definition';
 
-type DeletedAtField<Paranoid extends boolean> = Paranoid extends true
-  ? {
-      optional: {
-        deletedAt: {
-          kind: 'checked';
-          type: typeof DATE;
+type DeletedAtField<SoftDeletionEnabled extends boolean> =
+  SoftDeletionEnabled extends true
+    ? {
+        optional: {
+          deletedAt: {
+            kind: 'checked';
+            type: typeof DATE;
+          };
         };
-      };
-    }
-  : {};
+      }
+    : {};
 
 const SEQUELIZE_FIELDS = {
   nonNullWithDefault: {
@@ -41,11 +42,13 @@ type SequelizeFields = typeof SEQUELIZE_FIELDS;
 
 export type FieldsWithSequelize<
   F extends FieldDefinition,
-  Paranoid extends boolean
-> = F & SequelizeFields & DeletedAtField<Paranoid>;
+  SoftDeletionEnabled extends boolean
+> = F & SequelizeFields & DeletedAtField<SoftDeletionEnabled>;
 
-const genDeletedAtField = <P extends boolean>(paranoid: P): DeletedAtField<P> =>
-  (paranoid
+const genDeletedAtField = <P extends boolean>(
+  softDeletionEnabled: P
+): DeletedAtField<P> =>
+  (softDeletionEnabled
     ? {
         optional: {
           deletedAt: {
@@ -65,19 +68,19 @@ const genDeletedAtField = <P extends boolean>(paranoid: P): DeletedAtField<P> =>
  * It also ensures that `createdAt` and `updatedAt` fields are updated as needed
  */
 export const defineSequelizeModel =
-  <F extends FieldDefinition, Paranoid extends boolean>(opts: {
+  <F extends FieldDefinition, SoftDeletionEnabled extends boolean>(opts: {
     tableName: string;
     fields: F;
-    paranoid: Paranoid;
-  }): ModelInitializer<FieldsWithSequelize<F, Paranoid>> =>
+    softDeletionEnabled: SoftDeletionEnabled;
+  }): ModelInitializer<FieldsWithSequelize<F, SoftDeletionEnabled>> =>
   (conn) => {
-    type Fields = FieldsWithSequelize<F, Paranoid>;
+    type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
 
     const fields: Fields = merge(
       {},
       opts.fields,
       SEQUELIZE_FIELDS,
-      genDeletedAtField(opts.paranoid)
+      genDeletedAtField(opts.softDeletionEnabled)
     );
     const model = defineRawModel({
       ...opts,

@@ -33,8 +33,8 @@ type ExtendedFields<F extends FieldDefinition> = F & typeof VERSIONED_FIELDS;
 
 export type FieldsWithVersioned<
   F extends FieldDefinition,
-  Paranoid extends boolean
-> = FieldsWithId<F, Paranoid> & ExtendedFields<F>;
+  SoftDeletionEnabled extends boolean
+> = FieldsWithId<F, SoftDeletionEnabled> & ExtendedFields<F>;
 
 /**
  * A model that has been defined using `versionLib.versionModel`
@@ -45,13 +45,16 @@ export type FieldsWithVersioned<
 export const defineLegacyVersionedModel = <
   F extends FieldDefinition,
   IDField extends keyof F['generated'],
-  Paranoid extends boolean
+  SoftDeletionEnabled extends boolean
 >(opts: {
   tableName: string;
   fields: F;
   idField: IDField;
-  paranoid: Paranoid;
-}): ModelWithIdInitializer<FieldsWithVersioned<F, Paranoid>, IDField> => {
+  softDeletionEnabled: SoftDeletionEnabled;
+}): ModelWithIdInitializer<
+  FieldsWithVersioned<F, SoftDeletionEnabled>,
+  IDField
+> => {
   const fields: ExtendedFields<F> = merge({}, opts.fields, VERSIONED_FIELDS);
   return defineIDModel({
     ...opts,

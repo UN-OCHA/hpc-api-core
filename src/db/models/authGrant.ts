@@ -29,7 +29,7 @@ const authGrantModel = (conn: Knex) => {
         },
       },
     },
-    paranoid: false,
+    softDeletionEnabled: false,
   })(conn);
 
   type UserData = UserDataOfModel<typeof model>;

@@ -50,5 +50,5 @@ export default defineLegacyVersionedModel({
     },
   },
   idField: 'id',
-  paranoid: false,
+  softDeletionEnabled: false,
 });
