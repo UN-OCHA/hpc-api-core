@@ -6,6 +6,11 @@ import authGrantee from './models/authGrantee';
 import authGrantLog from './models/authGrantLog';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
+import form from './models/form';
+import operation from './models/operation';
+import operationCluster from './models/operationCluster';
+import reportingWindow from './models/reportingWindow';
+import reportingWindowAssignment from './models/reportingWindowAssignment';
 
 export default (conn: Knex) => ({
   attachment: attachment(conn),
@@ -15,4 +20,9 @@ export default (conn: Knex) => ({
   authGrantLog: authGrantLog(conn),
   authInvite: authInvite(conn),
   authTarget: authTarget(conn),
+  form: form(conn),
+  operation: operation(conn),
+  operationCluster: operationCluster(conn),
+  reportingWindow: reportingWindow(conn),
+  reportingWindowAssignment: reportingWindowAssignment(conn),
 });
