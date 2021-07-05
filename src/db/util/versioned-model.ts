@@ -88,6 +88,9 @@ type VersionedModel<
     where?: WhereCond<RootColumnDefinition<IDType, LookupColumns>>;
   }) => Promise<Array<VersionedInstance<IDType, Data>>>;
   get: (id: IDType) => Promise<VersionedInstance<IDType, Data> | null>;
+  getAll: (
+    ids: Iterable<IDType>
+  ) => Promise<Map<IDType, VersionedInstance<IDType, Data>>>;
   permanentlyDelete: (id: IDType) => Promise<void>;
   getAllVersions: (
     id: IDType
@@ -268,6 +271,16 @@ export const defineVersionedModel =
             data: version.data,
           });
         }
+      },
+      getAll: async (ids) => {
+        const items = await result.findAll({
+          where: (builder) => builder.whereIn<'id'>('id', [...(ids as any)]),
+        });
+        const grouped = new Map<IDType, VersionedInstance<IDType, Data>>();
+        for (const item of items) {
+          grouped.set(item.id, item);
+        }
+        return grouped;
       },
       getAllVersions: async (id) => {
         const getRoot = rootModel.findOne({
