@@ -1,6 +1,6 @@
 {
   "name": "@unocha/hpc-api-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Core libraries supporting HPC.Tools API Backend",
   "license": "Apache-2.0",
   "private": false,
