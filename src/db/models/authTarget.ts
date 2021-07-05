@@ -17,6 +17,7 @@ const AUTH_TARGET_TYPE = {
   operation: null,
   operationCluster: null,
   plan: null,
+  project: null,
   governingEntity: null,
 };
 
