@@ -1,0 +1,7 @@
+.husky/
+.github/
+.prettierrc.js
+.eslintrc.json 
+tsconfig.json
+yarn-error.log
+CONTRIBUTING.md
