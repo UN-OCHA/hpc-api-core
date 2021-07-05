@@ -33,6 +33,9 @@ export interface ModelWithId<
   IDField extends null | keyof F['generated']
 > extends Model<F> {
   readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
+  readonly getAll: (
+    id: Iterable<IdOf<F, IDField>>
+  ) => Promise<Map<IdOf<F, IDField>, InstanceDataOf<F>>>;
 }
 
 /**
@@ -80,10 +83,22 @@ export const defineIDModel =
         } as Partial<Instance>,
       });
 
+    const getAll = async (ids: Iterable<ID>): Promise<Map<ID, Instance>> => {
+      const items = await model.find({
+        where: (builder) => builder.whereIn<'id'>('id', [...(ids as any)]),
+      });
+      const grouped = new Map<ID, Instance>();
+      for (const item of items) {
+        grouped.set(item.id, item);
+      }
+      return grouped;
+    };
+
     // Extend the model with a get
     const extendedModel = {
       ...model,
       get,
+      getAll,
     };
     return extendedModel;
   };
