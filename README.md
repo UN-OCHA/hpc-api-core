@@ -1,5 +1,7 @@
 # `@unocha/hpc-api-core`
 
+[![](https://badgen.net/npm/v/@unocha/hpc-api-core)](https://www.npmjs.com/package/@unocha/hpc-api-core)
+
 This NPM library contains the core code that is shared between the various parts
 of the HPC.Tools API (`https://api.hpc.tools`), in particular:
 
