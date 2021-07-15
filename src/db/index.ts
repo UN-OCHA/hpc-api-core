@@ -7,6 +7,7 @@ import authGrantLog from './models/authGrantLog';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
 import form from './models/form';
+import governingEntity from './models/governingEntity';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import reportingWindow from './models/reportingWindow';
@@ -21,6 +22,7 @@ export default (conn: Knex) => ({
   authInvite: authInvite(conn),
   authTarget: authTarget(conn),
   form: form(conn),
+  governingEntity: governingEntity(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   reportingWindow: reportingWindow(conn),
