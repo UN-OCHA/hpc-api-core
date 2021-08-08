@@ -12,6 +12,7 @@ import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
+import organizationv2 from './models/organizationv2';
 
 export default (conn: Knex) => ({
   attachment: attachment(conn),
@@ -27,4 +28,5 @@ export default (conn: Knex) => ({
   operationCluster: operationCluster(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
+  organizationv2: organizationv2(conn),
 });
