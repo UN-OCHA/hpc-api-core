@@ -264,7 +264,7 @@ Versioned Tables are unsuitable.
 
 - Create a new module in `src/db/models` with the same
   name that the table will have. Inside this module:
-  - Pick an appropriate function to base your model definition om, i.e:
+  - Pick an appropriate function to base your model definition on, i.e:
     - `defineIDModel`:
       to describe a table that was previously defined using sequelize,
       and that has a unique ID field
