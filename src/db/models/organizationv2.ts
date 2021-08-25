@@ -13,7 +13,6 @@ export type OrganizationId = Brand<
 export const ORGANIZATION_ID = brandedType<number, OrganizationId>(t.number);
 
 export const ORGANIZATION_DATA = t.type({
-  id: ORGANIZATION_ID,
   name: t.string,
   nativeName: t.string,
   abbreviation: t.string,
@@ -36,10 +35,6 @@ export default defineVersionedModel({
   lookupColumns: {
     columns: {
       required: {
-        id: {
-          kind: 'branded-integer',
-          brand: ORGANIZATION_ID,
-        },
         parentID: {
           kind: 'branded-integer',
           brand: ORGANIZATION_ID,
