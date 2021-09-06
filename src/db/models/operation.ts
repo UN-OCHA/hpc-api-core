@@ -47,6 +47,6 @@ export default defineVersionedModel({
   data: OPERATION_DATA,
   lookupColumns: {
     columns: {},
-    prepare: async () => ({}),
+    prepare: () => Promise.resolve({}),
   },
 });

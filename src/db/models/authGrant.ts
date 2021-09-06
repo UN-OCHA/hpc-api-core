@@ -39,7 +39,7 @@ const authGrantModel = (conn: Knex) => {
   // expose wrappers that require that a user is specified,
   // and transactionally create logs
 
-  const create = async (
+  const create = (
     data: UserData,
     actor: ParticipantId,
     date = new Date()
@@ -61,10 +61,7 @@ const authGrantModel = (conn: Knex) => {
     });
   };
 
-  const update = async (
-    data: UserData,
-    actor: ParticipantId
-  ): Promise<void> => {
+  const update = (data: UserData, actor: ParticipantId): Promise<void> => {
     return conn.transaction(async (trx) => {
       await authGrantLog.create(
         {
