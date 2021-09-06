@@ -76,7 +76,7 @@ export const defineIDModel =
 
     const model = defineSequelizeModel(opts)(conn);
 
-    const get = async (id: ID): Promise<Instance | null> =>
+    const get = (id: ID): Promise<Instance | null> =>
       model.findOne({
         where: {
           [idField]: id,

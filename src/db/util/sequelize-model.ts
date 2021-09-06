@@ -87,7 +87,7 @@ export const defineSequelizeModel =
       fields,
     })(conn);
 
-    const create: CreateFn<Fields> = async (data, opts) => {
+    const create: CreateFn<Fields> = (data, opts) => {
       return model.create(
         {
           ...data,
@@ -98,7 +98,7 @@ export const defineSequelizeModel =
       );
     };
 
-    const update: UpdateFn<Fields> = async (args) => {
+    const update: UpdateFn<Fields> = (args) => {
       return model.update({
         ...args,
         values: {

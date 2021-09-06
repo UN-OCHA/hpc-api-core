@@ -52,8 +52,9 @@ export default defineVersionedModel({
         },
       },
     },
-    prepare: async (data) => ({
-      operationId: data.operation,
-    }),
+    prepare: (data) =>
+      Promise.resolve({
+        operationId: data.operation,
+      }),
   },
 });

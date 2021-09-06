@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
 import { Brand } from '../../util/types';
+import { defineIDModel } from '../util/id-model';
 
 export type ParticipantId = Brand<
   number,
@@ -10,3 +11,22 @@ export type ParticipantId = Brand<
 >;
 
 export const PARTICIPANT_ID = brandedType<number, ParticipantId>(t.number);
+
+export default defineIDModel({
+  tableName: 'participant',
+  fields: {
+    generated: {
+      id: { kind: 'branded-integer', brand: PARTICIPANT_ID },
+    },
+    optional: {
+      hidId: { kind: 'checked', type: t.string },
+      hidSub: { kind: 'checked', type: t.string },
+      email: { kind: 'checked', type: t.string },
+      name_given: { kind: 'checked', type: t.string },
+      name_family: { kind: 'checked', type: t.string },
+    },
+    required: {},
+  },
+  idField: 'id',
+  softDeletionEnabled: false,
+});

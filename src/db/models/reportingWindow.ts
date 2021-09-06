@@ -59,12 +59,13 @@ export default defineVersionedModel({
         },
       },
     },
-    prepare: async (data) => ({
-      belongsToType: data.belongsTo.type,
-      belongsToId:
-        data.belongsTo.type === 'operation'
-          ? data.belongsTo.operation
-          : undefined,
-    }),
+    prepare: (data) =>
+      Promise.resolve({
+        belongsToType: data.belongsTo.type,
+        belongsToId:
+          data.belongsTo.type === 'operation'
+            ? data.belongsTo.operation
+            : undefined,
+      }),
   },
 });
