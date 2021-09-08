@@ -6,6 +6,7 @@ import authGrantee from './models/authGrantee';
 import authGrantLog from './models/authGrantLog';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
+import authToken from './models/authToken';
 import form from './models/form';
 import governingEntity from './models/governingEntity';
 import operation from './models/operation';
@@ -22,6 +23,7 @@ export default (conn: Knex) => ({
   authGrantLog: authGrantLog(conn),
   authInvite: authInvite(conn),
   authTarget: authTarget(conn),
+  authToken: authToken(conn),
   form: form(conn),
   governingEntity: governingEntity(conn),
   operation: operation(conn),
