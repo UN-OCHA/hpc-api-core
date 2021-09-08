@@ -24,6 +24,7 @@ export default defineIDModel({
       email: { kind: 'checked', type: t.string },
       name_given: { kind: 'checked', type: t.string },
       name_family: { kind: 'checked', type: t.string },
+      internalUse: { kind: 'checked', type: t.string },
     },
     required: {},
   },
