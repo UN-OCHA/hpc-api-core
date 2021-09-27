@@ -12,6 +12,8 @@ import governingEntity from './models/governingEntity';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import participant from './models/participant';
+import projectVersion from './models/projectVersion';
+import projectVersionPlan from './models/projectVersionPlan';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 
@@ -29,6 +31,8 @@ export default (conn: Knex) => ({
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   participant: participant(conn),
+  projectVersion: projectVersion(conn),
+  projectVersionPlan: projectVersionPlan(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
 });
