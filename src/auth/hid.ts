@@ -12,6 +12,9 @@ const HID_ACCOUNT_INFO = t.type({
   email: t.string,
 });
 
+// Exported for mocking purposes in tests
+export { fetch };
+
 export type HIDInfo = t.TypeOf<typeof HID_ACCOUNT_INFO>;
 
 export type HIDResponse =
