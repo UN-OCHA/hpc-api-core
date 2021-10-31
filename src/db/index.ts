@@ -18,7 +18,7 @@ import projectVersionPlan from './models/projectVersionPlan';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 
-export default (conn: Knex) => ({
+const models = (conn: Knex) => ({
   attachment: attachment(conn),
   attachmentVersion: attachmentVersion(conn),
   authGrant: authGrant(conn),
@@ -38,3 +38,7 @@ export default (conn: Knex) => ({
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
 });
+
+export type DbModels = ReturnType<typeof models>;
+
+export default models;

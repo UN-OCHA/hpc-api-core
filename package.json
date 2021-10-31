@@ -9,7 +9,9 @@
     "prepare": "husky install",
     "lint-prettier": "prettier -c .",
     "lint-eslint": "eslint --quiet .",
-    "lint": "yarn lint-prettier && yarn lint-eslint"
+    "lint": "yarn lint-prettier && yarn lint-eslint",
+    "test": "yarn jest",
+    "test-with-docker": "docker-compose up --abort-on-container-exit"
   },
   "dependencies": {
     "fp-ts": "^2.6.6",
@@ -17,17 +19,20 @@
     "knex": "0.21.1",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.5",
-    "pg": "^8.5.1"
+    "pg": "^8.5.1",
+    "ts-jest": "^27.0.7"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.170",
     "@types/node": "^14.0.5",
     "@types/node-fetch": "^2.5.12",
     "@unocha/hpc-repo-tools": "^0.1.5",
     "eslint": "8.1.0",
     "husky": "^7.0.2",
-    "lint-staged": "^11.2.4",
-    "prettier": "2.4.1",
+    "jest": "^27.3.1",
+    "lint-staged": "^11.0.0",
+    "prettier": "2.3.2",
     "typescript": "^4.3.5"
   },
   "lint-staged": {
