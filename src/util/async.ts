@@ -44,7 +44,7 @@ export const createGroupableAsyncFunction = <
       }
     } catch (err) {
       for (const call of cs) {
-        call.reject(err);
+        err instanceof Error && call.reject(err);
       }
     }
   };

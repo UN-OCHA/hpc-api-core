@@ -5,9 +5,11 @@ export const isDefined = <T>(v: T | null | undefined): v is T =>
  * Strict version of Object.entries() that has a more useful key type,
  * and filters out entries where the value is undefined
  */
-export const definedEntries = <K extends string, V>(o: {
-  [key in K]?: V;
-}): Array<[K, V]> =>
+export const definedEntries = <K extends string, V>(
+  o: {
+    [key in K]?: V;
+  }
+): Array<[K, V]> =>
   [...(Object.entries(o) as [K, V][])].filter(([_k, v]) => isDefined(v));
 
 export const delay = (ms: number): Promise<unknown> =>
