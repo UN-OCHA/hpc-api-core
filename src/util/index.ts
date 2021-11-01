@@ -81,11 +81,23 @@ export const groupObjectsByProperty = <I, P extends keyof I>(
   objects: Iterable<I>,
   property: P
 ): Map<I[P], Set<I>> => {
-  const result = new Map<I[P], Set<I>>();
+  return groupObjectsByValue(objects, (o) => o[property]);
+};
+
+/**
+ * Take a collection of objects,
+ * and group them by values produced by the given function for each object
+ */
+export const groupObjectsByValue = <I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V
+): Map<V, Set<I>> => {
+  const result = new Map<V, Set<I>>();
   for (const obj of objects) {
-    let group = result.get(obj[property]);
+    const value = getValue(obj);
+    let group = result.get(value);
     if (!group) {
-      result.set(obj[property], (group = new Set()));
+      result.set(value, (group = new Set()));
     }
     group.add(obj);
   }
@@ -94,19 +106,33 @@ export const groupObjectsByProperty = <I, P extends keyof I>(
 
 /**
  * Take a collection of objects,
- * and create a map of them, using aparticular property as the key
+ * and create a map of them, using a particular property as the key
  */
 export const organizeObjectsByUniqueProperty = <I, P extends keyof I>(
   objects: Iterable<I>,
   property: P
 ): Map<I[P], I> => {
-  const result = new Map<I[P], I>();
+  return organizeObjectsByUniqueValue(objects, (o) => o[property]);
+};
+
+/**
+ * Take a collection of objects,
+ * and create a map of them,
+ * using a particular function to derive the key
+ * that should be used for each object
+ */
+export const organizeObjectsByUniqueValue = <I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V
+): Map<V, I> => {
+  const result = new Map<V, I>();
   for (const obj of objects) {
-    const existing = result.get(obj[property]);
+    const value = getValue(obj);
+    const existing = result.get(value);
     if (existing) {
-      throw new Error(`Duplicate property value: ${obj[property]}`);
+      throw new Error(`Duplicate value: ${value}`);
     }
-    result.set(obj[property], obj);
+    result.set(value, obj);
   }
   return result;
 };
