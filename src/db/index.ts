@@ -14,6 +14,7 @@ import expiredData from './models/expiredData';
 import form from './models/form';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
+import location from './models/location';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import participant from './models/participant';
@@ -44,6 +45,7 @@ export default (conn: Knex) => ({
   form: form(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
+  location: location(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   participant: participant(conn),
