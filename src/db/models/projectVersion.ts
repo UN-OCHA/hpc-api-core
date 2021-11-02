@@ -1,21 +1,13 @@
 import * as t from 'io-ts';
 
-import { brandedType } from '../../util/io-ts';
-import { Brand } from '../../util/types';
 import { DATE } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { PARTICIPANT_ID } from './participant';
 import { PROJECT_ID } from './project';
+import { ProjectVersionId, PROJECT_VERSION_ID } from './project';
 
-export type ProjectVersionId = Brand<
-  number,
-  { readonly s: unique symbol },
-  'projectVersion.id'
->;
-
-export const PROJECT_VERSION_ID = brandedType<number, ProjectVersionId>(
-  t.number
-);
+export { PROJECT_VERSION_ID };
+export type { ProjectVersionId };
 
 export default defineIDModel({
   tableName: 'projectVersion',
