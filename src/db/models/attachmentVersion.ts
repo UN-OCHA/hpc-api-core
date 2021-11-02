@@ -4,6 +4,7 @@ import type { Brand } from '../../util/types';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
 import { ATTACHMENT_ID } from './attachment';
 import { brandedType } from '../../util/io-ts';
+import { ANY_ATTACHMENT_VERSION_VALUE } from './json/attachment';
 
 export type AttachmentVersionId = Brand<
   number,
@@ -14,10 +15,6 @@ export type AttachmentVersionId = Brand<
 export const ATTACHMENT_VERSION_ID = brandedType<number, AttachmentVersionId>(
   t.number
 );
-
-export const COST_ATTACHMENT_VALUE = t.type({
-  cost: t.number,
-});
 
 export default defineLegacyVersionedModel({
   tableName: 'attachmentVersion',
@@ -45,7 +42,7 @@ export default defineLegacyVersionedModel({
       },
       value: {
         kind: 'checked',
-        type: COST_ATTACHMENT_VALUE,
+        type: ANY_ATTACHMENT_VERSION_VALUE,
       },
     },
   },
