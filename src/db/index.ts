@@ -29,6 +29,7 @@ import projectVersionAttachment from './models/projectVersionAttachment';
 import projectVersionPlan from './models/projectVersionPlan';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
+import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 
 export default (conn: Knex) => ({
@@ -62,5 +63,6 @@ export default (conn: Knex) => ({
   projectVersionPlan: projectVersionPlan(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
+  usageYear: usageYear(conn),
   workflowStatusOption: workflowStatusOption(conn),
 });
