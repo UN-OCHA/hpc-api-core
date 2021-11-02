@@ -35,7 +35,7 @@ export default defineLegacyVersionedModel({
       customReference: { kind: 'checked', type: t.string },
       value: { kind: 'checked', type: t.unknown },
     },
-    required: {
+    nonNullWithDefault: {
       overriding: {
         kind: 'checked',
         type: t.boolean,
