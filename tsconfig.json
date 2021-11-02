@@ -17,6 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "test", "jest.config.js"],
   "exclude": ["node_modules"]
 }

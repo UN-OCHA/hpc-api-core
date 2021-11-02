@@ -28,7 +28,7 @@ import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 import workflowStatusOption from './models/workflowStatusOption';
 
-export default (conn: Knex) => ({
+const models = (conn: Knex) => ({
   attachment: attachment(conn),
   attachmentPrototype: attachmentPrototype(conn),
   attachmentVersion: attachmentVersion(conn),
@@ -58,3 +58,7 @@ export default (conn: Knex) => ({
   reportingWindowAssignment: reportingWindowAssignment(conn),
   workflowStatusOption: workflowStatusOption(conn),
 });
+
+export type DbModels = ReturnType<typeof models>;
+
+export default models;

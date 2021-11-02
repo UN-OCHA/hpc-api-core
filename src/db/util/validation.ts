@@ -160,3 +160,13 @@ export const dataValidator = <F extends FieldDefinition>(
     validateAndFilter,
   };
 };
+
+export const genericValidator = <T>(type: t.Type<T>, object: T) => {
+  const decoded = type.decode(object);
+  if (isRight(decoded)) {
+    return decoded.right;
+  } else {
+    const errors = PathReporter.report(decoded);
+    throw new Error(`Invalid data: ${errors.join(', ')}`);
+  }
+};
