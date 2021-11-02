@@ -30,6 +30,14 @@ export const PROJECT_VERSION_ID = brandedType<number, ProjectVersionId>(
   t.number
 );
 
+const PROJECT_IMPLEMENTATION_STATUS = {
+  Planning: null,
+  Implementing: null,
+  'Ended - Completed': null,
+  'Ended - Terminated': null,
+  'Ended - Not started and abandoned': null,
+};
+
 const PROJECT_PDF_ENTRY = t.type({
   /**
    * TODO: use something more stable, like UNIX OFFSET as a number
@@ -60,7 +68,10 @@ export default defineIDModel({
     },
     optional: {
       code: { kind: 'checked', type: t.string },
-      implementationStatus: { kind: 'checked', type: t.string },
+      implementationStatus: {
+        kind: 'enum',
+        values: PROJECT_IMPLEMENTATION_STATUS,
+      },
       currentPublishedVersionId: {
         kind: 'branded-integer',
         brand: PROJECT_VERSION_ID,
