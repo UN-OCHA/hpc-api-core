@@ -46,6 +46,12 @@ export type ModelWithIdInitializer<
   IDField extends null | keyof F['generated']
 > = (conn: Knex) => ModelWithId<F, IDField>;
 
+const hasField = <F extends string>(
+  data: unknown,
+  field: F
+): data is { [K in F]: unknown } =>
+  typeof data === 'object' && !!data && field in data;
+
 export type { FieldsWithSequelize as FieldsWithId };
 
 /**
@@ -57,7 +63,7 @@ export type { FieldsWithSequelize as FieldsWithId };
 export const defineIDModel =
   <
     F extends FieldDefinition,
-    IDField extends keyof F['generated'],
+    IDField extends string & keyof F['generated'],
     SoftDeletionEnabled extends boolean
   >(opts: {
     tableName: string;
@@ -69,12 +75,18 @@ export const defineIDModel =
     IDField
   > =>
   (conn) => {
-    const { idField } = opts;
+    const { idField, tableName } = opts;
     type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
     type ID = IdOf<Fields, IDField>;
     type Instance = InstanceDataOf<Fields>;
 
-    const model = defineSequelizeModel(opts)(conn);
+    const model = defineSequelizeModel({
+      ...opts,
+      genIdentifier: (data) =>
+        hasField(data, idField)
+          ? `${tableName} ${data[idField]}`
+          : `Unknown ${tableName}`,
+    })(conn);
 
     const get = (id: ID): Promise<Instance | null> =>
       model.findOne({

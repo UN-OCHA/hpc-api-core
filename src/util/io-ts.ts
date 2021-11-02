@@ -1,4 +1,6 @@
 import * as t from 'io-ts';
+import { Left } from 'fp-ts/lib/Either';
+
 import { Brand } from './types';
 
 /**
@@ -17,3 +19,25 @@ export const brandedType = <Base, B extends Brand<Base, any, any>>(
     (u, c) => base.validate(u, c) as t.Validation<B>,
     (a) => a
   );
+
+/**
+ * Print out io-ts decoding errors in a more user-readable format for use in
+ * error messages / debugging
+ */
+export const ioTsErrorFormatter = (decoded: Left<t.Errors>): string[] =>
+  decoded.left.map((error) => {
+    const path = error.context
+      // Filter out useless / context paths
+      .filter((c, i) => {
+        const parent: t.ContextEntry | undefined = error.context[i - 1];
+        const parentType = (parent?.type as any)?._tag;
+        return (
+          c.key !== '' &&
+          parentType !== 'IntersectionType' &&
+          parentType !== 'UnionType'
+        );
+      })
+      .map((c) => c.key)
+      .join(' -> ');
+    return `Invalid value ${JSON.stringify(error.value)} supplied to ${path}`;
+  });

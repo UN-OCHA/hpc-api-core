@@ -71,6 +71,11 @@ export const defineSequelizeModel =
   <F extends FieldDefinition, SoftDeletionEnabled extends boolean>(opts: {
     tableName: string;
     fields: F;
+    /**
+     * A function that takes raw data from an instance from the database,
+     * and creates a string that can be used to identify it in error messages.
+     */
+    genIdentifier?: (data: unknown) => string;
     softDeletionEnabled: SoftDeletionEnabled;
   }): ModelInitializer<FieldsWithSequelize<F, SoftDeletionEnabled>> =>
   (conn) => {

@@ -77,9 +77,19 @@ export const defineRawModel =
   <F extends FieldDefinition>(opts: {
     tableName: string;
     fields: F;
+    /**
+     * A function that takes raw data from an instance from the database,
+     * and creates a string that can be used to identify it in error messages.
+     */
+    genIdentifier?: (data: unknown) => string;
   }): ModelInitializer<F> =>
   (conn): Model<F> => {
-    const { tableName, fields } = opts;
+    const { tableName, fields, genIdentifier } = opts;
+
+    const validateAndFilter = (row: unknown) =>
+      validator.validateAndFilter(row, () =>
+        genIdentifier ? genIdentifier(row) : `${tableName} row`
+      );
 
     type Instance = InstanceDataOf<F>;
 
@@ -90,13 +100,13 @@ export const defineRawModel =
     const create: CreateFn<F> = async (data, opts) => {
       const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
       const res = await builder.insert([data as any]).returning('*');
-      return validator.validateAndFilter(res[0]);
+      return validateAndFilter(res[0]);
     };
 
     const find: FindFn<F> = async ({ where, trx } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
       const res = await builder.where(where || {}).select('*');
-      return res.map(validator.validateAndFilter);
+      return res.map(validateAndFilter);
     };
 
     const findOne: FindOneFn<F> = async (opts) => {
@@ -116,7 +126,7 @@ export const defineRawModel =
         .where(where)
         .update(values as any)
         .returning('*');
-      return (res as unknown[]).map(validator.validateAndFilter);
+      return (res as unknown[]).map(validateAndFilter);
     };
 
     const destroy: DestroyFn<F> = async ({ where, trx }) => {
