@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
+import { LOCALIZED_STRING } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { PLAN_ID } from './plan';
 
@@ -33,9 +34,7 @@ export const WORKFLOW_STATUS_OPTION_TYPE = t.keyof({
 });
 
 export const WORKFLOW_STATUS_OPTION_VALUE = t.type({
-  label: t.type({
-    en: t.string,
-  }),
+  label: LOCALIZED_STRING,
 });
 
 export default defineIDModel({
