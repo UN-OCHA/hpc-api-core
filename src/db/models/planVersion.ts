@@ -44,7 +44,6 @@ export default defineLegacyVersionedModel({
         brand: PLAN_REPORTING_PERIOD_ID,
       },
       lastPublishedReportingPeriodId: { kind: 'checked', type: t.number },
-      // Even though this column isn't defined using DB enum only two values are used
       clusterSelectionType: {
         kind: 'checked',
         type: PLAN_VERSION_CLUSTER_SELECTION_TYPE,
