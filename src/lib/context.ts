@@ -1,8 +1,6 @@
-import v4Models from '../db';
+import { Database } from '../db/type';
 import { Config } from '../lib/config';
 import { SharedLogContext, SharedLogData } from '../lib/logging';
-
-type Models = ReturnType<typeof v4Models>;
 
 /**
  * An object that encapsulates all the context that may need to be passed to
@@ -12,7 +10,7 @@ type Models = ReturnType<typeof v4Models>;
  */
 export class Context {
   public readonly config: Config;
-  public readonly models: Models;
+  public readonly models: Database;
   public readonly token: string | null;
   public readonly log: SharedLogContext;
 
@@ -23,7 +21,7 @@ export class Context {
     log,
   }: {
     config: Config;
-    models: Models;
+    models: Database;
     token: string | null;
     log: SharedLogContext;
   }) {
