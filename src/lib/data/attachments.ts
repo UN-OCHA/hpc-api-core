@@ -175,7 +175,9 @@ export const getAllAttachments = async ({
       const parentEntity = planEntities.get(parent.id);
       /* istanbul ignore if - this should not happen as it should already be validated in computePlanAttachmentParent */
       if (!parentEntity) {
-        throw new Error(`Unexpected error`);
+        throw new Error(
+          `Internal data inconsistency found for planEntity ${parent.id}`
+        );
       }
       if (parentEntity.governingEntity) {
         governingEntity = parentEntity.governingEntity;
@@ -232,22 +234,24 @@ const computeAttachmentParent = ({
 }): AttachmentParent => {
   if (attachment.objectType === 'plan') {
     return { type: 'plan' };
-  }
-  if (attachment.objectType === 'governingEntity') {
+  } else if (attachment.objectType === 'governingEntity') {
     const ge = governingEntities.get(createBrandedValue(attachment.objectId));
     if (!ge) {
-      throw new Error(`Invalid objectType for attachment ${attachment.id}`);
+      throw new Error(
+        `Couldn't find governingEntity for attachment ${attachment.id}`
+      );
     }
     return { type: 'governingEntity', id: ge.governingEntity.id };
-  }
-  if (attachment.objectType === 'planEntity') {
+  } else if (attachment.objectType === 'planEntity') {
     const e = planEntities.get(createBrandedValue(attachment.objectId));
     if (!e) {
-      throw new Error(`Invalid objectType for attachment ${attachment.id}`);
+      throw new Error(
+        `Couldn't find planEntity for attachment ${attachment.id}`
+      );
     }
     return { type: 'planEntity', id: e.id };
   }
-  throw new Error('Unknown attachment parent type');
+  throw new Error(`Invalid objectType for attachment ${attachment.id}`);
 };
 
 /**

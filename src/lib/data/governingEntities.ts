@@ -102,7 +102,9 @@ const composeCustomReferenceForGoverningEntity = ({
 }): string => {
   const prototype = prototypes.get(governingEntity.entityPrototypeId);
   if (!prototype) {
-    throw new Error('Missing prototype');
+    throw new Error(
+      `Missing prototype for governingEntity ${governingEntity.id}`
+    );
   }
   return `${prototype.refCode}${governingEntityVersion.customReference}`;
 };

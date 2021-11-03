@@ -69,12 +69,14 @@ export async function getAllProjectsForPlan({
     // Sanity check that the project version is actually associated with
     // this project
     if (projectVersion.projectId !== project.id) {
-      throw new Error('Data inconsistency found');
+      throw new Error(`Data inconsistency found for project ${project.id}`);
     }
     const pvp = pvpsByProjectVersionId.get(projectVersion.id);
     /* istanbul ignore if - this should not occur*/
     if (!pvp) {
-      throw new Error('Unexpected error');
+      throw new Error(
+        `Missing projectVersionPlan for projectVersion ${projectVersion.id}`
+      );
     }
     const workflowStatus =
       (pvp.workflowStatusOptionId &&

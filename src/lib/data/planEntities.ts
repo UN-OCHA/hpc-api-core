@@ -92,12 +92,14 @@ export const getAndValidateAllPlanEntities = async ({
   for (const planEntity of planEntities) {
     const planEntityVersion = pevsByPlanEntityId.get(planEntity.id);
     if (!planEntityVersion) {
-      throw new Error('Missing plan entity version');
+      throw new Error(
+        `Missing plan entity version for planEntity ${planEntity.id}`
+      );
     }
 
     const prototype = prototypes.get(planEntity.entityPrototypeId);
     if (!prototype) {
-      throw new Error('Missing prototype');
+      throw new Error(`Missing prototype for planEntity ${planEntity.id}`);
     }
 
     const refAndType = getCustomReferenceAndTypeForPlanEntity({
@@ -216,20 +218,22 @@ const getCustomReferenceAndTypeForPlanEntity = ({
 } => {
   const prototype = prototypes.get(planEntity.entityPrototypeId);
   if (!prototype) {
-    throw new Error('Missing prototype');
+    throw new Error(`Missing prototype for planEntity ${planEntity.id}`);
   }
   const parent = entityAssociations.get(planEntity.id);
   let ref = '';
   if (parent) {
     const ge = governingEntities.get(parent.parentId);
     if (!ge) {
-      throw new Error('Missing governing entity');
+      throw new Error(
+        `Missing governing entity for planEntity ${planEntity.id}`
+      );
     }
     ref = `${ge.customRef}/`;
   }
   ref += `${prototype.refCode}${planEntityVersion.customReference}`;
   if (!prototype.refCode) {
-    throw new Error('Missing refCode');
+    throw new Error(`Missing refCode for entityPrototype ${prototype.id}`);
   }
   return {
     customRef: ref,
