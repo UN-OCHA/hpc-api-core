@@ -58,6 +58,10 @@ export const AUTH_PERMISSIONS = {
      * Can move projects associated with any plan to any step of the workflow.
      */
     PROJECT_WORKFLOW_MOVE_TO_ANY_STEP: 'projectWorkflowMoveToAnyStep',
+    /**
+     * Can clone data from any project to a new project
+     */
+    CLONE_ANY_PROJECT: 'cloneAnyProject',
   },
   operation: {
     /**
@@ -134,6 +138,10 @@ export const AUTH_PERMISSIONS = {
      * Can view the data associated with the project
      */
     VIEW_DATA: 'viewProjectData',
+    /**
+     * Can clone data from the project to a new project
+     */
+    CLONE: 'clone',
   },
   governingEntity: {
     /**
