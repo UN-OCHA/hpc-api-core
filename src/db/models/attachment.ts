@@ -3,7 +3,10 @@ import { brandedType } from '../../util/io-ts';
 
 import type { Brand } from '../../util/types';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
-import { ATTACHMENT_PROTOTYPE_ID } from './attachmentPrototype';
+import {
+  ATTACHMENT_PROTOTYPE_ID,
+  ATTACHMENT_TYPE,
+} from './attachmentPrototype';
 import { PLAN_ID } from './plan';
 
 export type AttachmentId = Brand<
@@ -16,6 +19,12 @@ export const ATTACHMENT_ID = brandedType<number, AttachmentId>(t.number);
 
 export const COST_ATTACHMENT_VALUE = t.type({
   cost: t.number,
+});
+
+export const ATTACHMENT_OBJECT_TYPE = t.keyof({
+  governingEntity: null,
+  plan: null,
+  planEntity: null,
 });
 
 export default defineLegacyVersionedModel({
@@ -44,11 +53,11 @@ export default defineLegacyVersionedModel({
       },
       objectType: {
         kind: 'checked',
-        type: t.string,
+        type: ATTACHMENT_OBJECT_TYPE,
       },
       type: {
         kind: 'checked',
-        type: t.string,
+        type: ATTACHMENT_TYPE,
       },
     },
   },
