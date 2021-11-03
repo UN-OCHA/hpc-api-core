@@ -12,10 +12,10 @@ export type LocationId = Brand<
 
 export const LOCATION_ID = brandedType<number, LocationId>(t.number);
 
-const LOCATION_STATUS = {
+const LOCATION_STATUS = t.keyof({
   active: null,
   expired: null,
-};
+});
 
 export default defineIDModel({
   tableName: 'location',
@@ -38,8 +38,8 @@ export default defineIDModel({
     accidentallyOptional: {
       adminLevel: { kind: 'checked', type: t.number },
       status: {
-        kind: 'enum',
-        values: LOCATION_STATUS,
+        kind: 'checked',
+        type: LOCATION_STATUS,
       },
       itosSync: { kind: 'checked', type: t.boolean },
     },

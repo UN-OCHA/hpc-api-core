@@ -15,10 +15,10 @@ export type PlanVersionId = Brand<
 
 export const PLAN_VERSION_ID = brandedType<number, PlanVersionId>(t.number);
 
-const PLAN_VERSION_CLUSTER_SELECTION_TYPE = {
+const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
   single: null,
   multi: null,
-};
+});
 
 export default defineLegacyVersionedModel({
   tableName: 'planVersion',
@@ -46,8 +46,8 @@ export default defineLegacyVersionedModel({
       lastPublishedReportingPeriodId: { kind: 'checked', type: t.number },
       // Even though this column isn't defined using DB enum only two values are used
       clusterSelectionType: {
-        kind: 'enum',
-        values: PLAN_VERSION_CLUSTER_SELECTION_TYPE,
+        kind: 'checked',
+        type: PLAN_VERSION_CLUSTER_SELECTION_TYPE,
       },
     },
   },
