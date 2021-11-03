@@ -1,65 +1,65 @@
 import * as t from 'io-ts';
+import {
+  CASELOAD_VALUE as CASELOAD_ATTACHMENT_VALUE,
+  INDICATOR_VALUE as INDICATOR_ATTACHMENT_VALUE,
+} from './indicatorsAndCaseloads';
+
+const COST_ATTACHMENT_VALUE = t.intersection([
+  t.exact(
+    t.type({
+      cost: t.number,
+    })
+  ),
+  t.exact(
+    t.partial({
+      /**
+       * When necessary, a cost breakdown can be provided with respect to a
+       * particular collection of objects.
+       *
+       * For example, when the object of this attachment is a governing entity,
+       * a breakdown needs to be provided for each of the global clusters,
+       * (even if the governing entity has 0 global clusters)
+       * and the total sum of the breakdown must match the overall cost when
+       * non-empty.
+       */
+      breakdown: t.array(
+        t.exact(
+          t.type({
+            objectId: t.number,
+            cost: t.number,
+          })
+        )
+      ),
+      // TODO: delete these properties once we've confirmed that they're not
+      // needed for any code that reads cost attachments
+      // (they seem to be produced by RPM frontend code related to other types)
+      /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
+      name: t.string,
+      /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
+      description: t.string,
+      /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
+      metrics: t.exact(
+        t.partial({
+          values: t.exact(t.partial({})),
+          measureFields: t.array(t.UnknownRecord),
+        })
+      ),
+    })
+  ),
+]);
 
 export const ATTACHMENT_VERSION_VALUE = {
-  /**
-   * TODO: Replace this with type that represents expected values
-   */
-  caseLoad: t.unknown,
+  caseLoad: CASELOAD_ATTACHMENT_VALUE,
   /**
    * TODO: Replace this with type that represents expected values
    */
   contact: t.unknown,
-  cost: t.intersection([
-    t.exact(
-      t.type({
-        cost: t.number,
-      })
-    ),
-    t.exact(
-      t.partial({
-        /**
-         * When necessary, a cost breakdown can be provided with respect to a
-         * particular collection of objects.
-         *
-         * For example, when the object of this attachment is a governing entity,
-         * a breakdown needs to be provided for each of the global clusters,
-         * (even if the governing entity has 0 global clusters)
-         * and the total sum of the breakdown must match the overall cost when
-         * non-empty.
-         */
-        breakdown: t.array(
-          t.exact(
-            t.type({
-              objectId: t.number,
-              cost: t.number,
-            })
-          )
-        ),
-        // TODO: delete these properties once we've confirmed that they're not
-        // needed for any code that reads cost attachments
-        // (they seem to be produced by RPM frontend code related to other types)
-        /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
-        name: t.string,
-        /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
-        description: t.string,
-        /** @deprecated TODO: remove (this doesn't look like it's needed for cost attachments) */
-        metrics: t.exact(
-          t.partial({
-            values: t.exact(t.partial({})),
-            measureFields: t.array(t.UnknownRecord),
-          })
-        ),
-      })
-    ),
-  ]),
+  cost: COST_ATTACHMENT_VALUE,
   /**
    * TODO: Replace this with type that represents expected values
    */
   fileWebContent: t.unknown,
-  /**
-   * TODO: Replace this with type that represents expected values
-   */
-  indicator: t.unknown,
+  indicator: INDICATOR_ATTACHMENT_VALUE,
   /**
    * TODO: Replace this with type that represents expected values
    */
