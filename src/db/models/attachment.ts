@@ -17,10 +17,6 @@ export type AttachmentId = Brand<
 
 export const ATTACHMENT_ID = brandedType<number, AttachmentId>(t.number);
 
-export const COST_ATTACHMENT_VALUE = t.type({
-  cost: t.number,
-});
-
 export const ATTACHMENT_OBJECT_TYPE = t.keyof({
   governingEntity: null,
   plan: null,
