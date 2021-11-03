@@ -49,3 +49,17 @@ export const FILE_REFERENCE = t.type({
 });
 
 export type FileReference = t.TypeOf<typeof FILE_REFERENCE>;
+
+const localized = <T extends t.Type<any>>(type: T) =>
+  t.type({
+    en: type,
+  });
+
+export const LOCALIZED_STRING = localized(t.string);
+
+export const LOCALIZED_PLURAL_STRING = localized(
+  t.type({
+    singular: t.string,
+    plural: t.string,
+  })
+);

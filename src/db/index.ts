@@ -14,18 +14,22 @@ import expiredData from './models/expiredData';
 import form from './models/form';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
+import location from './models/location';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import participant from './models/participant';
-import project from './models/project';
 import plan from './models/plan';
 import planEntity from './models/planEntity';
 import planEntityVersion from './models/planEntityVersion';
+import planVersion from './models/planVersion';
+import planYear from './models/planYear';
+import project from './models/project';
 import projectVersion from './models/projectVersion';
 import projectVersionAttachment from './models/projectVersionAttachment';
 import projectVersionPlan from './models/projectVersionPlan';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
+import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 
 export default (conn: Knex) => ({
@@ -44,17 +48,21 @@ export default (conn: Knex) => ({
   form: form(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
+  location: location(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   participant: participant(conn),
   plan: plan(conn),
   planEntity: planEntity(conn),
   planEntityVersion: planEntityVersion(conn),
+  planVersion: planVersion(conn),
+  planYear: planYear(conn),
   project: project(conn),
   projectVersion: projectVersion(conn),
   projectVersionAttachment: projectVersionAttachment(conn),
   projectVersionPlan: projectVersionPlan(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
+  usageYear: usageYear(conn),
   workflowStatusOption: workflowStatusOption(conn),
 });

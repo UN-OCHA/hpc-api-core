@@ -25,6 +25,7 @@ export default defineLegacyVersionedModel({
         brand: GOVERNING_ENTITY_VERSION_ID,
       },
     },
+    optional: { tags: { kind: 'checked', type: t.array(t.string) } },
     accidentallyOptional: {
       governingEntityId: {
         kind: 'branded-integer',
@@ -33,9 +34,8 @@ export default defineLegacyVersionedModel({
       name: { kind: 'checked', type: t.string },
       customReference: { kind: 'checked', type: t.string },
       value: { kind: 'checked', type: t.unknown },
-      tags: { kind: 'checked', type: t.array(t.string) },
     },
-    required: {
+    nonNullWithDefault: {
       overriding: {
         kind: 'checked',
         type: t.boolean,

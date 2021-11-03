@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
+import { LOCALIZED_PLURAL_STRING } from '../util/datatypes';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
 import { ENTITY_PROTOTYPE_ID } from './entityPrototype';
 import { PLAN_ENTITY_ID } from './planEntity';
@@ -29,12 +30,7 @@ export const PLAN_ENTITY_VERSION_VALUE = t.type({
       }),
     ])
   ),
-  type: t.type({
-    en: t.type({
-      singular: t.string,
-      plural: t.string,
-    }),
-  }),
+  type: LOCALIZED_PLURAL_STRING,
 });
 export type PlanEntityVersionValue = t.TypeOf<typeof PLAN_ENTITY_VERSION_VALUE>;
 

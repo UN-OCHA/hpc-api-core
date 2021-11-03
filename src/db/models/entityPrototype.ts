@@ -44,11 +44,11 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: ENTITY_PROTOTYPE_ID },
     },
+    optional: { orderNumber: { kind: 'checked', type: t.number } },
     accidentallyOptional: {
       refCode: { kind: 'checked', type: ENTITY_PROTOTYPE_REF_CODE },
       type: { kind: 'checked', type: ENTITY_PROTOTYPE_TYPE },
       planId: { kind: 'checked', type: PLAN_ID },
-      orderNumber: { kind: 'checked', type: t.number },
       value: { kind: 'checked', type: t.unknown },
     },
   },

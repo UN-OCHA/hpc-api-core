@@ -1,6 +1,6 @@
 {
   "name": "@unocha/hpc-api-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Core libraries supporting HPC.Tools API Backend",
   "license": "Apache-2.0",
   "private": false,
@@ -28,7 +28,7 @@
     "husky": "^7.0.2",
     "lint-staged": "^11.2.4",
     "prettier": "2.4.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.4"
   },
   "lint-staged": {
     "*.{ts,js}": [

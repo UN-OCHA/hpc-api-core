@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
+import { LOCALIZED_STRING } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { PLAN_ID } from './plan';
 
@@ -25,10 +26,6 @@ export const ATTACHMENT_TYPE = t.keyof({
   textWebContent: null,
 });
 export type AttachmentType = t.TypeOf<typeof ATTACHMENT_TYPE>;
-
-const LOCALIZED_STRING = t.type({
-  en: t.string,
-});
 
 const FIELDS = t.array(
   t.type({
@@ -59,10 +56,8 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: ATTACHMENT_PROTOTYPE_ID },
     },
-    optional: {
-      planId: { kind: 'branded-integer', brand: PLAN_ID },
-    },
     accidentallyOptional: {
+      planId: { kind: 'branded-integer', brand: PLAN_ID },
       refCode: { kind: 'checked', type: t.string },
       type: { kind: 'checked', type: ATTACHMENT_TYPE },
       value: { kind: 'checked', type: ATTACHMENT_PROTOTYPE_VALUE },

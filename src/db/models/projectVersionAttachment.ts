@@ -13,6 +13,8 @@ export default defineSequelizeModel({
         kind: 'branded-integer',
         brand: ATTACHMENT_VERSION_ID,
       },
+    },
+    optional: {
       value: { kind: 'checked', type: t.unknown },
       total: { kind: 'checked', type: t.number },
     },
