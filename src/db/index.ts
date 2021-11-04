@@ -26,6 +26,7 @@ import planYear from './models/planYear';
 import project from './models/project';
 import projectVersion from './models/projectVersion';
 import projectVersionAttachment from './models/projectVersionAttachment';
+import projectVersionField from './models/projectVersionField';
 import projectVersionPlan from './models/projectVersionPlan';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
@@ -60,6 +61,7 @@ export default (conn: Knex) => ({
   project: project(conn),
   projectVersion: projectVersion(conn),
   projectVersionAttachment: projectVersionAttachment(conn),
+  projectVersionField: projectVersionField(conn),
   projectVersionPlan: projectVersionPlan(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
