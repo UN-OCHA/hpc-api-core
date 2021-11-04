@@ -74,6 +74,13 @@ export type PromiseType<P extends Promise<any>> = P extends Promise<infer V>
   : never;
 
 /**
+ * A map with additional information stored about the items contained within.
+ */
+export type AnnotatedMap<K, V> = Map<K, V> & {
+  _objectType: string;
+};
+
+/**
  * Take a collection of objects,
  * and group them by one of their properties
  */
@@ -121,10 +128,34 @@ export const organizeObjectsByUniqueProperty = <I, P extends keyof I>(
  * using a particular function to derive the key
  * that should be used for each object
  */
-export const organizeObjectsByUniqueValue = <I, V>(
+export function organizeObjectsByUniqueValue<I, V>(
   objects: Iterable<I>,
   getValue: (i: I) => V
-): Map<V, I> => {
+): Map<V, I>;
+
+/**
+ * Take a collection of objects,
+ * and create a map of them,
+ * using a particular function to derive the key
+ * that should be used for each object
+ *
+ * This variation also specified a string that should be used to identify the
+ * type of object contained within the map
+ */
+export function organizeObjectsByUniqueValue<I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V,
+  /**
+   * The string that should be used to identify the type of object contained
+   */
+  objectType: string
+): AnnotatedMap<V, I>;
+
+export function organizeObjectsByUniqueValue<I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V,
+  objectType?: string
+): Map<V, I> {
   const result = new Map<V, I>();
   for (const obj of objects) {
     const value = getValue(obj);
@@ -134,8 +165,14 @@ export const organizeObjectsByUniqueValue = <I, V>(
     }
     result.set(value, obj);
   }
+  if (objectType) {
+    Object.defineProperty(result, '_objectType', {
+      value: objectType,
+      writable: false,
+    });
+  }
   return result;
-};
+}
 
 /**
  * Return a new object with the given map function applies to all values
