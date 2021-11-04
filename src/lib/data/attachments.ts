@@ -116,36 +116,36 @@ export const getAllAttachments = async ({
   governingEntities: MapOfGoverningEntities;
   log: SharedLogContext;
 }): Promise<AttachmentResults> => {
-  const prototypes = await database.attachmentPrototype.find({
+  const attachmentPrototypes = await database.attachmentPrototype.find({
     where: (builder) =>
       builder.whereIn('type', types).andWhere('planId', planId),
   });
   const attachmentPrototypesById = organizeObjectsByUniqueProperty(
-    prototypes,
+    attachmentPrototypes,
     'id'
   );
 
-  const planAttachments = await database.attachment.find({
+  const attachments = await database.attachment.find({
     where: (builder) =>
       builder.whereIn('type', types).andWhere('planId', planId),
   });
-  const planAttachmentVersions = await database.attachmentVersion.find({
+  const attachmentVersions = await database.attachmentVersion.find({
     where: (builder) =>
       builder
         .whereIn(
           'attachmentId',
-          planAttachments.map((pa) => pa.id)
+          attachments.map((pa) => pa.id)
         )
         .andWhere('latestVersion', true),
   });
-  const planAttachmentVersionsByAttachmentId = organizeObjectsByUniqueProperty(
-    planAttachmentVersions,
+  const attachmentVersionsByAttachmentId = organizeObjectsByUniqueProperty(
+    attachmentVersions,
     'attachmentId'
   );
   const result: AttachmentResults = new Map();
 
-  for (const attachment of planAttachments) {
-    const attachmentVersion = planAttachmentVersionsByAttachmentId.get(
+  for (const attachment of attachments) {
+    const attachmentVersion = attachmentVersionsByAttachmentId.get(
       attachment.id
     );
     if (!attachmentVersion) {
@@ -156,7 +156,7 @@ export const getAllAttachments = async ({
     const customRef = composeCustomReferenceForAttachment({
       attachment,
       attachmentVersion,
-      attachmentPrototypes: attachmentPrototypesById,
+      attachmentPrototypesById,
       planEntities,
       governingEntities,
     });
@@ -173,7 +173,7 @@ export const getAllAttachments = async ({
       governingEntity = parent.id;
     } else if (parent.type === 'planEntity') {
       const parentEntity = planEntities.get(parent.id);
-      /* istanbul ignore if - this should not happen as it should already be validated in computePlanAttachmentParent */
+      /* istanbul ignore if - this should not happen as it should already be validated in computeAttachmentParent */
       if (!parentEntity) {
         throw new Error(
           `Internal data inconsistency found for planEntity ${parent.id}`
@@ -251,6 +251,7 @@ const computeAttachmentParent = ({
     }
     return { type: 'planEntity', id: e.id };
   }
+
   throw new Error(`Invalid objectType for attachment ${attachment.id}`);
 };
 
@@ -285,7 +286,7 @@ export const typeCheckAttachmentData = ({
 export const composeCustomReferenceForAttachment = ({
   attachment,
   attachmentVersion,
-  attachmentPrototypes,
+  attachmentPrototypesById,
   planEntities,
   governingEntities,
 }: {
@@ -297,7 +298,7 @@ export const composeCustomReferenceForAttachment = ({
    *
    * Usually all the prototypes for a given plan are provided
    */
-  attachmentPrototypes: Map<
+  attachmentPrototypesById: Map<
     AttachmentPrototypeId,
     InstanceDataOfModel<Database['attachmentPrototype']>
   >;
@@ -321,7 +322,9 @@ export const composeCustomReferenceForAttachment = ({
       `Missing attachmentPrototypeId for attachment ${attachment.id}`
     );
   }
-  const prototype = attachmentPrototypes.get(attachment.attachmentPrototypeId);
+  const prototype = attachmentPrototypesById.get(
+    attachment.attachmentPrototypeId
+  );
   if (!prototype) {
     throw new Error(`Missing prototype for attachment ${attachment.id}`);
   }
