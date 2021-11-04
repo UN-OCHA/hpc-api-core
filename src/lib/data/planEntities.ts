@@ -61,10 +61,7 @@ export const getAndValidateAllPlanEntities = async ({
   const pevs = await database.planEntityVersion.find({
     where: (builder) =>
       builder
-        .whereIn(
-          'planEntityId',
-          planEntities.map((pe) => pe.id)
-        )
+        .whereIn('planEntityId', [...planEntityIDs])
         .andWhere('latestVersion', true),
   });
   const pevsByPlanEntityId = organizeObjectsByUniqueProperty(
@@ -75,10 +72,7 @@ export const getAndValidateAllPlanEntities = async ({
   const entitiesAssociation = await database.entitiesAssociation.find({
     where: (builder) =>
       builder
-        .whereIn(
-          'childId',
-          planEntities.map((pe) => pe.id)
-        )
+        .whereIn('childId', [...planEntityIDs])
         .andWhere('parentType', 'governingEntity')
         .andWhere('childType', 'planEntity'),
   });
