@@ -46,7 +46,7 @@ type RootColumnDefinition<
   };
 };
 
-type VersionedModel<
+export type VersionedModel<
   IDType,
   Data,
   LookupColumns extends LookupColumnDefinition
@@ -183,7 +183,7 @@ export const defineVersionedModel =
       },
       genIdentifier: (data) => {
         if (hasRootAndVersion(data)) {
-          return `${name}Version ${data.root}-${data.version}`;
+          return `${name}Version ${data.root}-v${data.version}`;
         } else {
           return `unknown ${name}Version`;
         }
@@ -198,20 +198,28 @@ export const defineVersionedModel =
       root: { id: IDType };
       data: Data;
       version: InstanceDataOfModel<typeof versionModel>;
-    }): VersionedInstance<IDType, Data> => ({
-      id,
-      version: version.version,
-      modifiedBy: version.modifiedBy || null,
-      modifiedAt: version.updatedAt,
-      data,
-      update: (data, modifiedBy) =>
-        result.update({
-          id,
-          currentVersion: version.version,
-          data,
-          modifiedBy,
-        }),
-    });
+    }): VersionedInstance<IDType, Data> => {
+      const instance: VersionedInstance<IDType, Data> = {
+        id,
+        version: version.version,
+        modifiedBy: version.modifiedBy || null,
+        modifiedAt: version.updatedAt,
+        data,
+        update: (data, modifiedBy) =>
+          result.update({
+            id,
+            currentVersion: version.version,
+            data,
+            modifiedBy,
+          }),
+      };
+      Object.defineProperty(instance, 'toString', {
+        value: () => `${name}Version ${id}-v${version.version}`,
+        writable: false,
+        enumerable: false,
+      });
+      return instance;
+    };
 
     const result: VersionedModel<IDType, Data, LookupColumns> = {
       _internals: {

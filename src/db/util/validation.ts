@@ -153,7 +153,13 @@ export const dataValidator = <F extends FieldDefinition>(
   ): Instance => {
     const decoded = instanceValidator.decode(val);
     if (isRight(decoded)) {
-      return decoded.right;
+      const val = decoded.right;
+      Object.defineProperty(val, 'toString', {
+        value: genIdentifier,
+        writable: false,
+        enumerable: false,
+      });
+      return val;
     } else {
       const errors = ioTsErrorFormatter(decoded);
       throw new DataValidationError({
