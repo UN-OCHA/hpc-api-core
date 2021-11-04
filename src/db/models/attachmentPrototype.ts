@@ -37,15 +37,35 @@ const FIELDS = t.array(
 export const ATTACHMENT_PROTOTYPE_VALUE = t.intersection([
   // Required Fields
   t.type({
-    hasMeasures: t.number,
+    /**
+     * Some prototypes incorrectly quote numbers, which we need to account for
+     *
+     * TODO: clean prototype data and make type stricter
+     */
+    hasMeasures: t.union([
+      t.literal(0),
+      t.literal(1),
+      t.literal('0'),
+      t.literal('1'),
+    ]),
     name: LOCALIZED_STRING,
     entities: t.array(t.string),
   }),
   // Optional Fields
   t.partial({
     measureFields: FIELDS,
-    min: t.number,
-    max: t.number,
+    /**
+     * Some prototypes incorrectly quote numbers, which we need to account for
+     *
+     * TODO: clean prototype data and make type stricter
+     */
+    min: t.union([t.number, t.string]),
+    /**
+     * Some prototypes incorrectly quote numbers, which we need to account for
+     *
+     * TODO: clean prototype data and make type stricter
+     */
+    max: t.union([t.number, t.string]),
     metrics: FIELDS,
   }),
 ]);

@@ -4,7 +4,6 @@
  */
 import Knex = require('knex');
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
 
 import { nullable } from './datatypes';
@@ -15,6 +14,8 @@ import type {
   InstanceDataOf,
 } from './model-definition';
 import { ModelInternals } from './raw-model';
+import { ioTsErrorFormatter } from '../../util/io-ts';
+import { DataValidationError } from './errors';
 
 /**
  * Given a model definition,
@@ -104,7 +105,7 @@ interface DataValidator<T> {
    * Check that the given data has the expected type,
    * and if not throw an error explaining why
    */
-  validateAndFilter(data: unknown): T;
+  validateAndFilter(data: unknown, genIdentifier: () => string): T;
 }
 
 /**
@@ -146,13 +147,20 @@ export const dataValidator = <F extends FieldDefinition>(
     fieldSetValidator(fields.accidentallyOptional || {}, true),
   ]) as t.Type<unknown> as t.Type<Instance>;
 
-  const validateAndFilter = (val: unknown): Instance => {
+  const validateAndFilter = (
+    val: unknown,
+    genIdentifier: () => string
+  ): Instance => {
     const decoded = instanceValidator.decode(val);
     if (isRight(decoded)) {
       return decoded.right;
     } else {
-      const errors = PathReporter.report(decoded);
-      throw new Error(`Invalid data: ${errors.join(', ')}`);
+      const errors = ioTsErrorFormatter(decoded);
+      throw new DataValidationError({
+        errors,
+        identifier: genIdentifier(),
+        data: val,
+      });
     }
   };
 

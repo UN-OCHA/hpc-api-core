@@ -44,7 +44,7 @@ export type FieldsWithVersioned<
  */
 export const defineLegacyVersionedModel = <
   F extends FieldDefinition,
-  IDField extends keyof F['generated'],
+  IDField extends string & keyof F['generated'],
   SoftDeletionEnabled extends boolean
 >(opts: {
   tableName: string;

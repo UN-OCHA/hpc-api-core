@@ -108,6 +108,13 @@ export type InstanceOfVersionedModel<M extends VersionedModel<any, any, any>> =
     ? VersionedInstance<IDType, Data>
     : never;
 
+const hasRootAndVersion = (
+  data: unknown
+): data is {
+  root: unknown;
+  version: unknown;
+} => typeof data === 'object' && !!data && 'root' in data && 'version' in data;
+
 export const defineVersionedModel =
   <
     IDType extends Brand<any, any, any>,
@@ -173,6 +180,13 @@ export const defineVersionedModel =
             brand: PARTICIPANT_ID,
           },
         },
+      },
+      genIdentifier: (data) => {
+        if (hasRootAndVersion(data)) {
+          return `${name}Version ${data.root}-${data.version}`;
+        } else {
+          return `unknown ${name}Version`;
+        }
       },
     })(conn);
 
