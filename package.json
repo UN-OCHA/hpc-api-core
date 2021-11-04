@@ -12,6 +12,8 @@
     "lint": "yarn lint-prettier && yarn lint-eslint"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.170",
+    "@types/node-fetch": "^2.5.12",
     "fp-ts": "^2.6.6",
     "io-ts": "2.2.9",
     "knex": "0.21.1",
@@ -20,9 +22,7 @@
     "pg": "^8.5.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.170",
     "@types/node": "^14.0.5",
-    "@types/node-fetch": "^2.5.12",
     "@unocha/hpc-repo-tools": "^0.1.5",
     "eslint": "8.1.0",
     "husky": "^7.0.2",
