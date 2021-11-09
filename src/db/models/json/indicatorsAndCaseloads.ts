@@ -159,9 +159,14 @@ export const INDICATOR_VALUE = t.intersection([
         values: CASELOAD_OR_INDICATOR_METRICS_VALUES,
       }),
       t.partial({
+        /**
+         * TODO: this field is too lax, some properties in the database don't
+         * have an id specified, and some don't have an object. We need to be
+         * stricter here.
+         */
         unit: t.union([
           t.null,
-          t.type({
+          t.partial({
             id: t.number,
             object: t.type({
               id: t.number,
