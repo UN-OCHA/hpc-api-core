@@ -23,7 +23,13 @@ export const PLAN_ENTITY_VERSION_VALUE = t.type({
   support: t.array(
     t.intersection([
       t.type({
-        planEntityIds: t.array(PLAN_ENTITY_ID),
+        /**
+         * TODO: Some values in the database seem to have null values in this
+         * array, which is problematic. We need to have stricter validation of
+         * data being stored here, repair existing values, and then remove null
+         * from this type
+         */
+        planEntityIds: t.array(t.union([t.null, PLAN_ENTITY_ID])),
       }),
       t.partial({
         entityPrototypeId: ENTITY_PROTOTYPE_ID,
