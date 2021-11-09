@@ -93,3 +93,18 @@ export const indexedObjectType = <T>(valueType: t.Type<T, any, any>) => {
 
   return newType;
 };
+
+export type EmptyTuple = [];
+
+export const EMPTY_TUPLE = new t.Type<EmptyTuple>(
+  'EMPTY_TUPLE',
+  (v): v is EmptyTuple => Array.isArray(v) && v.length === 0,
+  (v, c) => {
+    if (Array.isArray(v) && v.length === 0) {
+      return t.success([]);
+    }
+
+    return t.failure(v, c);
+  },
+  t.identity
+);
