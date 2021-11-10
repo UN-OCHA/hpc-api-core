@@ -24,6 +24,7 @@ import planEntityVersion from './models/planEntityVersion';
 import planVersion from './models/planVersion';
 import planYear from './models/planYear';
 import project from './models/project';
+import projectContact from './models/projectContact';
 import projectVersion from './models/projectVersion';
 import projectVersionAttachment from './models/projectVersionAttachment';
 import projectVersionField from './models/projectVersionField';
@@ -61,6 +62,7 @@ export default (conn: Knex) => ({
   planVersion: planVersion(conn),
   planYear: planYear(conn),
   project: project(conn),
+  projectContact: projectContact(conn),
   projectVersion: projectVersion(conn),
   projectVersionAttachment: projectVersionAttachment(conn),
   projectVersionField: projectVersionField(conn),
