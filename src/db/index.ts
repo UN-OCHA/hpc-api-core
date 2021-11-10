@@ -17,6 +17,7 @@ import governingEntityVersion from './models/governingEntityVersion';
 import location from './models/location';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
+import organization from './models/organization';
 import participant from './models/participant';
 import plan from './models/plan';
 import planEntity from './models/planEntity';
@@ -56,6 +57,7 @@ export default (conn: Knex) => ({
   location: location(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
+  organization: organization(conn),
   participant: participant(conn),
   plan: plan(conn),
   planEntity: planEntity(conn),

@@ -1,8 +1,13 @@
+import { OrganizationId } from '../../db/models/organization';
 import { PlanId } from '../../db/models/plan';
 import { ProjectId } from '../../db/models/project';
 import { Database } from '../../db/type';
 import { InstanceOfModel } from '../../db/util/types';
-import { isDefined, organizeObjectsByUniqueProperty } from '../../util';
+import {
+  groupObjectsByProperty,
+  isDefined,
+  organizeObjectsByUniqueProperty,
+} from '../../util';
 
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
@@ -87,6 +92,37 @@ export async function getAllProjectsForPlan({
       projectVersion,
       workflowStatus,
     });
+  }
+
+  return result;
+}
+
+export async function getOrganizationIDsForProjects({
+  database,
+  projects,
+}: {
+  database: Database;
+  projects: Map<ProjectId, ProjectData>;
+}): Promise<Map<ProjectId, Set<OrganizationId>>> {
+  const projectVersionIds = [...projects.values()].map(
+    (p) => p.projectVersion.id
+  );
+
+  const groupedPVOs = groupObjectsByProperty(
+    await database.projectVersionOrganization.find({
+      where: (builder) =>
+        builder.whereIn('projectVersionId', projectVersionIds),
+    }),
+    'projectVersionId'
+  );
+
+  const result = new Map<ProjectId, Set<OrganizationId>>();
+
+  for (const [projectId, projectData] of projects) {
+    const projectVersionId = projectData.projectVersion.id;
+    const pvos = groupedPVOs.get(projectVersionId) || [];
+    const organizationIds = new Set([...pvos].map((o) => o.organizationId));
+    result.set(projectId, organizationIds);
   }
 
   return result;
