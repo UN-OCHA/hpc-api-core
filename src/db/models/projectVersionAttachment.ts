@@ -5,6 +5,17 @@ import { PROJECT_VERSION_ID } from './projectVersion';
 import { ATTACHMENT_ID } from './attachment';
 import { ATTACHMENT_VERSION_ID } from './attachmentVersion';
 
+export const PROJECT_VERSION_ATTACHMENT_VALUE = t.type({
+  targets: t.union([
+    t.null,
+    t.array(t.array(t.union([t.string, t.number, t.null]))),
+  ]),
+});
+
+export type ProjectVersionAttachmentValue = t.TypeOf<
+  typeof PROJECT_VERSION_ATTACHMENT_VALUE
+>;
+
 export default defineSequelizeModel({
   tableName: 'projectVersionAttachment',
   fields: {
@@ -15,7 +26,7 @@ export default defineSequelizeModel({
       },
     },
     optional: {
-      value: { kind: 'checked', type: t.unknown },
+      value: { kind: 'checked', type: PROJECT_VERSION_ATTACHMENT_VALUE },
       total: { kind: 'checked', type: t.number },
     },
     required: {

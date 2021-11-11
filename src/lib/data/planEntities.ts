@@ -4,7 +4,7 @@ import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
-import { organizeObjectsByUniqueProperty } from '../../util';
+import { isDefined, organizeObjectsByUniqueProperty } from '../../util';
 import { MapOfGoverningEntities } from './governingEntities';
 
 export type ValidatedPlanEntity = {
@@ -122,7 +122,7 @@ export const getAndValidateAllPlanEntities = async ({
       );
       // Check that the list of planEntityIds is valid
       const missing = supportingPlanEntityIds.filter(
-        (id) => !planEntityIDs.has(id)
+        (id) => id !== null && !planEntityIDs.has(id)
       );
       if (missing.length > 0) {
         throw new Error(
@@ -132,7 +132,7 @@ export const getAndValidateAllPlanEntities = async ({
 
       // TODO: Check that the plan entities pass the canSupport requirements
       // specified in the prototype, including matching the cardinality
-      entityDetails.supports = supportingPlanEntityIds;
+      entityDetails.supports = supportingPlanEntityIds.filter(isDefined);
     }
 
     result.set(entityDetails.id, entityDetails);
