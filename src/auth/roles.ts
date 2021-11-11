@@ -177,6 +177,7 @@ export const calculatePermissionsFromRolesGrant = async <
         // New Permissions
         global.add(P.global.VIEW_ANY_PLAN_DATA);
         global.add(P.global.EDIT_ANY_PLAN_DATA);
+        global.add(P.global.CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS);
       } else if (role === 'ftsAdmin') {
         // New Permissions
         global.add(P.global.VIEW_ANY_FLOW);
@@ -272,6 +273,7 @@ export const calculatePermissionsFromRolesGrant = async <
         planSet.add(P.plan.VIEW_DATA);
         planSet.add(P.plan.EDIT_DATA);
         planSet.add(P.plan.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
+        planSet.add(P.plan.MAKE_VISIBLE_IN_PROJECTS);
       }
     }
   } else if (grant.type === 'project') {

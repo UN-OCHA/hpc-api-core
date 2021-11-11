@@ -62,6 +62,11 @@ export const AUTH_PERMISSIONS = {
      * Can clone data from any project to a new project
      */
     CLONE_ANY_PROJECT: 'cloneAnyProject',
+    /**
+     * Can change visibility of any plan in Projects Module
+     */
+    CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS:
+      'canChangeAnyPlanVisiblityInProjects',
   },
   operation: {
     /**
@@ -131,6 +136,10 @@ export const AUTH_PERMISSIONS = {
      */
     MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
       'canModifyAccessAndPermissionsOfProjects',
+    /**
+     * Can make plan visible to projects, in Projects Module
+     */
+    MAKE_VISIBLE_IN_PROJECTS: 'canMakeVisibleInProjects',
   },
   project: {
     MODIFY_ACCESS_AND_PERMISSIONS: 'canModifyAccessAndPermissions',
