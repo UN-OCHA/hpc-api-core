@@ -77,5 +77,5 @@ export type UserDataOf<F extends FieldDefinition> = Partial<
   FieldValuesOfSet<F['nonNullWithDefault']>
 > &
   FieldValuesOfSet<F['required']> &
-  Partial<FieldValuesOfSet<F['optional']>> &
-  FieldValuesOfSet<F['accidentallyOptional']>;
+  FieldValuesOfSet<F['accidentallyOptional']> &
+  Partial<Nullable<FieldValuesOfSet<F['optional']>>>;
