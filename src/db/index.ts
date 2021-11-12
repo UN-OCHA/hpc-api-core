@@ -40,6 +40,7 @@ import flowLink from './models/flowLink';
 import flowObject from './models/flowObject';
 import flowObjectType from './models/flowObjectType';
 import form from './models/form';
+import globalCluster from './models/globalCuster';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
 import location from './models/location';
@@ -109,6 +110,7 @@ export default (conn: Knex) => ({
   flowObject: flowObject(conn),
   flowObjectType: flowObjectType(conn),
   form: form(conn),
+  globalCluster: globalCluster(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
   location: location(conn),
