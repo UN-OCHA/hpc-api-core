@@ -16,6 +16,7 @@ import cache from './models/cache';
 import category from './models/category';
 import categoryGroup from './models/categoryGroup';
 import categoryRef from './models/categoryRef';
+import client from './models/client';
 import conditionField from './models/conditionField';
 import conditionFieldReliesOn from './models/conditionFieldReliesOn';
 import conditionFieldType from './models/conditionFieldType';
@@ -67,6 +68,7 @@ export default (conn: Knex) => ({
   category: category(conn),
   categoryGroup: categoryGroup(conn),
   categoryRef: categoryRef(conn),
+  client: client(conn),
   conditionField: conditionField(conn),
   conditionFieldReliesOn: conditionFieldReliesOn(conn),
   conditionFieldType: conditionFieldType(conn),
