@@ -26,6 +26,7 @@ import disaggregationCategoryGroup from './models/disaggregationCategoryGroup';
 import disaggregationModel from './models/disaggregationModel';
 import emergency from './models/emergency';
 import emergencyLocation from './models/emergencyLocation';
+import endpointLog from './models/endpointLog';
 import entitiesAssociation from './models/entitiesAssociation';
 import entityPrototype from './models/entityPrototype';
 import expiredData from './models/expiredData';
@@ -85,6 +86,7 @@ export default (conn: Knex) => ({
   disaggregationModel: disaggregationModel(conn),
   emergency: emergency(conn),
   emergencyLocation: emergencyLocation(conn),
+  endpointLog: endpointLog(conn),
   entitiesAssociation: entitiesAssociation(conn),
   entityPrototype: entityPrototype(conn),
   expiredData: expiredData(conn),
