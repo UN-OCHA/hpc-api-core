@@ -21,6 +21,7 @@ import conditionField from './models/conditionField';
 import conditionFieldReliesOn from './models/conditionFieldReliesOn';
 import conditionFieldType from './models/conditionFieldType';
 import currency from './models/currency';
+import disaggregationCategoryGroup from './models/disaggregationCategoryGroup';
 import entitiesAssociation from './models/entitiesAssociation';
 import entityPrototype from './models/entityPrototype';
 import expiredData from './models/expiredData';
@@ -75,6 +76,7 @@ export default (conn: Knex) => ({
   conditionFieldReliesOn: conditionFieldReliesOn(conn),
   conditionFieldType: conditionFieldType(conn),
   currency: currency(conn),
+  disaggregationCategoryGroup: disaggregationCategoryGroup(conn),
   entitiesAssociation: entitiesAssociation(conn),
   entityPrototype: entityPrototype(conn),
   expiredData: expiredData(conn),
