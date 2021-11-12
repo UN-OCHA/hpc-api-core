@@ -8,6 +8,7 @@ import authGrantLog from './models/authGrantLog';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
 import authToken from './models/authToken';
+import blueprint from './models/blueprint';
 import budgetSegment from './models/budgetSegment';
 import budgetSegmentBreakdown from './models/budgetSegmentBreakdown';
 import budgetSegmentBreakdownEntity from './models/budgetSegmentBreakdownEntity';
@@ -54,6 +55,7 @@ export default (conn: Knex) => ({
   authInvite: authInvite(conn),
   authTarget: authTarget(conn),
   authToken: authToken(conn),
+  blueprint: blueprint(conn),
   budgetSegment: budgetSegment(conn),
   budgetSegmentBreakdown: budgetSegmentBreakdown(conn),
   budgetSegmentBreakdownEntity: budgetSegmentBreakdownEntity(conn),
