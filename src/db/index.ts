@@ -33,6 +33,7 @@ import entityPrototype from './models/entityPrototype';
 import expiredData from './models/expiredData';
 import externalData from './models/externalData';
 import externalReference from './models/externalReference';
+import fileAssetEntity from './models/fileAssetEntity';
 import form from './models/form';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
@@ -96,6 +97,7 @@ export default (conn: Knex) => ({
   expiredData: expiredData(conn),
   externalData: externalData(conn),
   externalReference: externalReference(conn),
+  fileAssetEntity: fileAssetEntity(conn),
   form: form(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
