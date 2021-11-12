@@ -12,6 +12,7 @@ import blueprint from './models/blueprint';
 import budgetSegment from './models/budgetSegment';
 import budgetSegmentBreakdown from './models/budgetSegmentBreakdown';
 import budgetSegmentBreakdownEntity from './models/budgetSegmentBreakdownEntity';
+import cache from './models/cache';
 import conditionField from './models/conditionField';
 import conditionFieldReliesOn from './models/conditionFieldReliesOn';
 import conditionFieldType from './models/conditionFieldType';
@@ -59,6 +60,7 @@ export default (conn: Knex) => ({
   budgetSegment: budgetSegment(conn),
   budgetSegmentBreakdown: budgetSegmentBreakdown(conn),
   budgetSegmentBreakdownEntity: budgetSegmentBreakdownEntity(conn),
+  cache: cache(conn),
   conditionField: conditionField(conn),
   conditionFieldReliesOn: conditionFieldReliesOn(conn),
   conditionFieldType: conditionFieldType(conn),
