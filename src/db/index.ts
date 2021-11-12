@@ -8,6 +8,7 @@ import authGrantLog from './models/authGrantLog';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
 import authToken from './models/authToken';
+import conditionField from './models/conditionField';
 import conditionFieldType from './models/conditionFieldType';
 import entitiesAssociation from './models/entitiesAssociation';
 import entityPrototype from './models/entityPrototype';
@@ -49,6 +50,7 @@ export default (conn: Knex) => ({
   authInvite: authInvite(conn),
   authTarget: authTarget(conn),
   authToken: authToken(conn),
+  conditionField: conditionField(conn),
   conditionFieldType: conditionFieldType(conn),
   entitiesAssociation: entitiesAssociation(conn),
   entityPrototype: entityPrototype(conn),
