@@ -5,6 +5,7 @@ import type { Brand } from '../../util/types';
 import { DATE } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { FLOW_ID } from './flow';
+import { FLOW_OBJECT_REF_DIRECTION } from './flowObject';
 
 export type ExternalDataId = Brand<
   number,
@@ -31,11 +32,6 @@ export const EXTERNAL_DATA_OBJECT_TYPE = t.keyof({
   project: null,
 });
 
-export const EXTERNAL_DATA_REF_DIRECTION = t.keyof({
-  source: null,
-  destination: null,
-});
-
 export default defineIDModel({
   tableName: 'externalData',
   fields: {
@@ -52,7 +48,7 @@ export default defineIDModel({
     optional: {
       externalRefID: { kind: 'checked', type: t.string },
       externalRefDate: { kind: 'checked', type: DATE },
-      refDirection: { kind: 'checked', type: EXTERNAL_DATA_REF_DIRECTION },
+      refDirection: { kind: 'checked', type: FLOW_OBJECT_REF_DIRECTION },
       matched: { kind: 'checked', type: t.boolean },
     },
   },

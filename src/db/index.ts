@@ -37,6 +37,7 @@ import fileAssetEntity from './models/fileAssetEntity';
 import fileRecord from './models/fileRecord';
 import flow from './models/flow';
 import flowLink from './models/flowLink';
+import flowObject from './models/flowObject';
 import flowObjectType from './models/flowObjectType';
 import form from './models/form';
 import governingEntity from './models/governingEntity';
@@ -105,6 +106,7 @@ export default (conn: Knex) => ({
   fileRecord: fileRecord(conn),
   flow: flow(conn),
   flowLink: flowLink(conn),
+  flowObject: flowObject(conn),
   flowObjectType: flowObjectType(conn),
   form: form(conn),
   governingEntity: governingEntity(conn),
