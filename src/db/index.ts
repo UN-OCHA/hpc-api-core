@@ -40,7 +40,7 @@ import flowLink from './models/flowLink';
 import flowObject from './models/flowObject';
 import flowObjectType from './models/flowObjectType';
 import form from './models/form';
-import globalCluster from './models/globalCuster';
+import globalCluster from './models/globalCluster';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
 import location from './models/location';
