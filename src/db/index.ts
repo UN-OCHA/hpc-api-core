@@ -24,6 +24,7 @@ import currency from './models/currency';
 import disaggregationCategory from './models/disaggregationCategory';
 import disaggregationCategoryGroup from './models/disaggregationCategoryGroup';
 import disaggregationModel from './models/disaggregationModel';
+import emergency from './models/emergency';
 import entitiesAssociation from './models/entitiesAssociation';
 import entityPrototype from './models/entityPrototype';
 import expiredData from './models/expiredData';
@@ -81,6 +82,7 @@ export default (conn: Knex) => ({
   disaggregationCategory: disaggregationCategory(conn),
   disaggregationCategoryGroup: disaggregationCategoryGroup(conn),
   disaggregationModel: disaggregationModel(conn),
+  emergency: emergency(conn),
   entitiesAssociation: entitiesAssociation(conn),
   entityPrototype: entityPrototype(conn),
   expiredData: expiredData(conn),
