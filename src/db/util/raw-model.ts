@@ -18,6 +18,13 @@ export type CreateFn<F extends FieldDefinition> = (
   }
 ) => Promise<InstanceDataOf<F>>;
 
+export type CreateManyFn<F extends FieldDefinition> = (
+  data: UserDataOf<F>[],
+  opts?: {
+    trx?: Knex.Transaction<any, any>;
+  }
+) => Promise<Array<InstanceDataOf<F>>>;
+
 export type WhereCond<F extends FieldDefinition> =
   | Knex.QueryCallback<InstanceDataOf<F>, InstanceDataOf<F>>
   | Partial<InstanceDataOf<F>>;
@@ -56,6 +63,7 @@ export type ModelInternals<F extends FieldDefinition> = {
 export type Model<F extends FieldDefinition> = {
   readonly _internals: ModelInternals<F>;
   readonly create: CreateFn<F>;
+  readonly createMany: CreateManyFn<F>;
   readonly find: FindFn<F>;
   readonly findOne: FindOneFn<F>;
   readonly update: UpdateFn<F>;
@@ -103,6 +111,12 @@ export const defineRawModel =
       return validateAndFilter(res[0]);
     };
 
+    const createMany: CreateManyFn<F> = async (data, opts) => {
+      const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
+      const res = await builder.insert(data).returning('*');
+      return res.map(validateAndFilter);
+    };
+
     const find: FindFn<F> = async ({ where, trx } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
       const res = await builder.where(where || {}).select('*');
@@ -143,6 +157,7 @@ export const defineRawModel =
         fields,
       },
       create,
+      createMany,
       find,
       findOne,
       update,
