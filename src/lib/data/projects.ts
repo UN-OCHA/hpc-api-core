@@ -1,13 +1,10 @@
 import { OrganizationId } from '../../db/models/organization';
+import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
 import { PlanId } from '../../db/models/plan';
 import { ProjectId } from '../../db/models/project';
 import { Database } from '../../db/type';
 import { InstanceOfModel } from '../../db/util/types';
-import {
-  groupObjectsByProperty,
-  isDefined,
-  organizeObjectsByUniqueProperty,
-} from '../../util';
+import { getRequiredData, groupObjectsByProperty, isDefined } from '../../util';
 
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
@@ -23,39 +20,47 @@ export async function getAllProjectsForPlan({
   planId: PlanId;
   version: 'latest';
 }): Promise<Map<ProjectId, ProjectData>> {
-  const pvps = await database.projectVersionPlan.find({
-    where: {
-      planId,
-    },
-  });
-  const pvpsByProjectVersionId = organizeObjectsByUniqueProperty(
-    pvps,
+  const pvpsByProjectVersionId = await findAndOrganizeObjectsByUniqueProperty(
+    database.projectVersionPlan,
+    (t) =>
+      t.find({
+        where: {
+          planId,
+        },
+      }),
     'projectVersionId'
   );
-  const projectVersions = await database.projectVersion.find({
-    where: (builder) =>
-      builder.whereIn('id', [
-        ...new Set(pvps.map((pvp) => pvp.projectVersionId)),
-      ]),
-  });
-  const pvsById = organizeObjectsByUniqueProperty(projectVersions, 'id');
+  const pvps = [...pvpsByProjectVersionId.values()];
+  const pvsById = await findAndOrganizeObjectsByUniqueProperty(
+    database.projectVersion,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder.whereIn('id', [
+            ...new Set(pvps.map((pvp) => pvp.projectVersionId)),
+          ]),
+      }),
+    'id'
+  );
+  const projectVersions = [...pvsById.values()];
   const projects = await database.project.find({
     where: (builder) =>
       builder.whereIn('id', [
         ...new Set(projectVersions.map((pv) => pv.projectId)),
       ]),
   });
-  const workflowStatuses = await database.workflowStatusOption.find({
-    where: (builder) =>
-      builder.whereIn(
-        'id',
-        [...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId))].filter(
-          isDefined
-        )
-      ),
-  });
-  const workflowStatusById = organizeObjectsByUniqueProperty(
-    workflowStatuses,
+  const workflowStatusById = await findAndOrganizeObjectsByUniqueProperty(
+    database.workflowStatusOption,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder.whereIn(
+            'id',
+            [...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId))].filter(
+              isDefined
+            )
+          ),
+      }),
     'id'
   );
 
@@ -76,13 +81,7 @@ export async function getAllProjectsForPlan({
     if (projectVersion.projectId !== project.id) {
       throw new Error(`Data inconsistency found for project ${project.id}`);
     }
-    const pvp = pvpsByProjectVersionId.get(projectVersion.id);
-    /* istanbul ignore if - this should not occur*/
-    if (!pvp) {
-      throw new Error(
-        `Missing projectVersionPlan for projectVersion ${projectVersion.id}`
-      );
-    }
+    const pvp = getRequiredData(pvpsByProjectVersionId, projectVersion, 'id');
     const workflowStatus =
       (pvp.workflowStatusOptionId &&
         workflowStatusById.get(pvp.workflowStatusOptionId)) ||

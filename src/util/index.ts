@@ -74,6 +74,25 @@ export type PromiseType<P extends Promise<any>> = P extends Promise<infer V>
   : never;
 
 /**
+ * A map with additional information stored about the items contained within.
+ */
+export type AnnotatedMap<K, V> = Map<K, V> & {
+  _objectType: string;
+};
+
+/**
+ * Create a new annotated map with the specified objectType annotation
+ */
+export const annotatedMap = <K, V>(objectType: string): AnnotatedMap<K, V> => {
+  const map = new Map<K, V>();
+  Object.defineProperty(map, '_objectType', {
+    value: objectType,
+    writable: false,
+  });
+  return map as AnnotatedMap<K, V>;
+};
+
+/**
  * Take a collection of objects,
  * and group them by one of their properties
  */
@@ -121,10 +140,34 @@ export const organizeObjectsByUniqueProperty = <I, P extends keyof I>(
  * using a particular function to derive the key
  * that should be used for each object
  */
-export const organizeObjectsByUniqueValue = <I, V>(
+export function organizeObjectsByUniqueValue<I, V>(
   objects: Iterable<I>,
   getValue: (i: I) => V
-): Map<V, I> => {
+): Map<V, I>;
+
+/**
+ * Take a collection of objects,
+ * and create a map of them,
+ * using a particular function to derive the key
+ * that should be used for each object
+ *
+ * This variation also specified a string that should be used to identify the
+ * type of object contained within the map
+ */
+export function organizeObjectsByUniqueValue<I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V,
+  /**
+   * The string that should be used to identify the type of object contained
+   */
+  objectType: string
+): AnnotatedMap<V, I>;
+
+export function organizeObjectsByUniqueValue<I, V>(
+  objects: Iterable<I>,
+  getValue: (i: I) => V,
+  objectType?: string
+): Map<V, I> {
   const result = new Map<V, I>();
   for (const obj of objects) {
     const value = getValue(obj);
@@ -134,8 +177,14 @@ export const organizeObjectsByUniqueValue = <I, V>(
     }
     result.set(value, obj);
   }
+  if (objectType) {
+    Object.defineProperty(result, '_objectType', {
+      value: objectType,
+      writable: false,
+    });
+  }
   return result;
-};
+}
 
 /**
  * Return a new object with the given map function applies to all values
@@ -172,3 +221,54 @@ export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
 export type JSONObject = { [member: string]: JSONValue };
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface JSONArray extends Array<JSONValue> {}
+
+/**
+ * Retrieve a value from an annotated map that we expect to be present,
+ * and throw a useful error if not, which includes the type of object being
+ * looked-up in the map, along with the string representation of the object
+ * being used to look up the value.
+ *
+ * This is most commonly used when combining objects that refer to one another
+ * in the database
+ */
+export const getRequiredData = <
+  K,
+  V,
+  E extends {
+    [key in P]: K;
+  },
+  P extends keyof E
+>(
+  map: AnnotatedMap<K, V>,
+  entity: E,
+  property: P
+): V => getRequiredDataByValue(map, entity, (e) => e[property]);
+
+/**
+ * Retrieve a value from an annotated map that we expect to be present,
+ * and throw a useful error if not, which includes the type of object being
+ * looked-up in the map, along with the string representation of the object
+ * being used to look up the value.
+ *
+ * This is most commonly used when combining objects that refer to one another
+ * in the database
+ *
+ * @param map The map to look up the value in
+ * @param entity the Entity that is being referenced to determine which key to
+ * use in the map.
+ * @param getValue A function that takes an entity and returns the value to use
+ * as the key. Most of the time this will be a property of the entity, but this
+ * can also use a different key if entity is solely used for producing nice
+ * error messages when lookup fails.
+ */
+export const getRequiredDataByValue = <K, V, E>(
+  map: AnnotatedMap<K, V>,
+  entity: E,
+  getValue: (e: E) => K
+): V => {
+  const val = map.get(getValue(entity));
+  if (!val) {
+    throw new Error(`Missing ${map._objectType} for ${entity}`);
+  }
+  return val;
+};

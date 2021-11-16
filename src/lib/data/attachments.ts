@@ -1,5 +1,6 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
+import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
 import { AttachmentId } from '../../db/models/attachment';
 import {
   AttachmentPrototypeId,
@@ -11,9 +12,12 @@ import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
-import { organizeObjectsByUniqueProperty } from '../../util';
+import {
+  AnnotatedMap,
+  getRequiredData,
+  getRequiredDataByValue,
+} from '../../util';
 import { ioTsErrorFormatter } from '../../util/io-ts';
-import { createBrandedValue } from '../../util/types';
 import { SharedLogContext } from '../logging';
 import { MapOfGoverningEntities } from './governingEntities';
 import {
@@ -116,43 +120,42 @@ export const getAllAttachments = async ({
   governingEntities: MapOfGoverningEntities;
   log: SharedLogContext;
 }): Promise<AttachmentResults> => {
-  const attachmentPrototypes = await database.attachmentPrototype.find({
-    where: (builder) =>
-      builder.whereIn('type', types).andWhere('planId', planId),
-  });
-  const attachmentPrototypesById = organizeObjectsByUniqueProperty(
-    attachmentPrototypes,
+  const attachmentPrototypesById = await findAndOrganizeObjectsByUniqueProperty(
+    database.attachmentPrototype,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder.whereIn('type', types).andWhere('planId', planId),
+      }),
     'id'
   );
-
   const attachments = await database.attachment.find({
     where: (builder) =>
       builder.whereIn('type', types).andWhere('planId', planId),
   });
-  const attachmentVersions = await database.attachmentVersion.find({
-    where: (builder) =>
-      builder
-        .whereIn(
-          'attachmentId',
-          attachments.map((pa) => pa.id)
-        )
-        .andWhere('latestVersion', true),
-  });
-  const attachmentVersionsByAttachmentId = organizeObjectsByUniqueProperty(
-    attachmentVersions,
-    'attachmentId'
-  );
+  const attachmentVersionsByAttachmentId =
+    await findAndOrganizeObjectsByUniqueProperty(
+      database.attachmentVersion,
+      (t) =>
+        t.find({
+          where: (builder) =>
+            builder
+              .whereIn(
+                'attachmentId',
+                attachments.map((pa) => pa.id)
+              )
+              .andWhere('latestVersion', true),
+        }),
+      'attachmentId'
+    );
   const result: AttachmentResults = new Map();
 
   for (const attachment of attachments) {
-    const attachmentVersion = attachmentVersionsByAttachmentId.get(
-      attachment.id
+    const attachmentVersion = getRequiredData(
+      attachmentVersionsByAttachmentId,
+      attachment,
+      'id'
     );
-    if (!attachmentVersion) {
-      throw new Error(
-        `Missing attachment version for attachment ${attachment.id}`
-      );
-    }
     const customRef = composeCustomReferenceForAttachment({
       attachment,
       attachmentVersion,
@@ -172,13 +175,7 @@ export const getAllAttachments = async ({
     if (parent.type === 'governingEntity') {
       governingEntity = parent.id;
     } else if (parent.type === 'planEntity') {
-      const parentEntity = planEntities.get(parent.id);
-      /* istanbul ignore if - this should not happen as it should already be validated in computeAttachmentParent */
-      if (!parentEntity) {
-        throw new Error(
-          `Internal data inconsistency found for planEntity ${parent.id}`
-        );
-      }
+      const parentEntity = getRequiredData(planEntities, parent, 'id');
       if (parentEntity.governingEntity) {
         governingEntity = parentEntity.governingEntity;
       }
@@ -235,23 +232,20 @@ const computeAttachmentParent = ({
   if (attachment.objectType === 'plan') {
     return { type: 'plan' };
   } else if (attachment.objectType === 'governingEntity') {
-    const ge = governingEntities.get(createBrandedValue(attachment.objectId));
-    if (!ge) {
-      throw new Error(
-        `Couldn't find governingEntity for attachment ${attachment.id}`
-      );
-    }
+    const ge = getRequiredDataByValue(
+      governingEntities,
+      attachment,
+      (a) => a.objectId
+    );
     return { type: 'governingEntity', id: ge.governingEntity.id };
   } else if (attachment.objectType === 'planEntity') {
-    const e = planEntities.get(createBrandedValue(attachment.objectId));
-    if (!e) {
-      throw new Error(
-        `Couldn't find planEntity for attachment ${attachment.id}`
-      );
-    }
+    const e = getRequiredDataByValue(
+      planEntities,
+      attachment,
+      (a) => a.objectId
+    );
     return { type: 'planEntity', id: e.id };
   }
-
   throw new Error(`Invalid objectType for attachment ${attachment.id}`);
 };
 
@@ -298,7 +292,7 @@ export const composeCustomReferenceForAttachment = ({
    *
    * Usually all the prototypes for a given plan are provided
    */
-  attachmentPrototypesById: Map<
+  attachmentPrototypesById: AnnotatedMap<
     AttachmentPrototypeId,
     InstanceDataOfModel<Database['attachmentPrototype']>
   >;
@@ -322,27 +316,27 @@ export const composeCustomReferenceForAttachment = ({
       `Missing attachmentPrototypeId for attachment ${attachment.id}`
     );
   }
-  const prototype = attachmentPrototypesById.get(
-    attachment.attachmentPrototypeId
+
+  const prototype = getRequiredDataByValue(
+    attachmentPrototypesById,
+    attachment,
+    (a) => a.attachmentPrototypeId
   );
-  if (!prototype) {
-    throw new Error(`Missing prototype for attachment ${attachment.id}`);
-  }
 
   let customReference = '';
   if (attachment.objectType === 'planEntity') {
-    const entity = planEntities.get(createBrandedValue(attachment.objectId));
-    if (!entity) {
-      throw new Error(`Missing parent entity for attachment ${attachment.id}`);
-    }
+    const entity = getRequiredDataByValue(
+      planEntities,
+      attachment,
+      (a) => a.objectId
+    );
     customReference = `${entity.customRef}/`;
   } else if (attachment.objectType === 'governingEntity') {
-    const ge = governingEntities.get(createBrandedValue(attachment.objectId));
-    if (!ge) {
-      throw new Error(
-        `Missing parent governing entity for attachment ${attachment.id}`
-      );
-    }
+    const ge = getRequiredDataByValue(
+      governingEntities,
+      attachment,
+      (a) => a.objectId
+    );
     customReference = `${ge.customRef}/`;
   }
   customReference += `${prototype.refCode}${attachmentVersion.customReference}`;

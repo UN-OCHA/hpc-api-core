@@ -1,15 +1,16 @@
+import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
 import { EntityPrototypeId } from '../../db/models/entityPrototype';
 import { GoverningEntityId } from '../../db/models/governingEntity';
 import { PlanId } from '../../db/models/plan';
 import { Database } from '../../db/type';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
-import { organizeObjectsByUniqueProperty } from '../../util';
+import { annotatedMap, AnnotatedMap, getRequiredData } from '../../util';
 
 /**
  * A map from governing entity ids to an object that contains both the
  * governingEntity and governingEntityVersion for each entry.
  */
-export type MapOfGoverningEntities = Map<
+export type MapOfGoverningEntities = AnnotatedMap<
   GoverningEntityId,
   {
     governingEntity: InstanceDataOfModel<Database['governingEntity']>;
@@ -34,7 +35,7 @@ export const getAllGoverningEntitiesForPlan = async ({
    *
    * Usually the full list of prototypes for a plan is passed in.
    */
-  prototypes: Map<
+  prototypes: AnnotatedMap<
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
@@ -44,29 +45,28 @@ export const getAllGoverningEntitiesForPlan = async ({
       planId,
     },
   });
-  const gevs = await database.governingEntityVersion.find({
-    where: (builder) =>
-      builder
-        .whereIn(
-          'governingEntityId',
-          ges.map((ge) => ge.id)
-        )
-        .andWhere('latestVersion', true),
-  });
-  const gevsByGoverningEntityId = organizeObjectsByUniqueProperty(
-    gevs,
+
+  const gevsByGoverningEntityId = await findAndOrganizeObjectsByUniqueProperty(
+    database.governingEntityVersion,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder
+            .whereIn(
+              'governingEntityId',
+              ges.map((ge) => ge.id)
+            )
+            .andWhere('latestVersion', true),
+      }),
     'governingEntityId'
   );
-  const result: MapOfGoverningEntities = new Map();
+  const result: MapOfGoverningEntities = annotatedMap('governingEntity');
   for (const governingEntity of ges) {
-    const governingEntityVersion = gevsByGoverningEntityId.get(
-      governingEntity.id
+    const governingEntityVersion = getRequiredData(
+      gevsByGoverningEntityId,
+      governingEntity,
+      'id'
     );
-    if (!governingEntityVersion) {
-      throw new Error(
-        `Missing governing entity version for ${governingEntity.id}`
-      );
-    }
     const customRef = composeCustomReferenceForGoverningEntity({
       governingEntity,
       governingEntityVersion,
@@ -95,16 +95,15 @@ const composeCustomReferenceForGoverningEntity = ({
    *
    * Usually the full list of prototypes for a plan is passed in.
    */
-  prototypes: Map<
+  prototypes: AnnotatedMap<
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
 }): string => {
-  const prototype = prototypes.get(governingEntity.entityPrototypeId);
-  if (!prototype) {
-    throw new Error(
-      `Missing prototype for governingEntity ${governingEntity.id}`
-    );
-  }
+  const prototype = getRequiredData(
+    prototypes,
+    governingEntity,
+    'entityPrototypeId'
+  );
   return `${prototype.refCode}${governingEntityVersion.customReference}`;
 };

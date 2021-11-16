@@ -1,10 +1,17 @@
+import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
 import { EntityPrototypeId } from '../../db/models/entityPrototype';
 import { GoverningEntityId } from '../../db/models/governingEntity';
 import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
-import { isDefined, organizeObjectsByUniqueProperty } from '../../util';
+import {
+  isDefined,
+  annotatedMap,
+  AnnotatedMap,
+  getRequiredData,
+  getRequiredDataByValue,
+} from '../../util';
 import { MapOfGoverningEntities } from './governingEntities';
 
 export type ValidatedPlanEntity = {
@@ -20,7 +27,10 @@ export type ValidatedPlanEntity = {
   governingEntity: null | GoverningEntityId;
 };
 
-export type ValidatedPlanEntities = Map<PlanEntityId, ValidatedPlanEntity>;
+export type ValidatedPlanEntities = AnnotatedMap<
+  PlanEntityId,
+  ValidatedPlanEntity
+>;
 
 /**
  * Get all of the entities for a particular plan,
@@ -46,7 +56,7 @@ export const getAndValidateAllPlanEntities = async ({
    *
    * Usually the full list of prototypes for a plan is passed in.
    */
-  prototypes: Map<
+  prototypes: AnnotatedMap<
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
@@ -58,43 +68,39 @@ export const getAndValidateAllPlanEntities = async ({
   });
   const planEntityIDs = new Set(planEntities.map((pe) => pe.id));
 
-  const pevs = await database.planEntityVersion.find({
-    where: (builder) =>
-      builder
-        .whereIn('planEntityId', [...planEntityIDs])
-        .andWhere('latestVersion', true),
-  });
-  const pevsByPlanEntityId = organizeObjectsByUniqueProperty(
-    pevs,
+  const pevsByPlanEntityId = await findAndOrganizeObjectsByUniqueProperty(
+    database.planEntityVersion,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder
+            .whereIn('planEntityId', [...planEntityIDs])
+            .andWhere('latestVersion', true),
+      }),
     'planEntityId'
   );
 
-  const entitiesAssociation = await database.entitiesAssociation.find({
-    where: (builder) =>
-      builder
-        .whereIn('childId', [...planEntityIDs])
-        .andWhere('parentType', 'governingEntity')
-        .andWhere('childType', 'planEntity'),
-  });
-  const eaByChildId = organizeObjectsByUniqueProperty(
-    entitiesAssociation,
+  const eaByChildId = await findAndOrganizeObjectsByUniqueProperty(
+    database.entitiesAssociation,
+    (t) =>
+      t.find({
+        where: (builder) =>
+          builder
+            .whereIn('childId', [...planEntityIDs])
+            .andWhere('parentType', 'governingEntity')
+            .andWhere('childType', 'planEntity'),
+      }),
     'childId'
   );
 
-  const result: ValidatedPlanEntities = new Map();
+  const result: ValidatedPlanEntities = annotatedMap('planEntity');
 
   for (const planEntity of planEntities) {
-    const planEntityVersion = pevsByPlanEntityId.get(planEntity.id);
-    if (!planEntityVersion) {
-      throw new Error(
-        `Missing plan entity version for planEntity ${planEntity.id}`
-      );
-    }
-
-    const prototype = prototypes.get(planEntity.entityPrototypeId);
-    if (!prototype) {
-      throw new Error(`Missing prototype for planEntity ${planEntity.id}`);
-    }
+    const planEntityVersion = getRequiredData(
+      pevsByPlanEntityId,
+      planEntity,
+      'id'
+    );
 
     const refAndType = getCustomReferenceAndTypeForPlanEntity({
       planEntity,
@@ -163,10 +169,11 @@ export const calculateReflectiveTransitiveEntitySupport = ({
     }
     supportsEntitiesIDs.add(entity.id);
     for (const supportedEntity of entity.supports) {
-      const e = planEntities.get(supportedEntity);
-      if (!e) {
-        throw new Error(`Missing plan entity ${supportedEntity}`);
-      }
+      const e = getRequiredDataByValue(
+        planEntities,
+        `id: ${supportedEntity}`,
+        () => supportedEntity
+      );
       entities.push(e);
     }
   }
@@ -187,7 +194,7 @@ const getCustomReferenceAndTypeForPlanEntity = ({
    *
    * Usually the full list of prototypes for a plan is passed in.
    */
-  prototypes: Map<
+  prototypes: AnnotatedMap<
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
@@ -210,19 +217,19 @@ const getCustomReferenceAndTypeForPlanEntity = ({
   customRef: string;
   type: string;
 } => {
-  const prototype = prototypes.get(planEntity.entityPrototypeId);
-  if (!prototype) {
-    throw new Error(`Missing prototype for planEntity ${planEntity.id}`);
-  }
+  const prototype = getRequiredData(
+    prototypes,
+    planEntity,
+    'entityPrototypeId'
+  );
   const parent = entityAssociations.get(planEntity.id);
   let ref = '';
   if (parent) {
-    const ge = governingEntities.get(parent.parentId);
-    if (!ge) {
-      throw new Error(
-        `Missing governing entity for planEntity ${planEntity.id}`
-      );
-    }
+    const ge = getRequiredDataByValue(
+      governingEntities,
+      planEntity,
+      () => parent.parentId
+    );
     ref = `${ge.customRef}/`;
   }
   ref += `${prototype.refCode}${planEntityVersion.customReference}`;
