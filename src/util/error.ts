@@ -85,6 +85,32 @@ type ErrorBody = {
   message: string;
 };
 
+export class BadRequestError extends ExtendableError {
+  private readonly _originalError?: Error;
+  private readonly body: ErrorBody;
+  private readonly statusCode: StatusCode;
+
+  constructor(message: string, originalError?: Error) {
+    super(message);
+
+    /*
+     * Due to a known issue (https://github.com/microsoft/TypeScript/issues/13965)
+     * we need to set prototype manually, in order to get `instanceof` to work
+     * for classes that extend `Error`
+     */
+    Object.setPrototypeOf(this, BadRequestError.prototype);
+
+    this.name = this.constructor.name;
+    this.statusCode = STATUS_CODES.BAD_REQUEST;
+
+    if (originalError) {
+      this._originalError = originalError;
+    }
+
+    this.body = { status: 'error', code: this.name, message };
+  }
+}
+
 export class ForbiddenError extends ExtendableError {
   private readonly _originalError?: Error;
   private readonly body: ErrorBody;
