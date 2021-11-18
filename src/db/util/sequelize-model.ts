@@ -96,8 +96,8 @@ export const defineSequelizeModel =
       return model.create(
         {
           ...data,
-          createdAt: conn.fn.now(),
-          updatedAt: conn.fn.now(),
+          createdAt: conn.fn.now(3),
+          updatedAt: conn.fn.now(3),
         },
         opts
       );
@@ -108,7 +108,7 @@ export const defineSequelizeModel =
         ...args,
         values: {
           ...args.values,
-          updatedAt: conn.fn.now(),
+          updatedAt: conn.fn.now(3),
         },
       });
     };
