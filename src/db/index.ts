@@ -85,6 +85,7 @@ import projectVersionGoverningEntity from './models/projectVersionGoverningEntit
 import projectVersionHistory from './models/projectVersionHistory';
 import projectVersionOrganization from './models/projectVersionOrganization';
 import projectVersionPlan from './models/projectVersionPlan';
+import projectVersionPlanEntity from './models/projectVersionPlanEntity';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 import unitType from './models/unitType';
@@ -178,6 +179,7 @@ export default (conn: Knex) => ({
   projectVersionHistory: projectVersionHistory(conn),
   projectVersionOrganization: projectVersionOrganization(conn),
   projectVersionPlan: projectVersionPlan(conn),
+  projectVersionPlanEntity: projectVersionPlanEntity(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
   unitType: unitType(conn),
