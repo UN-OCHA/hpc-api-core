@@ -31,7 +31,6 @@ export default defineIDModel({
     },
     optional: {
       externalId: { kind: 'checked', type: t.string },
-      name: { kind: 'checked', type: t.string },
       latitude: { kind: 'checked', type: t.number },
       longitude: { kind: 'checked', type: t.number },
       iso3: { kind: 'checked', type: t.string },
@@ -42,6 +41,7 @@ export default defineIDModel({
       parentId: { kind: 'branded-integer', brand: LOCATION_ID },
     },
     accidentallyOptional: {
+      name: { kind: 'checked', type: t.string },
       adminLevel: { kind: 'checked', type: t.number },
     },
   },
