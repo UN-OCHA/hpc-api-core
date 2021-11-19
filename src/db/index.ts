@@ -50,6 +50,7 @@ import iatiPublisher from './models/iatiPublisher';
 import iatiRecipientCountry from './models/iatiRecipientCountry';
 import iatiTransaction from './models/iatiTransaction';
 import job from './models/job';
+import jobAssociation from './models/jobAssociation';
 import location from './models/location';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
@@ -127,6 +128,7 @@ export default (conn: Knex) => ({
   iatiRecipientCountry: iatiRecipientCountry(conn),
   iatiTransaction: iatiTransaction(conn),
   job: job(conn),
+  jobAssociation: jobAssociation(conn),
   location: location(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
