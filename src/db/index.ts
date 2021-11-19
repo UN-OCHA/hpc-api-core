@@ -52,6 +52,7 @@ import iatiTransaction from './models/iatiTransaction';
 import job from './models/job';
 import jobAssociation from './models/jobAssociation';
 import location from './models/location';
+import measurement from './models/measurement';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import organization from './models/organization';
@@ -130,6 +131,7 @@ export default (conn: Knex) => ({
   job: job(conn),
   jobAssociation: jobAssociation(conn),
   location: location(conn),
+  measurement: measurement(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   organization: organization(conn),
