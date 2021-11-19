@@ -45,6 +45,7 @@ import globalClusterAssociation from './models/globalClusterAssociation';
 import globalIndicator from './models/globalIndicator';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
+import iatiActivity from './models/iatiActivity';
 import iatiPublisher from './models/iatiPublisher';
 import location from './models/location';
 import operation from './models/operation';
@@ -118,6 +119,7 @@ export default (conn: Knex) => ({
   globalIndicator: globalIndicator(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
+  iatiActivity: iatiActivity(conn),
   iatiPublisher: iatiPublisher(conn),
   location: location(conn),
   operation: operation(conn),
