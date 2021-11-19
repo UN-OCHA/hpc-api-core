@@ -79,6 +79,7 @@ import projectGlobalClusters from './models/projectGlobalClusters';
 import projectLocations from './models/projectLocations';
 import projectVersion from './models/projectVersion';
 import projectVersionAttachment from './models/projectVersionAttachment';
+import projectVersionComment from './models/projectVersionComment';
 import projectVersionField from './models/projectVersionField';
 import projectVersionGoverningEntity from './models/projectVersionGoverningEntity';
 import projectVersionHistory from './models/projectVersionHistory';
@@ -171,6 +172,7 @@ export default (conn: Knex) => ({
   projectLocations: projectLocations(conn),
   projectVersion: projectVersion(conn),
   projectVersionAttachment: projectVersionAttachment(conn),
+  projectVersionComment: projectVersionComment(conn),
   projectVersionField: projectVersionField(conn),
   projectVersionGoverningEntity: projectVersionGoverningEntity(conn),
   projectVersionHistory: projectVersionHistory(conn),
