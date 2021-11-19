@@ -57,6 +57,7 @@ import measurementVersion from './models/measurementVersion';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import organization from './models/organization';
+import organizationLocation from './models/organizationLocation';
 import participant from './models/participant';
 import plan from './models/plan';
 import planEntity from './models/planEntity';
@@ -137,6 +138,7 @@ export default (conn: Knex) => ({
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   organization: organization(conn),
+  organizationLocation: organizationLocation(conn),
   participant: participant(conn),
   plan: plan(conn),
   planEntity: planEntity(conn),
