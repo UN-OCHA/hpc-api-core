@@ -70,6 +70,7 @@ import planReportingPeriod from './models/planReportingPeriod';
 import planTag from './models/planTag';
 import planVersion from './models/planVersion';
 import planYear from './models/planYear';
+import procedureEntityPrototype from './models/procedureEntityPrototype';
 import project from './models/project';
 import projectContact from './models/projectContact';
 import projectVersion from './models/projectVersion';
@@ -157,6 +158,7 @@ export default (conn: Knex) => ({
   planTag: planTag(conn),
   planVersion: planVersion(conn),
   planYear: planYear(conn),
+  procedureEntityPrototype: procedureEntityPrototype(conn),
   project: project(conn),
   projectContact: projectContact(conn),
   projectVersion: projectVersion(conn),
