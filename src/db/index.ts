@@ -47,6 +47,7 @@ import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
 import iatiActivity from './models/iatiActivity';
 import iatiPublisher from './models/iatiPublisher';
+import iatiRecipientCountry from './models/iatiRecipientCountry';
 import location from './models/location';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
@@ -121,6 +122,7 @@ export default (conn: Knex) => ({
   governingEntityVersion: governingEntityVersion(conn),
   iatiActivity: iatiActivity(conn),
   iatiPublisher: iatiPublisher(conn),
+  iatiRecipientCountry: iatiRecipientCountry(conn),
   location: location(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
