@@ -94,6 +94,7 @@ import unit from './models/unit';
 import unitType from './models/unitType';
 import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
+import workflowStatusOptionStep from './models/workflowStatusOptionStep';
 
 export default (conn: Knex) => ({
   attachment: attachment(conn),
@@ -191,4 +192,5 @@ export default (conn: Knex) => ({
   unitType: unitType(conn),
   usageYear: usageYear(conn),
   workflowStatusOption: workflowStatusOption(conn),
+  workflowStatusOptionStep: workflowStatusOptionStep(conn),
 });
