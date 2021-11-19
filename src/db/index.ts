@@ -90,6 +90,7 @@ import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 import tag from './models/tag';
 import task from './models/task';
+import unit from './models/unit';
 import unitType from './models/unitType';
 import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
@@ -186,6 +187,7 @@ export default (conn: Knex) => ({
   reportingWindowAssignment: reportingWindowAssignment(conn),
   tag: tag(conn),
   task: task(conn),
+  unit: unit(conn),
   unitType: unitType(conn),
   usageYear: usageYear(conn),
   workflowStatusOption: workflowStatusOption(conn),
