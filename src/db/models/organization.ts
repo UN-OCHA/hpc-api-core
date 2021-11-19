@@ -25,7 +25,6 @@ export default defineIDModel({
     },
     optional: {
       nativeName: { kind: 'checked', type: t.string },
-      abbreviation: { kind: 'checked', type: t.string },
       url: { kind: 'checked', type: t.string },
       parentID: { kind: 'branded-integer', brand: ORGANIZATION_ID },
       comments: { kind: 'checked', type: t.string },
@@ -34,6 +33,9 @@ export default defineIDModel({
     },
     required: {
       name: { kind: 'checked', type: t.string },
+    },
+    accidentallyOptional: {
+      abbreviation: { kind: 'checked', type: t.string },
     },
   },
   idField: 'id',
