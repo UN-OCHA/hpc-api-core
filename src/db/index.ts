@@ -66,6 +66,7 @@ import planEmergency from './models/planEmergency';
 import planEntity from './models/planEntity';
 import planEntityVersion from './models/planEntityVersion';
 import planLocation from './models/planLocation';
+import planReportingPeriod from './models/planReportingPeriod';
 import planVersion from './models/planVersion';
 import planYear from './models/planYear';
 import project from './models/project';
@@ -151,6 +152,7 @@ export default (conn: Knex) => ({
   planEntity: planEntity(conn),
   planEntityVersion: planEntityVersion(conn),
   planLocation: planLocation(conn),
+  planReportingPeriod: planReportingPeriod(conn),
   planVersion: planVersion(conn),
   planYear: planYear(conn),
   project: project(conn),
