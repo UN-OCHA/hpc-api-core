@@ -76,6 +76,7 @@ import procedureSectionField from './models/procedureSectionField';
 import project from './models/project';
 import projectContact from './models/projectContact';
 import projectGlobalClusters from './models/projectGlobalClusters';
+import projectLocations from './models/projectLocations';
 import projectVersion from './models/projectVersion';
 import projectVersionAttachment from './models/projectVersionAttachment';
 import projectVersionField from './models/projectVersionField';
@@ -167,6 +168,7 @@ export default (conn: Knex) => ({
   project: project(conn),
   projectContact: projectContact(conn),
   projectGlobalClusters: projectGlobalClusters(conn),
+  projectLocations: projectLocations(conn),
   projectVersion: projectVersion(conn),
   projectVersionAttachment: projectVersionAttachment(conn),
   projectVersionField: projectVersionField(conn),
