@@ -60,6 +60,7 @@ import organization from './models/organization';
 import organizationLocation from './models/organizationLocation';
 import participant from './models/participant';
 import participantCountry from './models/participantCountry';
+import participantOrganization from './models/participantOrganization';
 import plan from './models/plan';
 import planEntity from './models/planEntity';
 import planEntityVersion from './models/planEntityVersion';
@@ -142,6 +143,7 @@ export default (conn: Knex) => ({
   organizationLocation: organizationLocation(conn),
   participant: participant(conn),
   participantCountry: participantCountry(conn),
+  participantOrganization: participantOrganization(conn),
   plan: plan(conn),
   planEntity: planEntity(conn),
   planEntityVersion: planEntityVersion(conn),
