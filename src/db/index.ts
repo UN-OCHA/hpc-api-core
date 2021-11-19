@@ -53,6 +53,7 @@ import job from './models/job';
 import jobAssociation from './models/jobAssociation';
 import location from './models/location';
 import measurement from './models/measurement';
+import measurementVersion from './models/measurementVersion';
 import operation from './models/operation';
 import operationCluster from './models/operationCluster';
 import organization from './models/organization';
@@ -132,6 +133,7 @@ export default (conn: Knex) => ({
   jobAssociation: jobAssociation(conn),
   location: location(conn),
   measurement: measurement(conn),
+  measurementVersion: measurementVersion(conn),
   operation: operation(conn),
   operationCluster: operationCluster(conn),
   organization: organization(conn),
