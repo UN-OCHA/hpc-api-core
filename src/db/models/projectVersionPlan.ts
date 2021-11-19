@@ -24,17 +24,16 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: PROJECT_VERSION_PLAN_ID },
     },
-    accidentallyOptional: {
+    nonNullWithDefault: {
+      value: { kind: 'checked', type: t.unknown },
+    },
+    required: {
+      planId: { kind: 'branded-integer', brand: PLAN_ID },
+      projectVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
       workflowStatusOptionId: {
         kind: 'branded-integer',
         brand: WORKFLOW_STATUS_OPTION_ID,
       },
-    },
-    optional: {},
-    required: {
-      planId: { kind: 'branded-integer', brand: PLAN_ID },
-      projectVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
-      value: { kind: 'checked', type: t.any },
     },
   },
   idField: 'id',

@@ -23,6 +23,9 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: LOCATION_ID },
     },
+    required: {
+      status: { kind: 'checked', type: LOCATION_STATUS },
+    },
     optional: {
       externalId: { kind: 'checked', type: t.string },
       name: { kind: 'checked', type: t.string },
@@ -37,10 +40,6 @@ export default defineIDModel({
     },
     accidentallyOptional: {
       adminLevel: { kind: 'checked', type: t.number },
-      status: {
-        kind: 'checked',
-        type: LOCATION_STATUS,
-      },
       itosSync: { kind: 'checked', type: t.boolean },
     },
   },

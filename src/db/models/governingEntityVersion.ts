@@ -26,7 +26,7 @@ export default defineLegacyVersionedModel({
       },
     },
     optional: { tags: { kind: 'checked', type: t.array(t.string) } },
-    accidentallyOptional: {
+    required: {
       governingEntityId: {
         kind: 'branded-integer',
         brand: GOVERNING_ENTITY_ID,

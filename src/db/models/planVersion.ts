@@ -29,7 +29,7 @@ export default defineLegacyVersionedModel({
     nonNullWithDefault: {
       isForHPCProjects: { kind: 'checked', type: t.boolean },
     },
-    accidentallyOptional: {
+    required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
       name: { kind: 'checked', type: t.string },
       startDate: { kind: 'checked', type: DATE },

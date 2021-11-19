@@ -76,7 +76,7 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: ATTACHMENT_PROTOTYPE_ID },
     },
-    accidentallyOptional: {
+    required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
       refCode: { kind: 'checked', type: t.string },
       type: { kind: 'checked', type: ATTACHMENT_TYPE },

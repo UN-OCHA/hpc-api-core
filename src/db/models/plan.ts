@@ -21,11 +21,11 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: PLAN_ID },
     },
+    required: {
+      restricted: { kind: 'checked', type: t.boolean },
+    },
     optional: {
       revisionState: { kind: 'checked', type: PLAN_REVISION_STATE },
-    },
-    accidentallyOptional: {
-      restricted: { kind: 'checked', type: t.boolean },
     },
   },
   idField: 'id',

@@ -15,9 +15,6 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
     },
-    accidentallyOptional: {
-      code: { kind: 'checked', type: t.string },
-    },
     optional: {
       currentRequestedFunds: {
         kind: 'checked',
@@ -31,6 +28,7 @@ export default defineIDModel({
       tags: { kind: 'checked', type: t.array(t.string) },
     },
     required: {
+      code: { kind: 'checked', type: t.string },
       name: { kind: 'checked', type: t.string },
       projectId: { kind: 'branded-integer', brand: PROJECT_ID },
       version: { kind: 'checked', type: t.number },

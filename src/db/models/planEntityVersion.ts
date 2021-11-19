@@ -46,7 +46,7 @@ export default defineLegacyVersionedModel({
     generated: {
       id: { kind: 'branded-integer', brand: PLAN_ENTITY_VERSION_ID },
     },
-    accidentallyOptional: {
+    required: {
       planEntityId: { kind: 'branded-integer', brand: PLAN_ENTITY_ID },
       customReference: { kind: 'checked', type: t.string },
       value: { kind: 'checked', type: PLAN_ENTITY_VERSION_VALUE },

@@ -32,8 +32,6 @@ export default defineIDModel({
     required: {
       projectVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
       participantId: { kind: 'branded-integer', brand: PARTICIPANT_ID },
-    },
-    accidentallyOptional: {
       value: { kind: 'checked', type: PROJECT_VERSION_HISTORY_VALUE },
     },
   },
