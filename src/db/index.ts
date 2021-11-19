@@ -72,6 +72,7 @@ import planVersion from './models/planVersion';
 import planYear from './models/planYear';
 import procedureEntityPrototype from './models/procedureEntityPrototype';
 import procedureSection from './models/procedureSection';
+import procedureSectionField from './models/procedureSectionField';
 import project from './models/project';
 import projectContact from './models/projectContact';
 import projectVersion from './models/projectVersion';
@@ -161,6 +162,7 @@ export default (conn: Knex) => ({
   planYear: planYear(conn),
   procedureEntityPrototype: procedureEntityPrototype(conn),
   procedureSection: procedureSection(conn),
+  procedureSectionField: procedureSectionField(conn),
   project: project(conn),
   projectContact: projectContact(conn),
   projectVersion: projectVersion(conn),
