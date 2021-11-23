@@ -62,6 +62,7 @@ export const AUTH_PERMISSIONS = {
      * Can clone data from any project to a new project
      */
     CLONE_ANY_PROJECT: 'cloneAnyProject',
+    DELETE_ANY_PROJECT: 'canDeleteAnyProject',
     /**
      * Can change visibility of any plan in Projects Module
      */
@@ -151,6 +152,7 @@ export const AUTH_PERMISSIONS = {
      * Can clone data from the project to a new project
      */
     CLONE: 'clone',
+    DELETE: 'canDelete',
   },
   governingEntity: {
     /**
