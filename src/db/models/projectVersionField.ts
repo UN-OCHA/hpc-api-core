@@ -31,7 +31,7 @@ export default defineIDModel({
       },
     },
     optional: {
-      value: { kind: 'checked', type: t.unknown },
+      value: { kind: 'checked', type: t.string },
     },
   },
   idField: 'id',
