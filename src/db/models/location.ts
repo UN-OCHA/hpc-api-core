@@ -35,9 +35,7 @@ export default defineIDModel({
       longitude: { kind: 'checked', type: t.number },
       iso3: { kind: 'checked', type: t.string },
       pcode: { kind: 'checked', type: t.string },
-      // Even though this column is defined as int8, it is
-      // fetched as a string by knex, since it is bigint
-      validOn: { kind: 'checked', type: t.string },
+      validOn: { kind: 'checked', type: t.bigint },
       parentId: { kind: 'branded-integer', brand: LOCATION_ID },
     },
     accidentallyOptional: {
