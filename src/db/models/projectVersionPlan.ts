@@ -18,6 +18,19 @@ export const PROJECT_VERSION_PLAN_ID = brandedType<
   ProjectVersionPlanId
 >(t.number);
 
+export const PROJECT_VERSION_PLAN_VALUE = t.partial({
+  optionConsensus: t.array(
+    t.intersection([
+      t.type({
+        id: t.number,
+      }),
+      t.partial({
+        toId: t.number,
+      }),
+    ])
+  ),
+});
+
 export default defineIDModel({
   tableName: 'projectVersionPlan',
   fields: {
@@ -25,7 +38,7 @@ export default defineIDModel({
       id: { kind: 'branded-integer', brand: PROJECT_VERSION_PLAN_ID },
     },
     nonNullWithDefault: {
-      value: { kind: 'checked', type: t.unknown },
+      value: { kind: 'checked', type: PROJECT_VERSION_PLAN_VALUE },
     },
     required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
