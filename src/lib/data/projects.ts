@@ -15,10 +15,11 @@ export interface ProjectData {
 export async function getAllProjectsForPlan({
   database,
   planId,
+  version,
 }: {
   database: Database;
   planId: PlanId;
-  version: 'latest';
+  version: 'latest' | 'current';
 }): Promise<Map<ProjectId, ProjectData>> {
   const pvpsByProjectVersionId = await findAndOrganizeObjectsByUniqueProperty(
     database.projectVersionPlan,
@@ -66,11 +67,14 @@ export async function getAllProjectsForPlan({
 
   const result = new Map<ProjectId, ProjectData>();
   for (const project of projects) {
-    if (!project.latestVersionId) {
+    if (!project.latestVersionId || !project.currentPublishedVersionId) {
       // Project only has ID and no base data yet, ignore
       continue;
     }
-    const projectVersion = pvsById.get(project.latestVersionId);
+    const projectVersion =
+      version === 'current'
+        ? pvsById.get(project.currentPublishedVersionId)
+        : pvsById.get(project.latestVersionId);
     if (!projectVersion) {
       // Project likely has older version assigned to plan but not current
       // version, okay to ignore
