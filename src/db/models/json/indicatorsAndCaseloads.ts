@@ -30,6 +30,21 @@ export type CaseloadOrIndicatorMetricWithValue = t.TypeOf<
   typeof METRIC_WITH_VALUE
 >;
 
+export const DISAGGREGATED_LOCATIONS = t.array(
+  t.intersection([
+    t.type({
+      name: t.string,
+    }),
+    t.partial({
+      id: t.union([t.number, t.string]),
+      parent: t.type({
+        id: t.union([t.number, t.string]),
+        name: t.string,
+      }),
+    }),
+  ])
+);
+
 /**
  * Disaggregated data that may be present in a caseload, indicator, or
  * measurement for a caseload or indicator.
@@ -62,22 +77,7 @@ const DISAGGREGATED_DATA = t.type({
    * TODO: require all metrics to store more correct values
    */
   dataMatrix: t.array(t.array(t.union([t.null, t.number, t.string]))),
-  locations: t.array(
-    t.intersection([
-      t.type({
-        name: t.string,
-      }),
-      t.partial({
-        id: t.union([t.number, t.string]),
-      }),
-      t.partial({
-        parent: t.type({
-          id: t.union([t.number, t.string]),
-          name: t.string,
-        }),
-      }),
-    ])
-  ),
+  locations: DISAGGREGATED_LOCATIONS,
 });
 
 /**
