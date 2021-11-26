@@ -1,4 +1,3 @@
-import { GoverningEntityId } from '../../db/models/governingEntity';
 import { OrganizationId } from '../../db/models/organization';
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
 import { PlanId } from '../../db/models/plan';
@@ -68,7 +67,10 @@ export async function getAllProjectsForPlan({
 
   const result = new Map<ProjectId, ProjectData>();
   for (const project of projects) {
-    if (!project.latestVersionId || !project.currentPublishedVersionId) {
+    if (
+      (!project.latestVersionId && version === 'latest') ||
+      (!project.currentPublishedVersionId && version === 'current')
+    ) {
       // Project only has ID and no base data yet, ignore
       continue;
     }
@@ -127,39 +129,6 @@ export async function getOrganizationIDsForProjects({
     const pvos = groupedPVOs.get(projectVersionId) || [];
     const organizationIds = new Set([...pvos].map((o) => o.organizationId));
     result.set(projectId, organizationIds);
-  }
-
-  return result;
-}
-
-export async function getGoverningEntityIDsForProjects({
-  database,
-  projects,
-}: {
-  database: Database;
-  projects: Map<ProjectId, ProjectData>;
-}): Promise<Map<ProjectId, Set<GoverningEntityId>>> {
-  const projectVersionIds = [...projects.values()].map(
-    (p) => p.projectVersion.id
-  );
-
-  const groupedPVGEs = groupObjectsByProperty(
-    await database.projectVersionGoverningEntity.find({
-      where: (builder) =>
-        builder.whereIn('projectVersionId', projectVersionIds),
-    }),
-    'projectVersionId'
-  );
-
-  const result = new Map<ProjectId, Set<GoverningEntityId>>();
-
-  for (const [projectId, projectData] of projects) {
-    const projectVersionId = projectData.projectVersion.id;
-    const pvges = groupedPVGEs.get(projectVersionId) || [];
-    const governingEntityIds = new Set(
-      [...pvges].map((pvge) => pvge.governingEntityId)
-    );
-    result.set(projectId, governingEntityIds);
   }
 
   return result;
