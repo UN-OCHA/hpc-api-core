@@ -3,10 +3,10 @@ import * as t from 'io-ts';
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 
-export type GlobalClusterId = Brand<
+export type IatiFTSMapId = Brand<
   number,
   { readonly s: unique symbol },
-  'globalCluster.id'
+  'iatiFTSMap.id'
 >;
 
-export const GLOBAL_CLUSTER_ID = brandedType<number, GlobalClusterId>(t.number);
+export const IATI_FTS_MAP_ID = brandedType<number, IatiFTSMapId>(t.number);

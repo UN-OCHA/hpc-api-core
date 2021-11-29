@@ -19,17 +19,15 @@ export type ProjectVersionAttachmentValue = t.TypeOf<
 export default defineSequelizeModel({
   tableName: 'projectVersionAttachment',
   fields: {
-    accidentallyOptional: {
-      attachmentVersionId: {
-        kind: 'branded-integer',
-        brand: ATTACHMENT_VERSION_ID,
-      },
-    },
     optional: {
       value: { kind: 'checked', type: PROJECT_VERSION_ATTACHMENT_VALUE },
       total: { kind: 'checked', type: t.number },
     },
     required: {
+      attachmentVersionId: {
+        kind: 'branded-integer',
+        brand: ATTACHMENT_VERSION_ID,
+      },
       attachmentId: { kind: 'branded-integer', brand: ATTACHMENT_ID },
       projectVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
     },

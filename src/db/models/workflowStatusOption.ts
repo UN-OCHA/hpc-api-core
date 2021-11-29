@@ -46,15 +46,10 @@ export default defineIDModel({
         brand: WORKFLOW_STATUS_OPTION_ID,
       },
     },
-    accidentallyOptional: {
-      value: {
-        kind: 'checked',
-        type: WORKFLOW_STATUS_OPTION_VALUE,
-      },
-    },
     required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
       type: { kind: 'checked', type: WORKFLOW_STATUS_OPTION_TYPE },
+      value: { kind: 'checked', type: WORKFLOW_STATUS_OPTION_VALUE },
     },
   },
   idField: 'id',

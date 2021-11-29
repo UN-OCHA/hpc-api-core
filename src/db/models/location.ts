@@ -23,25 +23,24 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: LOCATION_ID },
     },
+    required: {
+      status: { kind: 'checked', type: LOCATION_STATUS },
+    },
+    nonNullWithDefault: {
+      itosSync: { kind: 'checked', type: t.boolean },
+    },
     optional: {
       externalId: { kind: 'checked', type: t.string },
-      name: { kind: 'checked', type: t.string },
       latitude: { kind: 'checked', type: t.number },
       longitude: { kind: 'checked', type: t.number },
       iso3: { kind: 'checked', type: t.string },
       pcode: { kind: 'checked', type: t.string },
-      // Even though this column is defined as int8, it is
-      // fetched as a string by knex, since it is bigint
-      validOn: { kind: 'checked', type: t.string },
+      validOn: { kind: 'checked', type: t.bigint },
       parentId: { kind: 'branded-integer', brand: LOCATION_ID },
     },
     accidentallyOptional: {
+      name: { kind: 'checked', type: t.string },
       adminLevel: { kind: 'checked', type: t.number },
-      status: {
-        kind: 'checked',
-        type: LOCATION_STATUS,
-      },
-      itosSync: { kind: 'checked', type: t.boolean },
     },
   },
   idField: 'id',

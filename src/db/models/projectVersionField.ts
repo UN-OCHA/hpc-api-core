@@ -23,7 +23,7 @@ export default defineIDModel({
     generated: {
       id: { kind: 'branded-integer', brand: PROJECT_VERSION_FIELD_ID },
     },
-    accidentallyOptional: {
+    required: {
       conditionFieldId: { kind: 'branded-integer', brand: CONDITION_FIELD_ID },
       projectVersionPlanId: {
         kind: 'branded-integer',
@@ -31,7 +31,7 @@ export default defineIDModel({
       },
     },
     optional: {
-      value: { kind: 'checked', type: t.unknown },
+      value: { kind: 'checked', type: t.string },
     },
   },
   idField: 'id',

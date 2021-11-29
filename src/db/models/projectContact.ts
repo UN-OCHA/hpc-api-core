@@ -25,8 +25,6 @@ export default defineIDModel({
     required: {
       name: { kind: 'checked', type: t.string },
       projectVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
-    },
-    accidentallyOptional: {
       email: { kind: 'checked', type: t.string },
       phoneNumber: { kind: 'checked', type: t.string },
     },

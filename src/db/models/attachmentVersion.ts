@@ -31,7 +31,7 @@ export default defineLegacyVersionedModel({
         type: t.boolean,
       },
     },
-    accidentallyOptional: {
+    required: {
       attachmentId: {
         kind: 'branded-integer',
         brand: ATTACHMENT_ID,

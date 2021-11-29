@@ -20,10 +20,8 @@ export default defineLegacyVersionedModel({
     generated: {
       id: { kind: 'branded-integer', brand: PLAN_ENTITY_ID },
     },
-    accidentallyOptional: {
-      planId: { kind: 'branded-integer', brand: PLAN_ID },
-    },
     required: {
+      planId: { kind: 'branded-integer', brand: PLAN_ID },
       entityPrototypeId: {
         kind: 'branded-integer',
         brand: ENTITY_PROTOTYPE_ID,

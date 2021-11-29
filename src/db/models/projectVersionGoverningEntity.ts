@@ -12,8 +12,6 @@ export default defineSequelizeModel({
         kind: 'branded-integer',
         brand: GOVERNING_ENTITY_ID,
       },
-    },
-    accidentallyOptional: {
       governingEntityVersionId: {
         kind: 'branded-integer',
         brand: GOVERNING_ENTITY_VERSION_ID,
