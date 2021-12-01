@@ -16,6 +16,14 @@ export default defineIDModel({
       id: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
     },
     optional: {
+      /**
+       * Union type of string and number is used because int8 (bigint)
+       * DB type is read as string, but when inserting rows, we don't want
+       * library clients to provide numbers as strings.
+       *
+       * TODO: Add the possibility to define separate types for reading
+       * and writing, then use string for reading and number for writing
+       */
       currentRequestedFunds: {
         kind: 'checked',
         type: t.union([t.string, t.number]),
