@@ -16,7 +16,15 @@ export default defineIDModel({
       id: { kind: 'branded-integer', brand: FLOW_ID },
     },
     required: {
-      amountUSD: { kind: 'checked', type: t.bigint },
+      /**
+       * Union type of string and number is used because int8 (bigint)
+       * DB type is read as string, but when inserting rows, we don't want
+       * library clients to provide numbers as strings.
+       *
+       * TODO: Add the possibility to define separate types for reading
+       * and writing, then use string for reading and number for writing
+       */
+      amountUSD: { kind: 'checked', type: t.union([t.string, t.number]) },
     },
     nonNullWithDefault: {
       versionID: { kind: 'checked', type: t.number },
@@ -29,7 +37,15 @@ export default defineIDModel({
       decisionDate: { kind: 'checked', type: DATE },
       firstReportedDate: { kind: 'checked', type: DATE },
       budgetYear: { kind: 'checked', type: t.string },
-      origAmount: { kind: 'checked', type: t.bigint },
+      /**
+       * Union type of string and number is used because int8 (bigint)
+       * DB type is read as string, but when inserting rows, we don't want
+       * library clients to provide numbers as strings.
+       *
+       * TODO: Add the possibility to define separate types for reading
+       * and writing, then use string for reading and number for writing
+       */
+      origAmount: { kind: 'checked', type: t.union([t.string, t.number]) },
       origCurrency: { kind: 'checked', type: t.string },
       exchangeRate: { kind: 'checked', type: t.number },
       description: { kind: 'checked', type: t.string },
