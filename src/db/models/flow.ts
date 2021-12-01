@@ -47,7 +47,15 @@ export default defineIDModel({
        */
       origAmount: { kind: 'checked', type: t.union([t.string, t.number]) },
       origCurrency: { kind: 'checked', type: t.string },
-      exchangeRate: { kind: 'checked', type: t.number },
+      /**
+       * Union type of string and number is used because numeric DB type
+       * is read as string, but when inserting rows, we don't want
+       * library clients to provide numbers as strings.
+       *
+       * TODO: Add the possibility to define separate types for reading
+       * and writing, then use string for reading and number for writing
+       */
+      exchangeRate: { kind: 'checked', type: t.union([t.string, t.number]) },
       description: { kind: 'checked', type: t.string },
       notes: { kind: 'checked', type: t.string },
       versionStartDate: { kind: 'checked', type: DATE },
