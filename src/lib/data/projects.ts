@@ -11,6 +11,7 @@ import { Op } from '../../db/util/conditions';
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
   projectVersion: InstanceOfModel<Database['projectVersion']>;
+  projectVersionPlan: InstanceOfModel<Database['projectVersionPlan']>;
   workflowStatus: InstanceOfModel<Database['workflowStatusOption']> | null;
 }
 
@@ -100,6 +101,7 @@ export async function getAllProjectsForPlan({
     result.set(project.id, {
       project,
       projectVersion,
+      projectVersionPlan: pvp,
       workflowStatus,
     });
   }
