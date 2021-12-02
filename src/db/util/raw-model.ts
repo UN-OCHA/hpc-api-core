@@ -29,8 +29,16 @@ export type WhereCond<F extends FieldDefinition> =
   | Knex.QueryCallback<InstanceDataOf<F>, InstanceDataOf<F>>
   | Partial<InstanceDataOf<F>>;
 
+export type OrderByCond<F extends FieldDefinition> = {
+  column: keyof InstanceDataOf<F>;
+  order?: 'asc' | 'desc';
+};
+
 export type FindFn<F extends FieldDefinition> = (args?: {
   where?: WhereCond<F>;
+  limit?: number;
+  offset?: number;
+  orderBy?: OrderByCond<F> | Array<OrderByCond<F>>;
   trx?: Knex.Transaction<any, any>;
 }) => Promise<Array<InstanceDataOf<F>>>;
 
@@ -117,9 +125,32 @@ export const defineRawModel =
       return res.map(validateAndFilter);
     };
 
-    const find: FindFn<F> = async ({ where, trx } = {}) => {
+    const find: FindFn<F> = async ({
+      where,
+      limit,
+      offset,
+      orderBy,
+      trx,
+    } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
-      const res = await builder.where(where || {}).select('*');
+      const query = builder.where(where || {}).select('*');
+
+      if (limit !== undefined && limit > 0) {
+        query.limit(limit);
+      }
+
+      if (offset !== undefined && offset > 0) {
+        query.offset(offset);
+      }
+
+      if (orderBy !== undefined) {
+        if (!Array.isArray(orderBy)) {
+          orderBy = [orderBy];
+        }
+        query.orderBy(orderBy);
+      }
+
+      const res = await query;
       return res.map(validateAndFilter);
     };
 
