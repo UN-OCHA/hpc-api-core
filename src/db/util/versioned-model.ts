@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * Use of `any` in this module is generally deliberate to help with generics
+ */
 import Knex = require('knex');
 import merge = require('lodash/merge');
 import * as t from 'io-ts';
@@ -10,6 +14,7 @@ import { ParticipantId, PARTICIPANT_ID } from '../models/participant';
 import { FieldDefinition, UserDataOf } from './model-definition';
 import { defineIDModel } from './id-model';
 import { InstanceDataOfModel, ModelInternals, WhereCond } from './raw-model';
+import { Op } from './conditions';
 
 type LookupColumnDefinition = Pick<FieldDefinition, 'optional' | 'required'>;
 
@@ -247,10 +252,12 @@ export const defineVersionedModel =
         const roots = await rootModel.find(args as any);
         const ids = new Set(roots.map((r) => r.id));
         const versionsList = await versionModel.find({
-          where: (builder) =>
-            builder
-              .whereIn<'root'>('root', [...ids])
-              .andWhere<'isLatest'>('isLatest', true),
+          where: {
+            root: {
+              [Op.IN]: ids,
+            },
+            isLatest: true,
+          },
         });
         const versions = new Map(versionsList.map((v) => [v.root, v]));
 
@@ -296,7 +303,11 @@ export const defineVersionedModel =
       },
       getAll: async (ids) => {
         const items = await result.findAll({
-          where: (builder) => builder.whereIn<'id'>('id', [...(ids as any)]),
+          where: {
+            id: {
+              [Op.IN]: ids as Iterable<any>,
+            },
+          },
         });
         const grouped = new Map<IDType, VersionedInstance<IDType, Data>>();
         for (const item of items) {

@@ -11,6 +11,7 @@ import { ATTACHMENT_VERSION_VALUE } from '../../db/models/json/attachment';
 import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
+import { Op } from '../../db/util/conditions';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
   AnnotatedMap,
@@ -124,27 +125,34 @@ export const getAllAttachments = async ({
     database.attachmentPrototype,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder.whereIn('type', types).andWhere('planId', planId),
+        where: {
+          planId,
+          type: {
+            [Op.IN]: types,
+          },
+        },
       }),
     'id'
   );
   const attachments = await database.attachment.find({
-    where: (builder) =>
-      builder.whereIn('type', types).andWhere('planId', planId),
+    where: {
+      planId,
+      type: {
+        [Op.IN]: types,
+      },
+    },
   });
   const attachmentVersionsByAttachmentId =
     await findAndOrganizeObjectsByUniqueProperty(
       database.attachmentVersion,
       (t) =>
         t.find({
-          where: (builder) =>
-            builder
-              .whereIn(
-                'attachmentId',
-                attachments.map((pa) => pa.id)
-              )
-              .andWhere('latestVersion', true),
+          where: {
+            latestVersion: true,
+            attachmentId: {
+              [Op.IN]: attachments.map((pa) => pa.id),
+            },
+          },
         }),
       'attachmentId'
     );

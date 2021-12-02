@@ -1,5 +1,5 @@
+import { Table } from '.';
 import { AnnotatedMap, organizeObjectsByUniqueValue } from '../util';
-import { Database } from './type';
 import { InstanceDataOfModel, Model } from './util/raw-model';
 import {
   InstanceOfVersionedModel,
@@ -10,7 +10,7 @@ import {
  * Generic type that can be used to obtain the type of an instance of either a
  * standard table, or a versioned table.
  */
-type InstanceOf<T extends Database[keyof Database]> = T extends Model<any>
+type InstanceOf<T extends Table> = T extends Model<any>
   ? InstanceDataOfModel<T>
   : T extends VersionedModel<any, any, any>
   ? InstanceOfVersionedModel<T>
@@ -24,21 +24,19 @@ type InstanceOf<T extends Database[keyof Database]> = T extends Model<any>
  * database, otherwise an error will be thrown
  */
 export const findAndOrganizeObjectsByUniqueProperty = <
-  Table extends Database[keyof Database],
-  P extends keyof InstanceOf<Table>
+  T extends Table,
+  P extends keyof InstanceOf<T>
 >(
-  table: Table,
-  fetch: (tbl: Table) => Promise<Iterable<InstanceOf<Table>>>,
+  table: T,
+  fetch: (tbl: T) => Promise<Iterable<InstanceOf<T>>>,
   property: P
-): Promise<
-  AnnotatedMap<Exclude<InstanceOf<Table>[P], null>, InstanceOf<Table>>
-> => {
+): Promise<AnnotatedMap<Exclude<InstanceOf<T>[P], null>, InstanceOf<T>>> => {
   return findAndOrganizeObjectsByUniqueValue(table, fetch, (item) => {
     const val = item[property];
     if (val === null) {
       throw new Error(`Unexpected null value in ${property} for ${item}`);
     }
-    return val as Exclude<InstanceOf<Table>[P], null>;
+    return val as Exclude<InstanceOf<T>[P], null>;
   });
 };
 
@@ -46,14 +44,11 @@ export const findAndOrganizeObjectsByUniqueProperty = <
  * Fetch a number of items of a particular type from the database,
  * and organize them into an AnnotatedMap by a unique value.
  */
-export const findAndOrganizeObjectsByUniqueValue = async <
-  Table extends Database[keyof Database],
-  V
->(
-  table: Table,
-  fetch: (tbl: Table) => Promise<Iterable<InstanceOf<Table>>>,
-  getValue: (i: InstanceOf<Table>) => Exclude<V, null>
-): Promise<AnnotatedMap<Exclude<V, null>, InstanceOf<Table>>> => {
+export const findAndOrganizeObjectsByUniqueValue = async <T extends Table, V>(
+  table: T,
+  fetch: (tbl: T) => Promise<Iterable<InstanceOf<T>>>,
+  getValue: (i: InstanceOf<T>) => Exclude<V, null>
+): Promise<AnnotatedMap<Exclude<V, null>, InstanceOf<T>>> => {
   const values = await fetch(table);
   const tableName =
     table._internals.type === 'single-table'

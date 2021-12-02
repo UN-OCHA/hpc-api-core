@@ -4,6 +4,7 @@ import { GoverningEntityId } from '../../db/models/governingEntity';
 import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
+import { Op } from '../../db/util/conditions';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
   isDefined,
@@ -72,10 +73,12 @@ export const getAndValidateAllPlanEntities = async ({
     database.planEntityVersion,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder
-            .whereIn('planEntityId', [...planEntityIDs])
-            .andWhere('latestVersion', true),
+        where: {
+          latestVersion: true,
+          planEntityId: {
+            [Op.IN]: planEntityIDs,
+          },
+        },
       }),
     'planEntityId'
   );
@@ -84,11 +87,13 @@ export const getAndValidateAllPlanEntities = async ({
     database.entitiesAssociation,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder
-            .whereIn('childId', [...planEntityIDs])
-            .andWhere('parentType', 'governingEntity')
-            .andWhere('childType', 'planEntity'),
+        where: {
+          childType: 'planEntity',
+          parentType: 'governingEntity',
+          childId: {
+            [Op.IN]: planEntityIDs,
+          },
+        },
       }),
     'childId'
   );

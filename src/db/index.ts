@@ -95,8 +95,18 @@ import unitType from './models/unitType';
 import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 import workflowStatusOptionStep from './models/workflowStatusOptionStep';
+import { Op, Cond } from './util/conditions';
 
-export default (conn: Knex) => ({
+/**
+ * Utilities that are frequently used, and should also be included as part of
+ * the model root for easy access.
+ */
+export const UTILS = {
+  Op,
+  Cond,
+};
+
+const initializeTables = (conn: Knex) => ({
   attachment: attachment(conn),
   attachmentPrototype: attachmentPrototype(conn),
   attachmentVersion: attachmentVersion(conn),
@@ -194,3 +204,26 @@ export default (conn: Knex) => ({
   workflowStatusOption: workflowStatusOption(conn),
   workflowStatusOptionStep: workflowStatusOptionStep(conn),
 });
+
+export type Tables = ReturnType<typeof initializeTables>;
+
+export type Table = Tables[keyof Tables];
+
+const initializeRoot = (conn: Knex) => {
+  const _tables = initializeTables(conn);
+  return {
+    ...UTILS,
+    ..._tables,
+    /**
+     * Expose the tables grouped together under one object under the root to
+     * allow for easier iteration through each of them.
+     *
+     * (this is used in unit tests)
+     */
+    _tables,
+  };
+};
+
+export type Database = ReturnType<typeof initializeRoot>;
+
+export default initializeRoot;

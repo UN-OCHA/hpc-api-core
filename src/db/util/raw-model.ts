@@ -3,6 +3,7 @@
  * Use of `any` in this module is generally deliberate to help with generics
  */
 import Knex = require('knex');
+import { Condition, prepareCondition } from './conditions';
 
 import {
   FieldDefinition,
@@ -25,9 +26,7 @@ export type CreateManyFn<F extends FieldDefinition> = (
   }
 ) => Promise<Array<InstanceDataOf<F>>>;
 
-export type WhereCond<F extends FieldDefinition> =
-  | Knex.QueryCallback<InstanceDataOf<F>, InstanceDataOf<F>>
-  | Partial<InstanceDataOf<F>>;
+export type WhereCond<F extends FieldDefinition> = Condition<InstanceDataOf<F>>;
 
 export type OrderByCond<F extends FieldDefinition> = {
   column: keyof InstanceDataOf<F>;
@@ -133,7 +132,7 @@ export const defineRawModel =
       trx,
     } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
-      const query = builder.where(where || {}).select('*');
+      const query = builder.where(prepareCondition(where || {})).select('*');
 
       if (limit !== undefined && limit > 0) {
         query.limit(limit);
@@ -168,7 +167,7 @@ export const defineRawModel =
     const update: UpdateFn<F> = async ({ values, where, trx }) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
       const res = await builder
-        .where(where)
+        .where(prepareCondition(where || {}))
         .update(values as any)
         .returning('*');
       return (res as unknown[]).map(validateAndFilter);
@@ -176,7 +175,7 @@ export const defineRawModel =
 
     const destroy: DestroyFn<F> = async ({ where, trx }) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
-      const count = await builder.where(where).delete();
+      const count = await builder.where(prepareCondition(where || {})).delete();
       return count;
     };
 

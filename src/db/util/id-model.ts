@@ -8,6 +8,7 @@ import {
   InstanceDataOf,
 } from './model-definition';
 import { defineSequelizeModel, FieldsWithSequelize } from './sequelize-model';
+import { Op } from './conditions';
 
 /**
  * Given a definition of fields, and the name of an ID prop,
@@ -97,7 +98,11 @@ export const defineIDModel =
 
     const getAll = async (ids: Iterable<ID>): Promise<Map<ID, Instance>> => {
       const items = await model.find({
-        where: (builder) => builder.whereIn<'id'>('id', [...(ids as any)]),
+        where: {
+          id: {
+            [Op.IN]: ids,
+          },
+        },
       });
       const grouped = new Map<ID, Instance>();
       for (const item of items) {
