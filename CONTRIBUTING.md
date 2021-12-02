@@ -82,16 +82,21 @@ technical debt, and prevent it's accumulation in the future by:
 
 - **Special handling of "accidentally optional" fields:**
 
-  The HPC schema has a number fields defined that were accidentally left
-  "nullable" across its tables. Sometimes there is data that is null and
-  sometimes it's just the schema that is incorrect and a migration would fix
-  the issue.
+  Historically, the HPC schema used to have many columns (across various tables)
+  defined as possibly `NULL`, whereas those columns should really be `NOT NULL`.
+  In cases where application code treated these columns as `NOT NULL`, a migration
+  fixed all these definitions and added `NOT NULL` constraints to the columns.
 
-  To account for this, models can be defined in a way that allows developers to
-  specify which fields are "accidentally optional". When this is done, the
-  static type-checking requires this field to be specified when creating new
-  rows for a table, but when reading data from the table, it is defined as
-  possibly `null`.
+  However, there are some columns which should also have `NOT NULL` constraint,
+  but there are some (usually very old) records where this column is actually `NULL`,
+  thus these columns were not covered by the aforementioned migration.
+
+  In order to prevent creating new records where this column would have `NULL`,
+  those columns can be marked as "accidentally optional".
+
+  When this is done, the static type-checking requires this field to be
+  specified when creating new rows for a table, but when reading data
+  from the table, it is defined as possibly `null`.
 
 - **Requiring type-validation of JSON fields:**
 
