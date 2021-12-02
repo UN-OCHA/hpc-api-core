@@ -109,12 +109,16 @@ export async function getAllProjectsForPlan({
   return result;
 }
 
-export async function getOrganizationIDsForProjects({
+export async function getOrganizationIDsForProjects<
+  Data extends {
+    projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
+  }
+>({
   database,
   projects,
 }: {
   database: Database;
-  projects: Map<ProjectId, ProjectData>;
+  projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<OrganizationId>>> {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -143,12 +147,16 @@ export async function getOrganizationIDsForProjects({
   return result;
 }
 
-export async function getGoverningEntityIDsForProjects({
+export async function getGoverningEntityIDsForProjects<
+  Data extends {
+    projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
+  }
+>({
   database,
   projects,
 }: {
   database: Database;
-  projects: Map<ProjectId, ProjectData>;
+  projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<GoverningEntityId>>> {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -179,12 +187,16 @@ export async function getGoverningEntityIDsForProjects({
   return result;
 }
 
-export const getConditionFieldsForProjects = async ({
+export const getConditionFieldsForProjects = async <
+  Data extends {
+    projectVersionPlan: Pick<ProjectData['projectVersionPlan'], 'id'>;
+  }
+>({
   database,
   projects,
 }: {
   database: Database;
-  projects: Map<ProjectId, ProjectData>;
+  projects: Map<ProjectId, Data>;
 }): Promise<
   Map<ProjectId, Set<InstanceOfModel<Database['projectVersionField']>>>
 > => {
