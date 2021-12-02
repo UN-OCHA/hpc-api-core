@@ -260,7 +260,9 @@ export const prepareCondition =
         PropertyConditions.Condition<InstanceData[keyof InstanceData]>
       ][];
       for (const [property, propertyCondition] of propertyConditions) {
-        if (PropertyConditions.isEqualityCondition(propertyCondition)) {
+        if (propertyCondition === undefined) {
+          throw new Error(`Unexpected undefined value for ${property}`);
+        } else if (PropertyConditions.isEqualityCondition(propertyCondition)) {
           builder.where(property, propertyCondition);
         } else if (PropertyConditions.isInCondition(propertyCondition)) {
           builder.whereIn(property, [...propertyCondition[Op.IN]]);
