@@ -9,6 +9,7 @@ import {
   defineRawModel,
   ModelInitializer,
   CreateFn,
+  CreateManyFn,
   UpdateFn,
 } from './raw-model';
 import { FieldDefinition } from './model-definition';
@@ -103,6 +104,17 @@ export const defineSequelizeModel =
       );
     };
 
+    const createMany: CreateManyFn<Fields> = (data, opts) => {
+      return model.createMany(
+        data.map((data) => ({
+          ...data,
+          createdAt: conn.fn.now(3),
+          updatedAt: conn.fn.now(3),
+        })),
+        opts
+      );
+    };
+
     const update: UpdateFn<Fields> = (args) => {
       return model.update({
         ...args,
@@ -116,6 +128,7 @@ export const defineSequelizeModel =
     return {
       ...model,
       create,
+      createMany,
       update,
     };
   };
