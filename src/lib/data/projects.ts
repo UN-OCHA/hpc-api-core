@@ -178,3 +178,41 @@ export async function getGoverningEntityIDsForProjects({
 
   return result;
 }
+
+export const getConditionFieldsForProjects = async ({
+  database,
+  projects,
+}: {
+  database: Database;
+  projects: Map<ProjectId, ProjectData>;
+}): Promise<
+  Map<ProjectId, Set<InstanceOfModel<Database['projectVersionField']>>>
+> => {
+  const projectVersionPlanIds = [...projects.values()].map(
+    (v) => v.projectVersionPlan.id
+  );
+
+  const groupedConditionFields = groupObjectsByProperty(
+    await database.projectVersionField.find({
+      where: {
+        projectVersionPlanId: {
+          [Op.IN]: projectVersionPlanIds,
+        },
+      },
+    }),
+    'projectVersionPlanId'
+  );
+
+  const result = new Map<
+    ProjectId,
+    Set<InstanceOfModel<Database['projectVersionField']>>
+  >();
+
+  for (const [projectId, projectData] of projects) {
+    const projectVersionPlanId = projectData.projectVersionPlan.id;
+    const conditionFields = groupedConditionFields.get(projectVersionPlanId);
+    result.set(projectId, conditionFields || new Set());
+  }
+
+  return result;
+};
