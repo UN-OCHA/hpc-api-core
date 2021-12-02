@@ -3,6 +3,7 @@ import { EntityPrototypeId } from '../../db/models/entityPrototype';
 import { GoverningEntityId } from '../../db/models/governingEntity';
 import { PlanId } from '../../db/models/plan';
 import { Database } from '../../db/type';
+import { Op } from '../../db/util/conditions';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
 import { annotatedMap, AnnotatedMap, getRequiredData } from '../../util';
 
@@ -50,13 +51,12 @@ export const getAllGoverningEntitiesForPlan = async ({
     database.governingEntityVersion,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder
-            .whereIn(
-              'governingEntityId',
-              ges.map((ge) => ge.id)
-            )
-            .andWhere('latestVersion', true),
+        where: {
+          latestVersion: true,
+          governingEntityId: {
+            [Op.IN]: ges.map((ge) => ge.id),
+          },
+        },
       }),
     'governingEntityId'
   );

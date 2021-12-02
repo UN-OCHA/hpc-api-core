@@ -27,6 +27,7 @@ import {
   filterValidRoleStrings,
   RolesGrant,
 } from './roles';
+import { Op } from '../db/util/conditions';
 
 const randomBytes = promisify(crypto.randomBytes);
 
@@ -68,11 +69,11 @@ const activateInvitesForEmail = async (
 
     const targets = new Map<AuthTargetId, AuthTarget>();
     for (const target of await models.authTarget.find({
-      where: (builder) =>
-        builder.whereIn(
-          'id',
-          invites.map((i) => i.target)
-        ),
+      where: {
+        id: {
+          [Op.IN]: invites.map((i) => i.target),
+        },
+      },
     })) {
       targets.set(target.id, target);
     }
@@ -284,26 +285,30 @@ export const getRoleGrantsForUsers = async ({
 
   // Get the grantees
   const grantees = await models.authGrantee.find({
-    where: (builder) =>
-      builder.where('type', 'user').andWhere('granteeId', 'in', users),
+    where: {
+      type: 'user',
+      granteeId: {
+        [Op.IN]: users,
+      },
+    },
   });
   if (grantees.length === 0) {
     return new Map();
   }
   const granteesById = organizeObjectsByUniqueProperty(grantees, 'id');
   const grants = await models.authGrant.find({
-    where: (builder) =>
-      builder.whereIn(
-        'grantee',
-        grantees.map((g) => g.id)
-      ),
+    where: {
+      grantee: {
+        [Op.IN]: grantees.map((g) => g.id),
+      },
+    },
   });
   const targets = await models.authTarget.find({
-    where: (builder) =>
-      builder.whereIn(
-        'id',
-        grants.map((g) => g.target)
-      ),
+    where: {
+      id: {
+        [Op.IN]: grants.map((g) => g.target),
+      },
+    },
   });
   const targetsById = organizeObjectsByUniqueProperty(targets, 'id');
 

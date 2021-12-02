@@ -6,6 +6,7 @@ import { ProjectId } from '../../db/models/project';
 import { Database } from '../../db/type';
 import { InstanceOfModel } from '../../db/util/types';
 import { getRequiredData, groupObjectsByProperty, isDefined } from '../../util';
+import { Op } from '../../db/util/conditions';
 
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
@@ -37,31 +38,33 @@ export async function getAllProjectsForPlan({
     database.projectVersion,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder.whereIn('id', [
-            ...new Set(pvps.map((pvp) => pvp.projectVersionId)),
-          ]),
+        where: {
+          id: {
+            [Op.IN]: new Set(pvps.map((pvp) => pvp.projectVersionId)),
+          },
+        },
       }),
     'id'
   );
   const projectVersions = [...pvsById.values()];
   const projects = await database.project.find({
-    where: (builder) =>
-      builder.whereIn('id', [
-        ...new Set(projectVersions.map((pv) => pv.projectId)),
-      ]),
+    where: {
+      id: {
+        [Op.IN]: new Set(projectVersions.map((pv) => pv.projectId)),
+      },
+    },
   });
   const workflowStatusById = await findAndOrganizeObjectsByUniqueProperty(
     database.workflowStatusOption,
     (t) =>
       t.find({
-        where: (builder) =>
-          builder.whereIn(
-            'id',
-            [...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId))].filter(
-              isDefined
-            )
-          ),
+        where: {
+          id: {
+            [Op.IN]: [
+              ...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId)),
+            ].filter(isDefined),
+          },
+        },
       }),
     'id'
   );
@@ -117,8 +120,11 @@ export async function getOrganizationIDsForProjects({
 
   const groupedPVOs = groupObjectsByProperty(
     await database.projectVersionOrganization.find({
-      where: (builder) =>
-        builder.whereIn('projectVersionId', projectVersionIds),
+      where: {
+        projectVersionId: {
+          [Op.IN]: projectVersionIds,
+        },
+      },
     }),
     'projectVersionId'
   );
@@ -148,8 +154,11 @@ export async function getGoverningEntityIDsForProjects({
 
   const groupedPVGEs = groupObjectsByProperty(
     await database.projectVersionGoverningEntity.find({
-      where: (builder) =>
-        builder.whereIn('projectVersionId', projectVersionIds),
+      where: {
+        projectVersionId: {
+          [Op.IN]: projectVersionIds,
+        },
+      },
     }),
     'projectVersionId'
   );
