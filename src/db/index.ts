@@ -95,8 +95,19 @@ import unitType from './models/unitType';
 import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 import workflowStatusOptionStep from './models/workflowStatusOptionStep';
+import { Op, Cond } from './util/conditions';
+
+/**
+ * Utilities that are frequently used, and should also be included as part of
+ * the model root for easy access.
+ */
+export const UTILS = {
+  Op,
+  Cond,
+};
 
 export default (conn: Knex) => ({
+  ...UTILS,
   attachment: attachment(conn),
   attachmentPrototype: attachmentPrototype(conn),
   attachmentVersion: attachmentVersion(conn),

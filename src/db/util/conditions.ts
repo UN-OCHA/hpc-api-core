@@ -6,7 +6,7 @@ import Knex = require('knex');
 /**
  * Symbols to use for where condition construction
  */
-namespace ConditionSymbols {
+export namespace ConditionSymbols {
   export const BUILDER = Symbol('builder');
   export const AND = Symbol('and');
   export const OR = Symbol('or');
@@ -26,7 +26,7 @@ export const Cond = ConditionSymbols.Cond;
 /**
  * Symbols to use when constructing conditions for a single property
  */
-namespace PropertySymbols {
+export namespace PropertySymbols {
   export const IN = Symbol('in');
   export const NOT_IN = Symbol('not in');
 

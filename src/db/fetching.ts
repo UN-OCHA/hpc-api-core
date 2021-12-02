@@ -1,3 +1,4 @@
+import { UTILS } from '.';
 import { AnnotatedMap, organizeObjectsByUniqueValue } from '../util';
 import { Database } from './type';
 import { InstanceDataOfModel, Model } from './util/raw-model';
@@ -24,7 +25,7 @@ type InstanceOf<T extends Database[keyof Database]> = T extends Model<any>
  * database, otherwise an error will be thrown
  */
 export const findAndOrganizeObjectsByUniqueProperty = <
-  Table extends Database[keyof Database],
+  Table extends Database[keyof Omit<Database, keyof typeof UTILS>],
   P extends keyof InstanceOf<Table>
 >(
   table: Table,
@@ -47,7 +48,7 @@ export const findAndOrganizeObjectsByUniqueProperty = <
  * and organize them into an AnnotatedMap by a unique value.
  */
 export const findAndOrganizeObjectsByUniqueValue = async <
-  Table extends Database[keyof Database],
+  Table extends Database[keyof Omit<Database, keyof typeof UTILS>],
   V
 >(
   table: Table,
