@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * Use of `any` in this module is generally deliberate to help with generics
+ */
 import Knex = require('knex');
 import merge = require('lodash/merge');
 import * as t from 'io-ts';
