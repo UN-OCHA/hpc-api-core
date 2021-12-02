@@ -106,8 +106,7 @@ export const UTILS = {
   Cond,
 };
 
-export default (conn: Knex) => ({
-  ...UTILS,
+const initializeTables = (conn: Knex) => ({
   attachment: attachment(conn),
   attachmentPrototype: attachmentPrototype(conn),
   attachmentVersion: attachmentVersion(conn),
@@ -205,3 +204,26 @@ export default (conn: Knex) => ({
   workflowStatusOption: workflowStatusOption(conn),
   workflowStatusOptionStep: workflowStatusOptionStep(conn),
 });
+
+export type Tables = ReturnType<typeof initializeTables>;
+
+export type Table = Tables[keyof Tables];
+
+const initializeRoot = (conn: Knex) => {
+  const _tables = initializeTables(conn);
+  return {
+    ...UTILS,
+    ..._tables,
+    /**
+     * Expose the tables grouped together under one object under the root to
+     * allow for easier iteration through each of them.
+     *
+     * (this is used in unit tests)
+     */
+    _tables,
+  };
+};
+
+export type Database = ReturnType<typeof initializeRoot>;
+
+export default initializeRoot;
