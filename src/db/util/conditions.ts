@@ -44,10 +44,10 @@ export const Op = PropertySymbols.Op;
 namespace PropertyConditions {
   export type EqualityCondition<T> = T;
   export type InCondition<T> = {
-    [Op.IN]: T[];
+    [Op.IN]: Iterable<T>;
   };
   export type NotInCondition<T> = {
-    [Op.NOT_IN]: T[];
+    [Op.NOT_IN]: Iterable<T>;
   };
   /**
    * A condition that must hold over a single property whose type is T
@@ -167,9 +167,9 @@ export const prepareCondition =
         if (PropertyConditions.isEqualityCondition(propertyCondition)) {
           builder.where(property, propertyCondition);
         } else if (PropertyConditions.isInCondition(propertyCondition)) {
-          builder.whereIn(property, propertyCondition[Op.IN]);
+          builder.whereIn(property, [...propertyCondition[Op.IN]]);
         } else if (PropertyConditions.isNotInCondition(propertyCondition)) {
-          builder.whereNotIn(property, propertyCondition[Op.NOT_IN]);
+          builder.whereNotIn(property, [...propertyCondition[Op.NOT_IN]]);
         } else {
           throw new Error(`Unexpected condition type: ${propertyCondition}`);
         }
