@@ -11,6 +11,7 @@ import { Op } from '../../db/util/conditions';
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
   projectVersion: InstanceOfModel<Database['projectVersion']>;
+  projectVersionPlan: InstanceOfModel<Database['projectVersionPlan']>;
   workflowStatus: InstanceOfModel<Database['workflowStatusOption']> | null;
 }
 
@@ -100,6 +101,7 @@ export async function getAllProjectsForPlan({
     result.set(project.id, {
       project,
       projectVersion,
+      projectVersionPlan: pvp,
       workflowStatus,
     });
   }
@@ -107,12 +109,16 @@ export async function getAllProjectsForPlan({
   return result;
 }
 
-export async function getOrganizationIDsForProjects({
+export async function getOrganizationIDsForProjects<
+  Data extends {
+    projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
+  }
+>({
   database,
   projects,
 }: {
   database: Database;
-  projects: Map<ProjectId, ProjectData>;
+  projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<OrganizationId>>> {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -141,12 +147,16 @@ export async function getOrganizationIDsForProjects({
   return result;
 }
 
-export async function getGoverningEntityIDsForProjects({
+export async function getGoverningEntityIDsForProjects<
+  Data extends {
+    projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
+  }
+>({
   database,
   projects,
 }: {
   database: Database;
-  projects: Map<ProjectId, ProjectData>;
+  projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<GoverningEntityId>>> {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -176,3 +186,45 @@ export async function getGoverningEntityIDsForProjects({
 
   return result;
 }
+
+export const getConditionFieldsForProjects = async <
+  Data extends {
+    projectVersionPlan: Pick<ProjectData['projectVersionPlan'], 'id'>;
+  }
+>({
+  database,
+  projects,
+}: {
+  database: Database;
+  projects: Map<ProjectId, Data>;
+}): Promise<
+  Map<ProjectId, Set<InstanceOfModel<Database['projectVersionField']>>>
+> => {
+  const projectVersionPlanIds = [...projects.values()].map(
+    (v) => v.projectVersionPlan.id
+  );
+
+  const groupedConditionFields = groupObjectsByProperty(
+    await database.projectVersionField.find({
+      where: {
+        projectVersionPlanId: {
+          [Op.IN]: projectVersionPlanIds,
+        },
+      },
+    }),
+    'projectVersionPlanId'
+  );
+
+  const result = new Map<
+    ProjectId,
+    Set<InstanceOfModel<Database['projectVersionField']>>
+  >();
+
+  for (const [projectId, projectData] of projects) {
+    const projectVersionPlanId = projectData.projectVersionPlan.id;
+    const conditionFields = groupedConditionFields.get(projectVersionPlanId);
+    result.set(projectId, conditionFields || new Set());
+  }
+
+  return result;
+};
