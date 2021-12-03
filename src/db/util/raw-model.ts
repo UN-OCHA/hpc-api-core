@@ -119,6 +119,10 @@ export const defineRawModel =
     };
 
     const createMany: CreateManyFn<F> = async (data, opts) => {
+      if (!data.length) {
+        return [];
+      }
+
       const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
       const res = await builder.insert(data).returning('*');
       return res.map(validateAndFilter);
