@@ -21,7 +21,7 @@ export default defineIDModel({
     },
     required: {
       name: { kind: 'checked', type: t.string },
-      group: { kind: 'branded-integer', brand: CATEGORY_GROUP_TYPE },
+      group: { kind: 'checked', type: CATEGORY_GROUP_TYPE },
     },
     optional: {
       description: { kind: 'checked', type: t.string },
