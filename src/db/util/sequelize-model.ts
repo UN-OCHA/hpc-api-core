@@ -11,8 +11,11 @@ import {
   CreateFn,
   CreateManyFn,
   UpdateFn,
+  FindFn,
+  FindOneFn,
 } from './raw-model';
 import { FieldDefinition } from './model-definition';
+import { Cond, Op } from './conditions';
 
 type DeletedAtField<SoftDeletionEnabled extends boolean> =
   SoftDeletionEnabled extends true
@@ -60,6 +63,15 @@ const genDeletedAtField = <P extends boolean>(
       }
     : {}) as DeletedAtField<P>;
 
+export type AdditionalFindArgsForSequelizeTables = {
+  /**
+   * If true, also include deleted records in the result.
+   *
+   * This only affects tables with softDeletionEnabled set to true
+   */
+  includeDeleted?: true;
+};
+
 /**
  * A model that has been defined by sequelize
  *
@@ -78,7 +90,10 @@ export const defineSequelizeModel =
      */
     genIdentifier?: (data: unknown) => string;
     softDeletionEnabled: SoftDeletionEnabled;
-  }): ModelInitializer<FieldsWithSequelize<F, SoftDeletionEnabled>> =>
+  }): ModelInitializer<
+    FieldsWithSequelize<F, SoftDeletionEnabled>,
+    AdditionalFindArgsForSequelizeTables
+  > =>
   (conn) => {
     type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
 
@@ -92,6 +107,50 @@ export const defineSequelizeModel =
       ...opts,
       fields,
     })(conn);
+
+    const find: FindFn<Fields, AdditionalFindArgsForSequelizeTables> = (
+      args
+    ) => {
+      if (args?.includeDeleted || !opts.softDeletionEnabled) {
+        return model.find(args);
+      } else {
+        return model.find({
+          ...args,
+          where: {
+            [Cond.AND]: [
+              {
+                deletedAt: {
+                  [Op.IS_NULL]: true,
+                },
+              },
+              args?.where || {},
+            ],
+          },
+        });
+      }
+    };
+
+    const findOne: FindOneFn<Fields, AdditionalFindArgsForSequelizeTables> = (
+      args
+    ) => {
+      if (args?.includeDeleted || !opts.softDeletionEnabled) {
+        return model.findOne(args);
+      } else {
+        return model.findOne({
+          ...args,
+          where: {
+            [Cond.AND]: [
+              {
+                deletedAt: {
+                  [Op.IS_NULL]: true,
+                },
+              },
+              args?.where || {},
+            ],
+          },
+        });
+      }
+    };
 
     const create: CreateFn<Fields> = (data, opts) => {
       return model.create(
@@ -127,6 +186,8 @@ export const defineSequelizeModel =
 
     return {
       ...model,
+      find,
+      findOne,
       create,
       createMany,
       update,

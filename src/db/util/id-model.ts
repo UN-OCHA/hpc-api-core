@@ -7,7 +7,11 @@ import {
   FieldDefinition,
   InstanceDataOf,
 } from './model-definition';
-import { defineSequelizeModel, FieldsWithSequelize } from './sequelize-model';
+import {
+  AdditionalFindArgsForSequelizeTables,
+  defineSequelizeModel,
+  FieldsWithSequelize,
+} from './sequelize-model';
 import { Op } from './conditions';
 
 /**
@@ -32,7 +36,7 @@ type IdOf<
 export interface ModelWithId<
   F extends FieldDefinition,
   IDField extends null | keyof F['generated']
-> extends Model<F> {
+> extends Model<F, AdditionalFindArgsForSequelizeTables> {
   readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
   readonly getAll: (
     id: Iterable<IdOf<F, IDField>>
