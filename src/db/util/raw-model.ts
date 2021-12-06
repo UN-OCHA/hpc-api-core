@@ -33,18 +33,22 @@ export type OrderByCond<F extends FieldDefinition> = {
   order?: 'asc' | 'desc';
 };
 
-export type FindFn<F extends FieldDefinition> = (args?: {
-  where?: WhereCond<F>;
-  limit?: number;
-  offset?: number;
-  orderBy?: OrderByCond<F> | Array<OrderByCond<F>>;
-  trx?: Knex.Transaction<any, any>;
-}) => Promise<Array<InstanceDataOf<F>>>;
+export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
+  args?: {
+    where?: WhereCond<F>;
+    limit?: number;
+    offset?: number;
+    orderBy?: OrderByCond<F> | Array<OrderByCond<F>>;
+    trx?: Knex.Transaction<any, any>;
+  } & AdditionalArgs
+) => Promise<Array<InstanceDataOf<F>>>;
 
-export type FindOneFn<F extends FieldDefinition> = (args: {
-  where: WhereCond<F>;
-  trx?: Knex.Transaction<any, any>;
-}) => Promise<InstanceDataOf<F> | null>;
+export type FindOneFn<F extends FieldDefinition, AdditionalArgs = {}> = (
+  args: {
+    where: WhereCond<F>;
+    trx?: Knex.Transaction<any, any>;
+  } & AdditionalArgs
+) => Promise<InstanceDataOf<F> | null>;
 
 export type UpdateFn<F extends FieldDefinition> = (args: {
   values: Partial<UserDataOf<F>>;
@@ -67,12 +71,12 @@ export type ModelInternals<F extends FieldDefinition> = {
 /**
  * The definition of a model
  */
-export type Model<F extends FieldDefinition> = {
+export type Model<F extends FieldDefinition, AdditionalFindArgs = {}> = {
   readonly _internals: ModelInternals<F>;
   readonly create: CreateFn<F>;
   readonly createMany: CreateManyFn<F>;
-  readonly find: FindFn<F>;
-  readonly findOne: FindOneFn<F>;
+  readonly find: FindFn<F, AdditionalFindArgs>;
+  readonly findOne: FindOneFn<F, AdditionalFindArgs>;
   readonly update: UpdateFn<F>;
   readonly destroy: DestroyFn<F>;
 };
@@ -84,9 +88,10 @@ export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
 /**
  * A function that takes a knex connection and returns the model definition
  */
-export type ModelInitializer<F extends FieldDefinition> = (
-  conn: Knex
-) => Model<F>;
+export type ModelInitializer<
+  F extends FieldDefinition,
+  AdditionalFindArgs = {}
+> = (conn: Knex) => Model<F, AdditionalFindArgs>;
 
 export const defineRawModel =
   <F extends FieldDefinition>(opts: {
