@@ -257,10 +257,22 @@ export const getProjectBudgetsByOrgAndCluster = async <
   database,
   projects,
   log,
+  ignoreInconsistentBudgets,
 }: {
   database: Database;
   projects: Map<ProjectId, Data>;
   log: SharedLogContext;
+  /**
+   * When true, projects with inconsistent budget data will be ignored, rather
+   * than causing an error.
+   *
+   * This is necessary for example when reading the "latest" data for a set of
+   * projects, which may be in draft or incomplete states.
+   *
+   * This should NOT be enabled when reading "current" (i.e. published) data,
+   * to for example calculate a plan's overall requirements.
+   */
+  ignoreInconsistentBudgets?: true;
 }): Promise<Map<ProjectId, Array<ProjectBudgetSegmentBreakdown>>> => {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -407,9 +419,14 @@ export const getProjectBudgetsByOrgAndCluster = async <
 
     const sum = projectResult.reduce((sum, v) => sum + v.amountUSD, 0);
     if (sum.toString() !== p.projectVersion.currentRequestedFunds) {
-      throw new Error(
-        `Project budget breakdown inconsistent for ${p.projectVersion}`
-      );
+      if (ignoreInconsistentBudgets) {
+        // Don't add the data for this project to the result
+        continue;
+      } else {
+        throw new Error(
+          `Project budget breakdown inconsistent for ${p.projectVersion}`
+        );
+      }
     }
 
     // Ensure that the organization IDs match the projectVersionOrganization

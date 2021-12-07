@@ -42,6 +42,7 @@ export const getAndValidateAllPlanEntities = async ({
   planId,
   governingEntities,
   prototypes,
+  allowMissingPlanEntities,
 }: {
   database: Database;
   planId: PlanId;
@@ -61,6 +62,14 @@ export const getAndValidateAllPlanEntities = async ({
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
+  /**
+   * If set to true,
+   * don't throw an error when a plan entity that another references in its
+   * `supports` list is missing.
+   *
+   * This can happen for example when another entity is soft-deleted.
+   */
+  allowMissingPlanEntities?: boolean;
 }): Promise<ValidatedPlanEntities> => {
   const planEntities = await database.planEntity.find({
     where: {
@@ -133,14 +142,14 @@ export const getAndValidateAllPlanEntities = async ({
         planEntityVersion.value.support &&
         Array.isArray(planEntityVersion.value.support)
       ) {
-        const supportingPlanEntityIds = planEntityVersion.value.support.flatMap(
-          (s) => s?.planEntityIds
-        );
+        const supportingPlanEntityIds = planEntityVersion.value.support
+          .flatMap((s) => s?.planEntityIds)
+          .filter(isDefined);
         // Check that the list of planEntityIds is valid
         const missing = supportingPlanEntityIds.filter(
-          (id) => id !== null && id !== undefined && !planEntityIDs.has(id)
+          (id) => !planEntityIDs.has(id)
         );
-        if (missing.length > 0) {
+        if (!allowMissingPlanEntities && missing.length > 0) {
           throw new Error(
             `Missing supporting planEntityIds: ${missing.join(', ')}`
           );
@@ -148,7 +157,9 @@ export const getAndValidateAllPlanEntities = async ({
 
         // TODO: Check that the plan entities pass the canSupport requirements
         // specified in the prototype, including matching the cardinality
-        entityDetails.supports = supportingPlanEntityIds.filter(isDefined);
+        entityDetails.supports = supportingPlanEntityIds.filter((id) =>
+          planEntityIDs.has(id)
+        );
       }
     }
 
