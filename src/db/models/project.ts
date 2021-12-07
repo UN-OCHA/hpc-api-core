@@ -78,6 +78,7 @@ export default defineIDModel({
       },
       creatorParticipantId: { kind: 'branded-integer', brand: PARTICIPANT_ID },
       latestVersionId: { kind: 'branded-integer', brand: PROJECT_VERSION_ID },
+      sourceProjectId: { kind: 'branded-integer', brand: PROJECT_ID },
       pdf: { kind: 'checked', type: PROJECT_PDF },
     },
   },
