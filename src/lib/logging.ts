@@ -11,13 +11,13 @@
  */
 export type SharedLogData = {
   /**
-   * Placeholder property to ensure that SharedLogData is not an empty object
-   *
-   * Without this, or other properties, any object is assignable to
-   * SharedLogData, which will make it harder to detect when invalid data
+   * Which version of the API is logging this entry.
    */
-  readonly _sharedLogData?: null;
-  // TODO: add fields here when needed by the library for logging information
+  version?: 'hpc-api-v3' | 'hpc-api-v4';
+  /**
+   * What is the commit sha of the code that is currently being run.
+   */
+  commitSha?: string;
 };
 
 export type LogMethod<Data extends SharedLogData> = (
