@@ -12,7 +12,8 @@
     "lint": "yarn lint-prettier && yarn lint-eslint"
   },
   "engines": {
-    "node": ">=16.13.0"
+    "node": ">=16.13.0",
+    "yarn": ">=1.22.10"
   },
   "dependencies": {
     "@types/lodash": "^4.14.170",
