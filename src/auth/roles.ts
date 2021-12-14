@@ -194,6 +194,8 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.VIEW_OPERATION_METADATA);
         global.add(P.global.EDIT_FORM_ASSIGNMENT_CLEAN_DATA);
         global.add(P.global.EDIT_FORM_ASSIGNMENT_RAW_DATA);
+        global.add(P.global.EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_CLOSED);
+        global.add(P.global.EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_PENDING);
       }
     }
   } else if (grant.type === 'operation') {

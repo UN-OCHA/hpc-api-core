@@ -42,6 +42,22 @@ export const AUTH_PERMISSIONS = {
      */
     EDIT_FORM_ASSIGNMENT_CLEAN_DATA: 'editFormAssignmentCleanData',
     /**
+     * Can edit assignments when their are associated with a closed reporting
+     * window.
+     *
+     * (This does not allow for edit access for any assignment, that must be
+     * granted separately)
+     */
+    EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_CLOSED: `editAssignmentsWhenReportingWindowClosed`,
+    /**
+     * Can edit assignments when their are associated with a pending reporting
+     * window.
+     *
+     * (This does not allow for edit access for any assignment, that must be
+     * granted separately)
+     */
+    EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_PENDING: `editAssignmentsWhenReportingWindowPending`,
+    /**
      * Can view the data associated with any plan
      */
     VIEW_ANY_PLAN_DATA: 'viewAnyPlanData',
