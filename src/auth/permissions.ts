@@ -18,13 +18,13 @@ export const AUTH_PERMISSIONS = {
      *
      * (equivalent to operation.VIEW_DATA for every operation)
      */
-    VIEW_OPERATION_DATA: 'viewOperationData',
+    VIEW_ANY_OPERATION_DATA: 'viewOperationData',
     /**
      * Can list operations and view the metadata for any operation
      *
      * (equivalent to operation.VIEW_METADATA for every operation)
      */
-    VIEW_OPERATION_METADATA: 'viewOperationMetadata',
+    VIEW_ANY_OPERATION_METADATA: 'viewOperationMetadata',
     /**
      * Can list operations and view the metadata for assigned operations
      *
@@ -36,11 +36,11 @@ export const AUTH_PERMISSIONS = {
     /**
      * Can edit the raw data of any assignment that is a form
      */
-    EDIT_FORM_ASSIGNMENT_RAW_DATA: 'editFormAssignmentRawData',
+    EDIT_ANY_FORM_ASSIGNMENT_RAW_DATA: 'editFormAssignmentRawData',
     /**
      * Can edit the clean data of any assignment that is a form
      */
-    EDIT_FORM_ASSIGNMENT_CLEAN_DATA: 'editFormAssignmentCleanData',
+    EDIT_ANY_FORM_ASSIGNMENT_CLEAN_DATA: 'editFormAssignmentCleanData',
     /**
      * Can edit assignments when their are associated with a closed reporting
      * window.
