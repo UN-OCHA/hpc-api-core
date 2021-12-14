@@ -190,10 +190,12 @@ export const calculatePermissionsFromRolesGrant = async <
       } else if (role === 'swaps') {
         global.add(P.global.MODIFY_OPERATION_ACCESS_AND_PERMISSIONS);
         global.add(P.global.ADD_OPERATION);
-        global.add(P.global.VIEW_OPERATION_DATA);
-        global.add(P.global.VIEW_OPERATION_METADATA);
-        global.add(P.global.EDIT_FORM_ASSIGNMENT_CLEAN_DATA);
-        global.add(P.global.EDIT_FORM_ASSIGNMENT_RAW_DATA);
+        global.add(P.global.VIEW_ANY_OPERATION_DATA);
+        global.add(P.global.VIEW_ANY_OPERATION_METADATA);
+        global.add(P.global.EDIT_ANY_FORM_ASSIGNMENT_CLEAN_DATA);
+        global.add(P.global.EDIT_ANY_FORM_ASSIGNMENT_RAW_DATA);
+        global.add(P.global.EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_CLOSED);
+        global.add(P.global.EDIT_ASSIGNMENTS_WHEN_REPORTING_WINDOW_PENDING);
       }
     }
   } else if (grant.type === 'operation') {
