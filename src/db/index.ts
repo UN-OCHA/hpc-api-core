@@ -96,6 +96,7 @@ import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 import workflowStatusOptionStep from './models/workflowStatusOptionStep';
 import { Op, Cond } from './util/conditions';
+import OrganizationV2 from './models/organizationV2';
 
 /**
  * Utilities that are frequently used, and should also be included as part of
@@ -203,6 +204,7 @@ const initializeTables = (conn: Knex) => ({
   usageYear: usageYear(conn),
   workflowStatusOption: workflowStatusOption(conn),
   workflowStatusOptionStep: workflowStatusOptionStep(conn),
+  OrganizationV2: OrganizationV2(conn),
 });
 
 export type Tables = ReturnType<typeof initializeTables>;
