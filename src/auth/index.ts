@@ -121,17 +121,8 @@ export const getLoggedInParticipant = async (
     .catch((error) => ({ result: 'error' as const, error }));
 
   // Check if we have our own token before we check HID
-  let tokenParticipant = await tokenPromise;
+  const tokenParticipant = await tokenPromise;
   if (tokenParticipant) {
-    // If the user hasn't got a hidId value stored, copy it from hidSub
-    if (!tokenParticipant.hidId && tokenParticipant.hidSub) {
-      tokenParticipant = (
-        await models.participant.update({
-          values: { hidId: tokenParticipant.hidSub },
-          where: { hidSub: tokenParticipant.hidSub },
-        })
-      )[0];
-    }
     return tokenParticipant;
   }
 
@@ -158,8 +149,6 @@ export const getLoggedInParticipant = async (
       email: hidInfo.email,
       name: hidInfo.name,
       hidSub: hidInfo.sub,
-      /** TODO: Remove this */
-      hidId: hidInfo.sub,
     });
 
     await activateInvitesForEmail(
@@ -168,39 +157,22 @@ export const getLoggedInParticipant = async (
       context,
       processInvite
     );
-  } else {
-    // If the users' email address has changed
-    // Update the user's email and activate any invites
-    if (participant.email !== hidInfo.email) {
-      participant = (
-        await models.participant.update({
-          values: { email: hidInfo.email },
-          where: { hidSub: hidInfo.sub },
-        })
-      )[0];
-
-      await activateInvitesForEmail(
-        participant,
-        hidInfo.email,
-        context,
-        processInvite
-      );
-    }
-    // If the user hasn't got a hidId value stored, store it
-    if (!participant.hidId) {
-      participant = (
-        await models.participant.update({
-          values: { hidId: hidInfo.sub },
-          where: { hidSub: hidInfo.sub },
-        })
-      )[0];
-    }
   }
-  if (!participant.hidId) {
-    // TODO: Remove req.apiAuth.userId
-    // and this check (which should not be necessary)
-    throw new Error(
-      `Unexpected missing hidId for participant ${participant.id}`
+  // If the users' email address has changed
+  // Update the user's email and activate any invites
+  else if (participant.email !== hidInfo.email) {
+    participant = (
+      await models.participant.update({
+        values: { email: hidInfo.email },
+        where: { hidSub: hidInfo.sub },
+      })
+    )[0];
+
+    await activateInvitesForEmail(
+      participant,
+      hidInfo.email,
+      context,
+      processInvite
     );
   }
 
