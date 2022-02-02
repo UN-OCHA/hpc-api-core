@@ -19,7 +19,6 @@ export default defineIDModel({
       id: { kind: 'branded-integer', brand: PARTICIPANT_ID },
     },
     optional: {
-      hidId: { kind: 'checked', type: t.string },
       hidSub: { kind: 'checked', type: t.string },
       email: { kind: 'checked', type: t.string },
       name: { kind: 'checked', type: t.string },
