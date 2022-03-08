@@ -21,6 +21,7 @@ export const JOB_STATUS = {
 export const JOB_TYPE = {
   confirmableCommand: null,
   locationImport: null,
+  projectExcelGeneration: null,
   projectPdfGeneration: null,
 };
 
@@ -45,6 +46,11 @@ export const JOB_METADATA_PROJECT_PDF = t.partial({
   files: t.array(PDF_FILE_RECORD),
 });
 
+export const JOB_METADATA_PROJECT_EXCEL = t.partial({
+  startedBy: PARTICIPANT_ID,
+  fileName: t.string,
+});
+
 const JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND = t.type({
   requester: PARTICIPANT_ID,
   command: t.string,
@@ -53,6 +59,7 @@ const JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND = t.type({
 
 const JOB_METADATA = t.union([
   JOB_METADATA_LOCATION_IMPORT,
+  JOB_METADATA_PROJECT_EXCEL,
   JOB_METADATA_PROJECT_PDF,
   JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND,
 ]);
