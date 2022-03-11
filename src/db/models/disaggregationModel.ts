@@ -4,6 +4,7 @@ import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { defineIDModel } from '../util/id-model';
 import { LOCATION_ID } from './location';
+import { PARTICIPANT_ID } from './participant';
 import { PLAN_ID } from './plan';
 
 export type DisaggregationModelId = Brand<
@@ -60,6 +61,9 @@ export default defineIDModel({
       creator: { kind: 'checked', type: DISAGGREGATION_MODEL_CREATOR },
       value: { kind: 'checked', type: DISAGGREGATION_MODEL_VALUE },
       planId: { kind: 'checked', type: PLAN_ID },
+    },
+    optional: {
+      creatorParticipantId: { kind: 'branded-integer', brand: PARTICIPANT_ID },
     },
   },
   idField: 'id',
