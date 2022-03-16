@@ -154,6 +154,10 @@ export const AUTH_PERMISSIONS = {
     MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
       'canModifyAccessAndPermissionsOfProjects',
     /**
+     * Can clone any project under this plan
+     */
+    CLONE_PROJECTS: 'cloneProjects',
+    /**
      * Can make plan visible to projects, in Projects Module
      */
     MAKE_VISIBLE_IN_PROJECTS: 'canMakeVisibleInProjects',
