@@ -58,7 +58,6 @@ export default defineIDModel({
     },
     required: {
       name: { kind: 'checked', type: t.string },
-      creator: { kind: 'checked', type: DISAGGREGATION_MODEL_CREATOR },
       value: { kind: 'checked', type: DISAGGREGATION_MODEL_VALUE },
       planId: { kind: 'checked', type: PLAN_ID },
     },
