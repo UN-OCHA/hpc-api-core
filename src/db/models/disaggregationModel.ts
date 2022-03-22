@@ -59,10 +59,8 @@ export default defineIDModel({
     required: {
       name: { kind: 'checked', type: t.string },
       value: { kind: 'checked', type: DISAGGREGATION_MODEL_VALUE },
-      planId: { kind: 'checked', type: PLAN_ID },
-    },
-    optional: {
       creatorParticipantId: { kind: 'branded-integer', brand: PARTICIPANT_ID },
+      planId: { kind: 'checked', type: PLAN_ID },
     },
   },
   idField: 'id',
