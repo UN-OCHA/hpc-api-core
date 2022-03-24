@@ -3,6 +3,7 @@ import * as t from 'io-ts';
 import { defineSequelizeModel } from '../util/sequelize-model';
 
 export const FLOW_OBJECT_TYPE_TYPE = t.keyof({
+  anonymisedOrganization: null,
   cluster: null,
   corePlanEntityActivity: null,
   corePlanEntityObjective: null,
