@@ -31,6 +31,16 @@ const LOCATION_INFO = t.intersection([
   }),
 ]);
 
+/**
+ * Strict version of `LOCATION_INFO` codec defined above.
+ * Intended to be used when creating new records, in order
+ * to enforce stricter type of location ID.
+ */
+const LOCATION_INFO_STRICT = t.intersection([
+  LOCATION_INFO.types[0],
+  t.partial({ id: LOCATION_ID }),
+]);
+
 export const DISAGGREGATION_MODEL_VALUE = t.type({
   categories: t.array(
     t.type({
@@ -43,6 +53,26 @@ export const DISAGGREGATION_MODEL_VALUE = t.type({
     t.intersection([LOCATION_INFO, t.partial({ parent: LOCATION_INFO })])
   ),
   status: t.boolean,
+});
+
+/**
+ * Strict version of `DISAGGREGATION_MODEL_VALUE` codec defined above.
+ * Intended to be used when creating new records, in order to enforce
+ * stricter type of location ID.
+ *
+ * Location ID used to allow for string type, which is why there are
+ * many records using location's pcode instead of ID. This stricter
+ * type should be used for validating new records upon creation.
+ */
+export const DISAGGREGATION_MODEL_VALUE_STRICT = t.type({
+  categories: DISAGGREGATION_MODEL_VALUE.props.categories,
+  status: DISAGGREGATION_MODEL_VALUE.props.status,
+  locations: t.array(
+    t.intersection([
+      LOCATION_INFO_STRICT,
+      t.partial({ parent: LOCATION_INFO_STRICT }),
+    ])
+  ),
 });
 
 export default defineIDModel({
