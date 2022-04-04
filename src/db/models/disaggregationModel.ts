@@ -18,11 +18,6 @@ export const DISAGGREGATION_MODEL_ID = brandedType<
   DisaggregationModelId
 >(t.number);
 
-export const DISAGGREGATION_MODEL_CREATOR = t.type({
-  participantHidId: t.string,
-  roles: t.array(t.string),
-});
-
 const LOCATION_INFO = t.intersection([
   t.type({ name: t.string }),
   t.partial({
