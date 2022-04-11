@@ -55,6 +55,31 @@ export const BUDGET_SEGMENT_BREAKDOWN_CONTENT = t.intersection([
   }),
 ]);
 
+/**
+ * Strict version of `BUDGET_SEGMENT_BREAKDOWN_CONTENT` codec
+ * defined above. Intended to be used when creating new records,
+ * in order to enforce stricter type of `amount` and `percent`.
+ *
+ * `percent` used to allow for string type, while `amount` allowed
+ * for both `string` and `null` (in addition to proper `number` type),
+ * which is why there are many records with "corrupt" data. This stricter
+ * type should be used for validating new records upon creation.
+ */
+export const BUDGET_SEGMENT_BREAKDOWN_CONTENT_STRICT = t.intersection([
+  t.type({ amount: t.number }),
+  t.partial({
+    originalAmount:
+      BUDGET_SEGMENT_BREAKDOWN_CONTENT.types[1].props.originalAmount,
+    percent: t.number,
+    fixed: BUDGET_SEGMENT_BREAKDOWN_CONTENT.types[1].props.fixed,
+    breakdown: BUDGET_SEGMENT_BREAKDOWN_CONTENT.types[1].props.breakdown,
+  }),
+]);
+
+export type BudgetSegmentBreakdownContentStrict = t.TypeOf<
+  typeof BUDGET_SEGMENT_BREAKDOWN_CONTENT_STRICT
+>;
+
 export default defineIDModel({
   tableName: 'budgetSegmentBreakdown',
   fields: {
