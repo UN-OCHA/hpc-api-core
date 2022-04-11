@@ -5,7 +5,7 @@ import { PlanId } from '../../db/models/plan';
 import { ProjectId } from '../../db/models/project';
 import { Database } from '../../db/type';
 import { InstanceOfModel } from '../../db/util/types';
-import { getRequiredData, groupObjectsByProperty, isDefined } from '../../util';
+import { getRequiredData, groupObjectsByProperty } from '../../util';
 import { Op } from '../../db/util/conditions';
 import { GlobalClusterId } from '../../db/models/globalCluster';
 import { createBrandedValue } from '../../util/types';
@@ -73,7 +73,7 @@ export async function getAllProjectsForPlan({
           id: {
             [Op.IN]: [
               ...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId)),
-            ].filter(isDefined),
+            ],
           },
         },
       }),
