@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.170",
-    "@types/node-fetch": "2.6.1",
     "fp-ts": "^2.6.6",
     "io-ts": "2.2.9",
     "knex": "0.21.1",
