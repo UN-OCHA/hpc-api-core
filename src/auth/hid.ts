@@ -55,14 +55,14 @@ export const getHidInfo = async (
   } else {
     const accountUrl = new URL('/account.json', context.config.authBaseUrl);
     // Reference fetch.default to allow for mocking
-    const res = await fetch.default(accountUrl, {
+    const res = await fetch.default(accountUrl.toString(), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     if (!res.ok) {
       if (res.status === 401) {
-        const r = await res.json();
+        const r = (await res.json()) as { message: string };
         const message = r.message || 'Invalid Token';
         HID_CACHE.store(token, { type: 'forbidden', message });
         throw new ForbiddenError(message);
