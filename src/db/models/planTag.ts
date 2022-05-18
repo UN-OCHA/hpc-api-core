@@ -13,6 +13,12 @@ export type PlanTagId = Brand<
 
 export const PLAN_TAG_ID = brandedType<number, PlanTagId>(t.number);
 
+const PLAN_TAG_PUBLISH_TYPE = t.keyof({
+  major: null,
+  minor: null,
+  custom: null,
+});
+
 export const PLAN_TAG_REVISION_STATE = t.keyof({
   none: null,
   planDataAndProjects: null,
@@ -32,10 +38,12 @@ export default defineIDModel({
     },
     nonNullWithDefault: {
       public: { kind: 'checked', type: t.boolean },
+      reportingPeriods: { kind: 'checked', type: t.array(t.number) },
     },
     optional: {
       comment: { kind: 'checked', type: t.string },
       revisionState: { kind: 'checked', type: PLAN_TAG_REVISION_STATE },
+      type: { kind: 'checked', type: PLAN_TAG_PUBLISH_TYPE },
     },
   },
   idField: 'id',
