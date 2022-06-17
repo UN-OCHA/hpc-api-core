@@ -136,11 +136,9 @@ export const getLoggedInParticipant = async (
     return undefined;
   }
 
-  const participants = await models.participant.find({
+  let participant = await models.participant.findOne({
     where: { hidSub: hidInfo.sub },
   });
-  let participant =
-    participants.find((p) => p.hidSub === hidInfo.sub) || undefined;
 
   if (!participant) {
     // Create a new participant for this HID account
