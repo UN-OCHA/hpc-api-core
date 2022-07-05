@@ -6,6 +6,7 @@ import { DATE } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { LOCATION_ID } from './location';
 import { PARTICIPANT_ID } from './participant';
+import { PLAN_ID } from './plan';
 import { PROJECT_ID } from './project';
 
 export type JobId = Brand<number, { readonly s: unique symbol }, 'job.id'>;
@@ -48,7 +49,11 @@ export const JOB_METADATA_PROJECT_PDF = t.partial({
 
 export const JOB_METADATA_PROJECT_EXCEL = t.partial({
   startedBy: PARTICIPANT_ID,
-  fileName: t.string,
+  file: t.type({
+    fileHash: t.string,
+    name: t.string,
+    planId: PLAN_ID,
+  }),
 });
 
 const JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND = t.type({
