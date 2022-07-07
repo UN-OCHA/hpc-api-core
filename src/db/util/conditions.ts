@@ -261,7 +261,9 @@ export const prepareCondition =
       ][];
       for (const [property, propertyCondition] of propertyConditions) {
         if (propertyCondition === undefined) {
-          throw new Error(`Unexpected undefined value for ${property}`);
+          throw new Error(
+            `Unexpected undefined value for ${property.toString()}`
+          );
         } else if (PropertyConditions.isEqualityCondition(propertyCondition)) {
           builder.where(property, propertyCondition);
         } else if (PropertyConditions.isInCondition(propertyCondition)) {
