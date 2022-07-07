@@ -34,7 +34,9 @@ export const findAndOrganizeObjectsByUniqueProperty = <
   return findAndOrganizeObjectsByUniqueValue(table, fetch, (item) => {
     const val = item[property];
     if (val === null) {
-      throw new Error(`Unexpected null value in ${property} for ${item}`);
+      throw new Error(
+        `Unexpected null value in ${property.toString()} for ${item}`
+      );
     }
     return val as Exclude<InstanceOf<T>[P], null>;
   });
