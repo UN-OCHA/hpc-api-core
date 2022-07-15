@@ -58,6 +58,11 @@ export type FindOneFn<F extends FieldDefinition, AdditionalArgs = {}> = (
 export type UpdateFn<F extends FieldDefinition> = (args: {
   values: Partial<UserDataOf<F>>;
   where: WhereCond<F>;
+  /**
+   * WARNING: Only use this in very rare cases when performance gains
+   * from disabling validation are worth the risk!
+   */
+  skipValidation?: boolean;
   trx?: Knex.Transaction<any, any>;
 }) => Promise<Array<InstanceDataOf<F>>>;
 
@@ -184,12 +189,22 @@ export const defineRawModel =
       }
     };
 
-    const update: UpdateFn<F> = async ({ values, where, trx }) => {
+    const update: UpdateFn<F> = async ({
+      values,
+      where,
+      skipValidation = false,
+      trx,
+    }) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
       const res = await builder
         .where(prepareCondition(where || {}))
         .update(values as any)
         .returning('*');
+
+      if (skipValidation) {
+        return res as Instance[];
+      }
+
       return (res as unknown[]).map(validateAndFilter);
     };
 
