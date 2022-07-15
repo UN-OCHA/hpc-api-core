@@ -39,6 +39,11 @@ export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
     limit?: number;
     offset?: number;
     orderBy?: OrderByCond<F> | Array<OrderByCond<F>>;
+    /**
+     * WARNING: Only use this in very rare cases when performance gains
+     * from disabling validation are worth the risk!
+     */
+    skipValidation?: boolean;
     trx?: Knex.Transaction<any, any>;
   } & AdditionalArgs
 ) => Promise<Array<InstanceDataOf<F>>>;
@@ -138,6 +143,7 @@ export const defineRawModel =
       limit,
       offset,
       orderBy,
+      skipValidation = false,
       trx,
     } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
@@ -159,6 +165,11 @@ export const defineRawModel =
       }
 
       const res = await query;
+
+      if (skipValidation) {
+        return res as Instance[];
+      }
+
       return res.map(validateAndFilter);
     };
 
