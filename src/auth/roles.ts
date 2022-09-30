@@ -290,6 +290,7 @@ export const calculatePermissionsFromRolesGrant = async <
     for (const role of grant.roles) {
       if (role === 'projectOwner') {
         projectSet.add(P.project.CLONE);
+        projectSet.add(P.project.DELETE);
         projectSet.add(P.project.MODIFY_ACCESS_AND_PERMISSIONS);
         projectSet.add(P.project.VIEW_DATA);
       }
