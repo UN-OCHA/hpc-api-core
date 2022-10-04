@@ -275,6 +275,7 @@ export const calculatePermissionsFromRolesGrant = async <
         planSet.add(P.plan.VIEW_DATA);
         planSet.add(P.plan.EDIT_DATA);
         planSet.add(P.plan.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
+        planSet.add(P.plan.DELETE_PROJECTS);
         planSet.add(P.plan.CLONE_PROJECTS);
         planSet.add(P.plan.MAKE_VISIBLE_IN_PROJECTS);
       }
@@ -290,6 +291,7 @@ export const calculatePermissionsFromRolesGrant = async <
     for (const role of grant.roles) {
       if (role === 'projectOwner') {
         projectSet.add(P.project.CLONE);
+        projectSet.add(P.project.DELETE);
         projectSet.add(P.project.MODIFY_ACCESS_AND_PERMISSIONS);
         projectSet.add(P.project.VIEW_DATA);
       }

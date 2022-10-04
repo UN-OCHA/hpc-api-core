@@ -154,6 +154,10 @@ export const AUTH_PERMISSIONS = {
     MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
       'canModifyAccessAndPermissionsOfProjects',
     /**
+     * Can delete any project under this plan
+     */
+    DELETE_PROJECTS: 'deleteProjects',
+    /**
      * Can clone any project under this plan
      */
     CLONE_PROJECTS: 'cloneProjects',
