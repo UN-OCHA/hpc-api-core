@@ -191,6 +191,10 @@ export const actionIsPermitted = async <
     return true;
   }
 
+  if (condition === 'noone') {
+    return false;
+  }
+
   return hasRequiredPermissions(await calculatePermissions(context), condition);
 };
 
