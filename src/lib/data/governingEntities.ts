@@ -81,7 +81,7 @@ export const getAllGoverningEntitiesForPlan = async ({
   return result;
 };
 
-const composeCustomReferenceForGoverningEntity = ({
+export const composeCustomReferenceForGoverningEntity = ({
   governingEntity,
   governingEntityVersion,
   prototypes,
