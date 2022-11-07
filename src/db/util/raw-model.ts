@@ -71,6 +71,8 @@ export type DestroyFn<F extends FieldDefinition> = (args: {
   trx?: Knex.Transaction<any, any>;
 }) => Promise<number>;
 
+export type TruncateFn = (trx?: Knex.Transaction<any, any>) => Promise<void>;
+
 export type ModelInternals<F extends FieldDefinition> = {
   readonly type: 'single-table';
   readonly tableName: string;
@@ -89,6 +91,7 @@ export type Model<F extends FieldDefinition, AdditionalFindArgs = {}> = {
   readonly findOne: FindOneFn<F, AdditionalFindArgs>;
   readonly update: UpdateFn<F>;
   readonly destroy: DestroyFn<F>;
+  readonly truncate: TruncateFn;
 };
 
 export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
@@ -214,6 +217,11 @@ export const defineRawModel =
       return count;
     };
 
+    const truncate: TruncateFn = async (trx) => {
+      const builder = trx ? tbl().transacting(trx) : tbl();
+      await builder.truncate();
+    };
+
     return {
       _internals: {
         type: 'single-table',
@@ -227,5 +235,6 @@ export const defineRawModel =
       findOne,
       update,
       destroy,
+      truncate,
     };
   };
