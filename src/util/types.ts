@@ -20,4 +20,4 @@ export type Brand<T, S extends { s: symbol }, Label extends string = ''> = T & {
 };
 
 export const createBrandedValue = <T, B extends Brand<T, any, any>>(v: T): B =>
-  v as B;
+  v as unknown as B;
