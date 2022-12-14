@@ -15,6 +15,7 @@ export const CATEGORY_GROUP_TYPE = t.keyof({
   inactiveReason: null,
   keywords: null,
   method: null,
+  organizationLevel: null,
   organizationType: null,
   pendingStatus: null,
   planCosting: null,
