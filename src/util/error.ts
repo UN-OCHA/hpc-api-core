@@ -56,7 +56,7 @@ const STATUS_CODES = {
   USE_PROXY: 305,
 } as const;
 
-type StatusCode = typeof STATUS_CODES[keyof typeof STATUS_CODES];
+type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];
 
 export class ExtendableError extends Error {
   constructor(message: string) {

@@ -1,6 +1,6 @@
 {
   "name": "@unocha/hpc-api-core",
-  "version": "4.5.2",
+  "version": "5.0.0",
   "description": "Core libraries supporting HPC.Tools API Backend",
   "license": "Apache-2.0",
   "private": false,
@@ -16,23 +16,23 @@
     "yarn": ">=1.22.10"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.170",
-    "@types/node-fetch": "2.6.1",
-    "fp-ts": "^2.6.6",
-    "io-ts": "2.2.9",
+    "@types/lodash": "^4.14.194",
+    "@types/node-fetch": "2.6.3",
+    "fp-ts": "^2.14.0",
+    "io-ts": "2.2.20",
     "knex": "0.21.1",
     "lodash": "^4.17.21",
-    "node-fetch": "2.6.7",
-    "pg": "^8.5.1"
+    "node-fetch": "2.6.9",
+    "pg": "^8.10.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.21",
-    "@unocha/hpc-repo-tools": "^1.2.0",
-    "eslint": "8.19.0",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
-    "prettier": "2.7.1",
-    "typescript": "^4.9.4"
+    "@types/node": "^18.16.2",
+    "@unocha/hpc-repo-tools": "^2.0.0",
+    "eslint": "8.39.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
+    "prettier": "2.8.8",
+    "typescript": "^5.0.4"
   },
   "lint-staged": {
     "*.{ts,js}": [
