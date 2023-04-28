@@ -195,7 +195,7 @@ export const AUTH_PERMISSIONS = {
  * Get the union type of string permissions allowed for a particular target type
  */
 export type PermissionStrings<K extends keyof typeof AUTH_PERMISSIONS> =
-  typeof AUTH_PERMISSIONS[K][keyof typeof AUTH_PERMISSIONS[K]];
+  (typeof AUTH_PERMISSIONS)[K][keyof (typeof AUTH_PERMISSIONS)[K]];
 
 /**
  * Type that represents an object containing the complete computed permissions

@@ -43,7 +43,7 @@ export type RoleAuthTargetString = keyof typeof AUTH_ROLES;
  * Get the union type of string permissions allowed for a particular target type
  */
 export type RolesStrings<K extends RoleAuthTargetString> =
-  typeof AUTH_ROLES[K][keyof typeof AUTH_ROLES[K]] & string;
+  (typeof AUTH_ROLES)[K][keyof (typeof AUTH_ROLES)[K]] & string;
 
 export const getValidRolesForTargetType = <K extends RoleAuthTargetString>(
   targetType: K

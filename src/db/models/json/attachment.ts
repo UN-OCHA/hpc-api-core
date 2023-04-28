@@ -67,7 +67,7 @@ export const ATTACHMENT_VERSION_VALUE = {
 } as const;
 
 export type CostAttachmentValue = t.TypeOf<
-  typeof ATTACHMENT_VERSION_VALUE['cost']
+  (typeof ATTACHMENT_VERSION_VALUE)['cost']
 >;
 
 export const ANY_ATTACHMENT_VERSION_VALUE = t.union([
