@@ -26,13 +26,13 @@
     "pg": "^8.10.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.21",
-    "@unocha/hpc-repo-tools": "^1.2.0",
+    "@types/node": "^18.16.2",
+    "@unocha/hpc-repo-tools": "^2.0.0",
     "eslint": "8.19.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.4"
   },
   "lint-staged": {
     "*.{ts,js}": [
