@@ -45,6 +45,7 @@ import globalClusterAssociation from './models/globalClusterAssociation';
 import globalIndicator from './models/globalIndicator';
 import governingEntity from './models/governingEntity';
 import governingEntityVersion from './models/governingEntityVersion';
+import highWater from './models/highWater';
 import iatiActivity from './models/iatiActivity';
 import iatiPublisher from './models/iatiPublisher';
 import iatiRecipientCountry from './models/iatiRecipientCountry';
@@ -153,6 +154,7 @@ const initializeTables = (conn: Knex) => ({
   globalIndicator: globalIndicator(conn),
   governingEntity: governingEntity(conn),
   governingEntityVersion: governingEntityVersion(conn),
+  highWater: highWater(conn),
   iatiActivity: iatiActivity(conn),
   iatiPublisher: iatiPublisher(conn),
   iatiRecipientCountry: iatiRecipientCountry(conn),
