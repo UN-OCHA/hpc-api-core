@@ -65,6 +65,10 @@ export const AUTH_PERMISSIONS = {
      * Can edit the data associated with any plan (when that plan is editable)
      */
     EDIT_ANY_PLAN_DATA: 'editAnyPlanData',
+    /**
+     * Can edit any project
+     */
+    EDIT_ANY_PROJECT: 'editAnyProject',
     VIEW_ANY_FLOW: 'viewAnyFlow',
     EDIT_ANY_FLOW: 'editAnyFlow',
     VIEW_CATEGORIES: 'viewCategories',
@@ -154,6 +158,10 @@ export const AUTH_PERMISSIONS = {
     MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
       'canModifyAccessAndPermissionsOfProjects',
     /**
+     * Can edit any project under this plan
+     */
+    EDIT_PROJECTS: 'editProjects',
+    /**
      * Can delete any project under this plan
      */
     DELETE_PROJECTS: 'deleteProjects',
@@ -172,6 +180,7 @@ export const AUTH_PERMISSIONS = {
      * Can view the data associated with the project
      */
     VIEW_DATA: 'viewProjectData',
+    EDIT: 'canEdit',
     /**
      * Can clone data from the project to a new project
      */
@@ -184,6 +193,10 @@ export const AUTH_PERMISSIONS = {
      * (when it's associated plan is editable)
      */
     EDIT_DATA: 'editGoverningEntityData',
+    /**
+     * Can edit the project data associated with the governing entity
+     */
+    EDIT_PROJECTS: 'editProjects',
     /**
      * Can move projects associated with this cluster to any step of the workflow.
      */
