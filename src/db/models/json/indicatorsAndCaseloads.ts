@@ -143,6 +143,7 @@ export const CASELOAD_VALUE = t.intersection([
   }),
   t.partial({
     description: t.string,
+    name: t.string,
   }),
 ]);
 
@@ -187,6 +188,7 @@ export const INDICATOR_VALUE = t.intersection([
   }),
   t.partial({
     description: t.string,
+    name: t.string,
   }),
 ]);
 
