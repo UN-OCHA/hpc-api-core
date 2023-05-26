@@ -193,7 +193,16 @@ export const INDICATOR_VALUE = t.intersection([
 export type IndicatorValue = t.TypeOf<typeof INDICATOR_VALUE>;
 
 /**
- * measurement values have the same types as their respective caseload
+ * Measurement values have the same types as their respective caseload
  * or indicator attachments
  */
-export const MEASUREMENT_VALUE = t.union([INDICATOR_VALUE, CASELOAD_VALUE]);
+export const MEASUREMENT_VALUE = t.union([
+  t.intersection([
+    INDICATOR_VALUE,
+    t.type({ attachmentType: t.literal('indicator') }),
+  ]),
+  t.intersection([
+    CASELOAD_VALUE,
+    t.type({ attachmentType: t.literal('caseLoad') }),
+  ]),
+]);
