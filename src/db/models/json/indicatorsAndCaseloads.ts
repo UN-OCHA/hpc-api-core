@@ -183,6 +183,7 @@ export const INDICATOR_VALUE = t.intersection([
           }),
         ]),
         measureFields: t.array(METRIC_DEFINITION),
+        calculationMethod: t.string,
       }),
     ]),
   }),
