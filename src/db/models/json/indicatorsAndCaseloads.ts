@@ -132,9 +132,14 @@ export const hasDisaggregation = (
  */
 export const CASELOAD_VALUE = t.intersection([
   t.type({
-    metrics: t.type({
-      values: CASELOAD_OR_INDICATOR_METRICS_VALUES,
-    }),
+    metrics: t.intersection([
+      t.type({
+        values: CASELOAD_OR_INDICATOR_METRICS_VALUES,
+      }),
+      t.partial({
+        measureFields: t.array(METRIC_DEFINITION),
+      }),
+    ]),
   }),
   t.partial({
     description: t.string,
@@ -176,6 +181,7 @@ export const INDICATOR_VALUE = t.intersection([
             }),
           }),
         ]),
+        measureFields: t.array(METRIC_DEFINITION),
       }),
     ]),
   }),
