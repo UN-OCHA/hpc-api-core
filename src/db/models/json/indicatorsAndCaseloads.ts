@@ -22,7 +22,7 @@ const METRIC_WITH_VALUE = t.intersection([
      * measurements incorrectly have string types. We should update all of these
      * to be numbers when specified.
      */
-    value: t.union([t.number, t.null, t.literal('')]),
+    value: t.union([t.number, t.null, t.string]),
   }),
 ]);
 
