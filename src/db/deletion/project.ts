@@ -21,79 +21,120 @@ export const deleteProjectById = async (
   }
 
   // Cannot delete already published project
-  if (project.currentPublishedVersionId) {
+  if (
+    project.latestVersionId !== null && // TODO: Remove once HPC-9121 is done and `latestVersionId` can no longer be `null`
+    project.currentPublishedVersionId === project.latestVersionId
+  ) {
     throw new PreconditionFailedError(
-      `Project with ID ${project.id} has already been published`
+      `Latest version of project with ID ${project.id} has already been published`
     );
   }
 
-  if (project.latestVersionId) {
-    const latestVersion = await database.projectVersion.findOne({
-      where: { id: project.latestVersionId },
+  const projectVersions = await database.projectVersion.find({
+    where: { projectId: project.id },
+    trx,
+  });
+
+  if (projectVersions.length > 1) {
+    const currentLatestVersion = projectVersions.find(
+      (pv) => pv.id === project.latestVersionId
+    );
+
+    if (!currentLatestVersion) {
+      throw new Error(
+        `Cannot find version with ID ${project.latestVersionId} for project ${project.id}`
+      );
+    }
+
+    const newMaxVersion = currentLatestVersion.version - 1;
+    const newLatestVersion = projectVersions.find(
+      (pv) => pv.version === newMaxVersion
+    );
+
+    if (!newLatestVersion) {
+      throw new Error(
+        `Cannot find version ${newMaxVersion} for project ${project.id}`
+      );
+    }
+
+    await database.project.update({
+      values: { latestVersionId: newLatestVersion.id },
+      where: { id: project.id },
       trx,
     });
 
-    if (latestVersion?.version !== 1) {
+    await database.projectVersion.destroy({
+      where: { id: currentLatestVersion.id },
+      trx,
+    });
+
+    // Delete weak references
+
+    // References to projectVersion in categoryRef aren't being
+    // used anymore, so, remove this if data ever gets cleaned up
+    await database.categoryRef.destroy({
+      where: {
+        objectType: 'projectVersion',
+        objectID: currentLatestVersion.id,
+      },
+      trx,
+    });
+  } else {
+    const linkedToFlows = await database.flowObject.find({
+      where: {
+        objectType: 'project',
+        objectID: project.id,
+      },
+      trx,
+    });
+    const totalLinkedFlows = linkedToFlows.length;
+
+    if (totalLinkedFlows) {
       throw new PreconditionFailedError(
-        `More than one version of project with ID ${project.id} has been created`
+        `Cannot delete project because it is linked to flows with ID: ${linkedToFlows
+          .map((f) => f.flowID)
+          .slice(0, 10)
+          .join(', ')}.${
+          totalLinkedFlows > 10
+            ? ` There are ${
+                totalLinkedFlows - 10
+              } more flows, we're just showing the first 10`
+            : ''
+        }`
       );
     }
-  }
 
-  const linkedToFlows = await database.flowObject.find({
-    where: {
-      objectType: 'project',
-      objectID: project.id,
-    },
-    trx,
-  });
-  const totalLinkedFlows = linkedToFlows.length;
+    const clonedProjects = await database.project.find({
+      where: { sourceProjectId: project.id },
+      trx,
+    });
 
-  if (totalLinkedFlows) {
-    throw new PreconditionFailedError(
-      `Cannot delete project because it is linked to flows with ID: ${linkedToFlows
-        .map((f) => f.flowID)
-        .slice(0, 10)
-        .join(', ')}.${
-        totalLinkedFlows > 10
-          ? ` There are ${
-              totalLinkedFlows - 10
-            } more flows, we're just showing the first 10`
-          : ''
-      }`
+    // Unlink all cloned projects
+    await database.project.update({
+      values: { sourceProjectId: null },
+      where: {
+        id: { [database.Op.IN]: clonedProjects.map((p) => p.id) },
+      },
+      trx,
+    });
+
+    await database.project.destroy({
+      where: { id: project.id },
+      trx,
+    });
+
+    // Delete weak references
+    await database.expiredData.destroy({
+      where: { objectType: 'project', objectId: project.id },
+      trx,
+    });
+
+    // Clean up all references in auth tables
+    await deleteAuthTarget(
+      database,
+      { type: 'project', targetId: projectToDelete },
+      authGrantRevoker,
+      trx
     );
   }
-
-  const clonedProjects = await database.project.find({
-    where: { sourceProjectId: project.id },
-    trx,
-  });
-
-  // Unlink all cloned projects
-  await database.project.update({
-    values: { sourceProjectId: null },
-    where: {
-      id: { [database.Op.IN]: clonedProjects.map((p) => p.id) },
-    },
-    trx,
-  });
-
-  await database.project.destroy({
-    where: { id: project.id },
-    trx,
-  });
-
-  // Delete weak references
-  await database.expiredData.destroy({
-    where: { objectType: 'project', objectId: project.id },
-    trx,
-  });
-
-  // Clean up all references in auth tables
-  await deleteAuthTarget(
-    database,
-    { type: 'project', targetId: projectToDelete },
-    authGrantRevoker,
-    trx
-  );
 };
