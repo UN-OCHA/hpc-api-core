@@ -15,88 +15,123 @@ export const deleteProjectById = async (
   }
 
   // Cannot delete already published project
-  if (project.currentPublishedVersionId) {
+  if (project.currentPublishedVersionId === project.latestVersionId) {
     throw new PreconditionFailedError(
-      `Project with ID ${project.id} has already been published`
+      `Latest version of project with ID ${project.id} has already been published`
     );
   }
 
-  if (project.latestVersionId) {
-    const latestVersion = await database.projectVersion.get(
-      project.latestVersionId
+  const projectVersions = await database.projectVersion.find({
+    where: { projectId: project.id },
+  });
+
+  if (projectVersions.length > 1) {
+    const currentLatestVersion = projectVersions.find(
+      (pv) => pv.id === project.latestVersionId
     );
 
-    if (latestVersion?.version !== 1) {
-      throw new PreconditionFailedError(
-        `More than one version of project with ID ${project.id} has been created`
+    if (!currentLatestVersion) {
+      throw new Error(
+        `Cannot find version with ID ${project.latestVersionId} for project ${project.id}`
       );
     }
-  }
 
-  const linkedToFlows = await database.flowObject.find({
-    where: {
-      objectType: 'project',
-      objectID: project.id,
-    },
-  });
-  const totalLinkedFlows = linkedToFlows.length;
-
-  if (totalLinkedFlows) {
-    throw new PreconditionFailedError(
-      `Cannot delete project because it is linked to flows with ID: ${linkedToFlows
-        .map((f) => f.flowID)
-        .slice(0, 10)
-        .join(', ')}.${
-        totalLinkedFlows > 10
-          ? ` There are ${
-              totalLinkedFlows - 10
-            } more flows, we're just showing the first 10`
-          : ''
-      }`
+    const newMaxVersion = currentLatestVersion.version - 1;
+    const newLatestVersion = projectVersions.find(
+      (pv) => pv.version === newMaxVersion
     );
-  }
 
-  const clonedProjects = await database.project.find({
-    where: { sourceProjectId: project.id },
-  });
+    if (!newLatestVersion) {
+      throw new Error(
+        `Cannot find version ${newMaxVersion} for project ${project.id}`
+      );
+    }
 
-  // Unlink all cloned projects
-  await database.project.update({
-    values: { sourceProjectId: null },
-    where: {
-      id: { [database.Op.IN]: clonedProjects.map((p) => p.id) },
-    },
-  });
+    await database.project.update({
+      values: { latestVersionId: newLatestVersion.id },
+      where: { id: project.id },
+    });
 
-  await database.project.destroy({
-    where: { id: project.id },
-  });
+    await database.projectVersion.destroy({
+      where: { id: currentLatestVersion.id },
+    });
 
-  // Delete weak references
-  await database.expiredData.destroy({
-    where: { objectType: 'project', objectId: project.id },
-  });
+    // Delete weak references
 
-  // Unfortunately, due to DB constraints, we must keep auth
-  // targets pointing to projects which no longer exist
-  // Thus, we only remove the entry from `authGrants` table
-  const targets = await database.authTarget.find({
-    where: {
-      type: 'project',
-      targetId: project.id,
-    },
-  });
-  const grants = await database.authGrant.find({
-    where: { target: { [database.Op.IN]: targets.map((t) => t.id) } },
-  });
-  for (const grant of grants) {
-    await database.authGrant.update(
-      {
-        grantee: grant.grantee,
-        roles: [],
-        target: grant.target,
+    // References to projectVersion in categoryRef aren't being
+    // used anymore, so, remove this if data even gets cleaned up
+    await database.categoryRef.destroy({
+      where: {
+        objectType: 'projectVersion',
+        objectID: currentLatestVersion.id,
       },
-      authGrantRevoker
-    );
+    });
+  } else {
+    const linkedToFlows = await database.flowObject.find({
+      where: {
+        objectType: 'project',
+        objectID: project.id,
+      },
+    });
+    const totalLinkedFlows = linkedToFlows.length;
+
+    if (totalLinkedFlows) {
+      throw new PreconditionFailedError(
+        `Cannot delete project because it is linked to flows with ID: ${linkedToFlows
+          .map((f) => f.flowID)
+          .slice(0, 10)
+          .join(', ')}.${
+          totalLinkedFlows > 10
+            ? ` There are ${
+                totalLinkedFlows - 10
+              } more flows, we're just showing the first 10`
+            : ''
+        }`
+      );
+    }
+
+    const clonedProjects = await database.project.find({
+      where: { sourceProjectId: project.id },
+    });
+
+    // Unlink all cloned projects
+    await database.project.update({
+      values: { sourceProjectId: null },
+      where: {
+        id: { [database.Op.IN]: clonedProjects.map((p) => p.id) },
+      },
+    });
+
+    await database.project.destroy({
+      where: { id: project.id },
+    });
+
+    // Delete weak references
+    await database.expiredData.destroy({
+      where: { objectType: 'project', objectId: project.id },
+    });
+
+    // Unfortunately, due to DB constraints, we must keep auth
+    // targets pointing to projects which no longer exist
+    // Thus, we only remove the entry from `authGrants` table
+    const targets = await database.authTarget.find({
+      where: {
+        type: 'project',
+        targetId: project.id,
+      },
+    });
+    const grants = await database.authGrant.find({
+      where: { target: { [database.Op.IN]: targets.map((t) => t.id) } },
+    });
+    for (const grant of grants) {
+      await database.authGrant.update(
+        {
+          grantee: grant.grantee,
+          roles: [],
+          target: grant.target,
+        },
+        authGrantRevoker
+      );
+    }
   }
 };
