@@ -67,6 +67,7 @@ export const ATTACHMENT_PROTOTYPE_VALUE = t.intersection([
      */
     max: t.union([t.number, t.string]),
     metrics: FIELDS,
+    calculationMethod: t.array(t.string),
   }),
 ]);
 

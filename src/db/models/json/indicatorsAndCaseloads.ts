@@ -22,7 +22,7 @@ const METRIC_WITH_VALUE = t.intersection([
      * measurements incorrectly have string types. We should update all of these
      * to be numbers when specified.
      */
-    value: t.union([t.number, t.null, t.literal('')]),
+    value: t.union([t.number, t.null, t.string]),
   }),
 ]);
 
@@ -143,6 +143,7 @@ export const CASELOAD_VALUE = t.intersection([
   }),
   t.partial({
     description: t.string,
+    name: t.string,
   }),
 ]);
 
@@ -182,18 +183,29 @@ export const INDICATOR_VALUE = t.intersection([
           }),
         ]),
         measureFields: t.array(METRIC_DEFINITION),
+        calculationMethod: t.string,
       }),
     ]),
   }),
   t.partial({
     description: t.string,
+    name: t.string,
   }),
 ]);
 
 export type IndicatorValue = t.TypeOf<typeof INDICATOR_VALUE>;
 
 /**
- * measurement values have the same types as their respective caseload
+ * Measurement values have the same types as their respective caseload
  * or indicator attachments
  */
-export const MEASUREMENT_VALUE = t.union([INDICATOR_VALUE, CASELOAD_VALUE]);
+export const MEASUREMENT_VALUE = t.union([
+  t.intersection([
+    INDICATOR_VALUE,
+    t.type({ attachmentType: t.literal('indicator') }),
+  ]),
+  t.intersection([
+    CASELOAD_VALUE,
+    t.type({ attachmentType: t.literal('caseLoad') }),
+  ]),
+]);
