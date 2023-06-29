@@ -37,7 +37,7 @@ export const createGroupableAsyncFunction = <
     try {
       const result = await opts.run(cs.map((req) => req.args));
       if (result.length !== cs.length) {
-        throw new Error(`Received unexpected number of results`);
+        throw new Error('Received unexpected number of results');
       }
       for (let i = 0; i < cs.length; i++) {
         cs[i].resolve(result[i]);

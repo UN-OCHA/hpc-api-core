@@ -291,7 +291,7 @@ export const getRoleGrantsForUsers = async ({
   for (const grant of grants) {
     const grantee = granteesById.get(grant.grantee);
     if (!grantee) {
-      throw new Error(`Unexpected missing grantee`);
+      throw new Error('Unexpected missing grantee');
     }
 
     const target = targetsById.get(grant.target);

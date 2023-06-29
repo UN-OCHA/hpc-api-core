@@ -184,7 +184,7 @@ export const defineRawModel =
     const findOne: FindOneFn<F> = async (opts) => {
       const res = await find(opts);
       if (res.length > 1) {
-        throw new Error(`More than 1 result returned`);
+        throw new Error('More than 1 result returned');
       } else if (res.length === 1) {
         return res[0];
       } else {
