@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.16.2",
-    "@unocha/hpc-repo-tools": "^2.0.0",
+    "@unocha/hpc-repo-tools": "^2.1.1",
     "eslint": "8.39.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
