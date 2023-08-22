@@ -10,7 +10,7 @@ import { Op } from '../../db/util/conditions';
 import { GlobalClusterId } from '../../db/models/globalCluster';
 import { createBrandedValue } from '../../util/types';
 import { SharedLogContext } from '../logging';
-import { isEqual } from 'lodash';
+import isEqual = require('lodash/isEqual');
 
 /**
  * The `name` value used across all budget segments that are segmented by
