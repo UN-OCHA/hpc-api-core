@@ -272,3 +272,10 @@ export const getRequiredDataByValue = <K, V, E>(
   }
   return val;
 };
+
+export const cleanNumberVal = (value: number | string | null): number | null =>
+  typeof value === 'number'
+    ? value
+    : typeof value === 'string' && value !== ''
+    ? parseFloat(value.trim().replace(/,/g, ''))
+    : null;
