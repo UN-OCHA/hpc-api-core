@@ -21,6 +21,7 @@ export const EXTERNAL_DATA_SYSTEM_ID = t.keyof({
   IATI: null,
   OCT: null,
   'OCT-CERF': null,
+  'OCT-CBPF': null,
 });
 
 export const EXTERNAL_DATA_OBJECT_TYPE = t.keyof({
