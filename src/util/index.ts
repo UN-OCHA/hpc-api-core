@@ -279,3 +279,22 @@ export const cleanNumberVal = (value: number | string | null): number | null =>
     : typeof value === 'string' && value !== ''
     ? parseFloat(value.trim().replace(/,/g, ''))
     : null;
+
+export const toCamelCase = (originalString: string) => {
+  let isNextLetterUppercase = false;
+  let convertedString = '';
+
+  for (const char of originalString) {
+    if (char === ' ') {
+      isNextLetterUppercase = true;
+      continue;
+    }
+
+    convertedString += isNextLetterUppercase
+      ? char.toUpperCase()
+      : char.toLowerCase();
+    isNextLetterUppercase = false;
+  }
+
+  return convertedString;
+};
