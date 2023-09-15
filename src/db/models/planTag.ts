@@ -3,7 +3,7 @@ import * as t from 'io-ts';
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { defineIDModel } from '../util/id-model';
-import { PLAN_ID } from './plan';
+import { PLAN_ID, PLAN_REVISION_STATE } from './plan';
 
 export type PlanTagId = Brand<
   number,
@@ -17,13 +17,6 @@ const PLAN_TAG_PUBLISH_TYPE = t.keyof({
   major: null,
   minor: null,
   custom: null,
-});
-
-export const PLAN_TAG_REVISION_STATE = t.keyof({
-  none: null,
-  planDataAndProjects: null,
-  planDataOnly: null,
-  projectsOnly: null,
 });
 
 export default defineIDModel({
@@ -42,7 +35,7 @@ export default defineIDModel({
     },
     optional: {
       comment: { kind: 'checked', type: t.string },
-      revisionState: { kind: 'checked', type: PLAN_TAG_REVISION_STATE },
+      revisionState: { kind: 'checked', type: PLAN_REVISION_STATE },
       type: { kind: 'checked', type: PLAN_TAG_PUBLISH_TYPE },
     },
   },

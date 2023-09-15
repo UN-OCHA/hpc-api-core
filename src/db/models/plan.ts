@@ -8,11 +8,11 @@ export type PlanId = Brand<number, { readonly s: unique symbol }, 'plan.id'>;
 
 export const PLAN_ID = brandedType<number, PlanId>(t.number);
 
-const PLAN_REVISION_STATE = t.keyof({
-  projectsOnly: null,
+export const PLAN_REVISION_STATE = t.keyof({
   none: null,
   planDataAndProjects: null,
   planDataOnly: null,
+  projectsOnly: null,
 });
 
 export default defineIDModel({
