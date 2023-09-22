@@ -26,6 +26,10 @@ type IdOf<
       [K in IDField]: Field;
     }
     ? FieldTypeOf<F['generated'][IDField]>
+    : F['generatedCompositeKey'] extends {
+        [K in IDField]: Field;
+      }
+    ? FieldTypeOf<F['generatedCompositeKey'][IDField]>
     : never
   : never;
 
@@ -35,7 +39,7 @@ type IdOf<
  */
 export interface ModelWithId<
   F extends FieldDefinition,
-  IDField extends null | keyof F['generated']
+  IDField extends null | keyof F['generated'] | keyof F['generatedCompositeKey']
 > extends Model<F, AdditionalFindArgsForSequelizeTables> {
   readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
   readonly getAll: (
@@ -48,7 +52,7 @@ export interface ModelWithId<
  */
 export type ModelWithIdInitializer<
   F extends FieldDefinition,
-  IDField extends null | keyof F['generated']
+  IDField extends null | keyof F['generated'] | keyof F['generatedCompositeKey']
 > = (conn: Knex) => ModelWithId<F, IDField>;
 
 const hasField = <F extends string>(
