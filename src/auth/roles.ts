@@ -330,6 +330,7 @@ export const calculatePermissionsFromRolesGrant = async <
         geSet.add(P.governingEntity.EDIT_DATA);
         geSet.add(P.governingEntity.EDIT_PROJECTS);
         geSet.add(P.governingEntity.PROJECT_WORKFLOW_MOVE_IF_PLAN_UNLOCKED);
+        geSet.add(P.governingEntity.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
         planSet.add(P.plan.VIEW_DATA);
       }
     }

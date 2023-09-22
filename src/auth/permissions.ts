@@ -203,6 +203,11 @@ export const AUTH_PERMISSIONS = {
      * Can move projects associated with this cluster to any step of the workflow.
      */
     PROJECT_WORKFLOW_MOVE_IF_PLAN_UNLOCKED: 'projectWorkflowMoveIfPlanUnlocked',
+    /**
+     * Can edit access and permissions of all projects for a given governing entity.
+     */
+    MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
+      'canModifyAccessAndPermissionsOfProjects',
   },
 } as const;
 
