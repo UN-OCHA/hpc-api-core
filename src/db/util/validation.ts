@@ -140,7 +140,10 @@ export const dataValidator = <F extends FieldDefinition>(
   };
 
   const instanceValidator = t.intersection([
-    fieldSetValidator(fields.generated || {}, false),
+    t.intersection([
+      fieldSetValidator(fields.generated || {}, false),
+      fieldSetValidator(fields.generatedCompositeKey || {}, false),
+    ]),
     fieldSetValidator(fields.nonNullWithDefault || {}, false),
     fieldSetValidator(fields.required || {}, false),
     fieldSetValidator(fields.optional || {}, true),
