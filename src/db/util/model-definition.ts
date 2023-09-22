@@ -52,6 +52,12 @@ export type FieldDefinition = {
    * such ids that use autoIncrement.
    */
   generated?: FieldSet;
+  /**
+   * Same as `generated`, but indicates that auto-incremented ID is used as
+   * part of a composite primary key on the table, thus we need to make it
+   * possible for client code to specify these IDs when inserting new rows.
+   */
+  generatedCompositeKey?: FieldSet;
   nonNullWithDefault?: FieldSet;
   optional?: FieldSet;
   accidentallyOptional?: FieldSet;
@@ -68,14 +74,16 @@ export type FieldValuesOfSet<Set extends FieldSet | undefined> =
 export type InstanceDataOf<F extends FieldDefinition> = FieldValuesOfSet<
   F['generated']
 > &
+  FieldValuesOfSet<F['generatedCompositeKey']> &
   FieldValuesOfSet<F['nonNullWithDefault']> &
   FieldValuesOfSet<F['required']> &
   Nullable<FieldValuesOfSet<F['optional']>> &
   Nullable<FieldValuesOfSet<F['accidentallyOptional']>>;
 
 export type UserDataOf<F extends FieldDefinition> = Partial<
-  FieldValuesOfSet<F['nonNullWithDefault']>
+  FieldValuesOfSet<F['generatedCompositeKey']>
 > &
+  Partial<FieldValuesOfSet<F['nonNullWithDefault']>> &
   FieldValuesOfSet<F['required']> &
   FieldValuesOfSet<F['accidentallyOptional']> &
   Partial<Nullable<FieldValuesOfSet<F['optional']>>>;

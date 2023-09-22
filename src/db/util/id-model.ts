@@ -68,7 +68,8 @@ export type { FieldsWithSequelize as FieldsWithId };
 export const defineIDModel =
   <
     F extends FieldDefinition,
-    IDField extends string & keyof F['generated'],
+    IDField extends string &
+      (keyof F['generated'] | keyof F['generatedCompositeKey']),
     SoftDeletionEnabled extends boolean
   >(opts: {
     tableName: string;

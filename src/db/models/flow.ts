@@ -12,7 +12,7 @@ export const FLOW_ID = brandedType<number, FlowId>(t.number);
 export default defineIDModel({
   tableName: 'flow',
   fields: {
-    generated: {
+    generatedCompositeKey: {
       id: { kind: 'branded-integer', brand: FLOW_ID },
     },
     required: {
