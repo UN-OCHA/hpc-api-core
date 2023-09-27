@@ -90,6 +90,10 @@ export const AUTH_PERMISSIONS = {
      */
     CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS:
       'canChangeAnyPlanVisiblityInProjects',
+    /**
+     * Can edit measurements of any plan
+     */
+    EDIT_ANY_MEASUREMENT: 'canEditAnyMeasurement',
   },
   operation: {
     /**
@@ -175,6 +179,10 @@ export const AUTH_PERMISSIONS = {
      * Can make plan visible to projects, in Projects Module
      */
     MAKE_VISIBLE_IN_PROJECTS: 'canMakeVisibleInProjects',
+    /**
+     * Can edit measurements under this plan
+     */
+    EDIT_MEASUREMENTS: 'canEditMeasurements',
   },
   project: {
     MODIFY_ACCESS_AND_PERMISSIONS: 'canModifyAccessAndPermissions',
@@ -208,6 +216,10 @@ export const AUTH_PERMISSIONS = {
      */
     MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS:
       'canModifyAccessAndPermissionsOfProjects',
+    /**
+     * Can edit measurements with the governing entity
+     */
+    EDIT_MEASUREMENTS: 'canEditMeasurements',
   },
 } as const;
 
