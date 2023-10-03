@@ -8,6 +8,8 @@ import {
 } from '../../db/models/attachmentPrototype';
 import { GoverningEntityId } from '../../db/models/governingEntity';
 import { ATTACHMENT_VERSION_VALUE } from '../../db/models/json/attachment';
+import type { CaseloadOrIndicatorMetricsValues } from '../../db/models/json/indicatorsAndCaseloads';
+import { LOCATION_ID } from '../../db/models/location';
 import { PlanId } from '../../db/models/plan';
 import { PlanEntityId } from '../../db/models/planEntity';
 import { Database } from '../../db/type';
@@ -15,16 +17,20 @@ import { Op } from '../../db/util/conditions';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
   AnnotatedMap,
+  cleanNumberVal,
   getRequiredData,
   getRequiredDataByValue,
+  toCamelCase,
 } from '../../util';
-import { ioTsErrorFormatter } from '../../util/io-ts';
+import { EMPTY_TUPLE, ioTsErrorFormatter } from '../../util/io-ts';
+import { createBrandedValue } from '../../util/types';
 import { SharedLogContext } from '../logging';
 import { MapOfGoverningEntities } from './governingEntities';
 import {
   calculateReflectiveTransitiveEntitySupport,
   ValidatedPlanEntities,
 } from './planEntities';
+import isEqual = require('lodash/isEqual');
 
 const ATTACHMENT_DATA = t.union([
   t.type({
@@ -349,4 +355,270 @@ export const composeCustomReferenceForAttachment = ({
   }
   customReference += `${prototype.refCode}${attachmentVersion.customReference}`;
   return customReference;
+};
+
+const disaggregationData = <T extends t.Mixed>(additionalFields: T) =>
+  t.array(
+    t.type({
+      locationId: t.union([LOCATION_ID, t.null]),
+      categoryLabel: t.string,
+      categoryName: t.string,
+      dataMatrix: t.array(
+        t.intersection([
+          t.type({
+            metricType: t.string,
+            value: t.union([t.number, t.null]),
+          }),
+          additionalFields,
+        ])
+      ),
+    })
+  );
+
+export const DISAGGREGATION_DATA = disaggregationData(t.type({}));
+type DisaggregationData = t.TypeOf<typeof DISAGGREGATION_DATA>;
+
+const EXTENDED_DISAGGREGATION_DATA = disaggregationData(
+  t.type({
+    lIndex: t.number,
+    cIndex: t.number,
+  })
+);
+type ExtendedDisaggregationData = t.TypeOf<typeof EXTENDED_DISAGGREGATION_DATA>;
+
+const DISAGGREGATION_MATRIX = t.array(
+  t.array(t.union([EMPTY_TUPLE, t.tuple([t.number])]))
+);
+type DisaggregationMatrix = t.TypeOf<typeof DISAGGREGATION_MATRIX>;
+
+/**
+ * Utility method that gets disaggregation data of an
+ * attachment or measurement. This method is not meant
+ * to be used directly, but through one of wrapper
+ * methods that transforms its output.
+ */
+const getDisaggregations = ({
+  metricsValue,
+  totalsOnly,
+  specificMetricTypes,
+  log,
+}: {
+  metricsValue: CaseloadOrIndicatorMetricsValues;
+  totalsOnly: boolean;
+  specificMetricTypes?: string[];
+  log: SharedLogContext;
+}) => {
+  const disaggregated = metricsValue.disaggregated;
+
+  if (!disaggregated) {
+    return null;
+  }
+
+  const disaggregatedCategories = disaggregated.categories;
+  const disaggregatedLocations = disaggregated.locations;
+
+  const disaggregationData: ExtendedDisaggregationData = [];
+
+  const locations = disaggregatedLocations.map((l) => {
+    if (typeof l.id === 'number') {
+      return l.id;
+    }
+    return null;
+  });
+  const categories = disaggregatedCategories.map((c) => ({
+    name: c.name,
+    label: c.label,
+    ids: c.ids,
+  }));
+  categories.push({
+    name: 'Total',
+    label: 'total',
+    ids: [],
+  });
+
+  const allMetrics = (
+    disaggregatedCategories.length > 0
+      ? disaggregatedCategories[0].metrics
+      : metricsValue.totals
+  ).map((m) => ({
+    type: m.type,
+    name: m.name,
+  }));
+  const metrics = allMetrics
+    .map((m, i) => ({
+      type: m.type,
+      name: m.name.en,
+      offset: i,
+    }))
+    .filter((m) =>
+      specificMetricTypes ? specificMetricTypes.includes(m.type) : true
+    );
+
+  // Confirm all categories have the same metrics (in the same order)
+  for (const category of disaggregatedCategories) {
+    if (!isEqual(category.metrics, allMetrics)) {
+      log.info(
+        'Differing metrics, ' +
+          `expected: ${JSON.stringify(allMetrics)} ` +
+          `actual: ${JSON.stringify(category.metrics)}`
+      );
+      throw new Error('Categories with different metrics are not supported');
+    }
+  }
+
+  // Confirm expected number of rows
+  if (disaggregated.dataMatrix.length !== locations.length + 1) {
+    throw new Error('Unexpected number of datamatrix rows');
+  }
+
+  for (let lIndex = 0; lIndex < locations.length; lIndex++) {
+    const dmRow = disaggregated.dataMatrix[lIndex + 1];
+    if (dmRow.length !== categories.length * allMetrics.length) {
+      throw new Error('Unexpected number of datamatrix columns');
+    }
+
+    for (
+      // If `totalsOnly` is true, fetch only the disaggregated data for the category "Total"
+      let cIndex = totalsOnly ? categories.length - 1 : 0;
+      cIndex < categories.length;
+      cIndex++
+    ) {
+      const dataMatrix: ExtendedDisaggregationData[number]['dataMatrix'] = [];
+
+      for (let mIndex = 0; mIndex < metrics.length; mIndex++) {
+        const dmCell =
+          dmRow[cIndex * allMetrics.length + metrics[mIndex].offset];
+
+        const value = cleanNumberVal(dmCell);
+
+        dataMatrix.push({
+          metricType: !specificMetricTypes?.length
+            ? metrics[mIndex].type
+            : toCamelCase(metrics[mIndex].name),
+          lIndex,
+          cIndex,
+          value: value !== null && !Number.isNaN(value) ? value : null,
+        });
+      }
+
+      if (dataMatrix.length) {
+        disaggregationData.push({
+          locationId: createBrandedValue(locations[lIndex]),
+          categoryLabel: categories[cIndex].label,
+          categoryName: categories[cIndex].name,
+          dataMatrix,
+        });
+      }
+    }
+  }
+
+  return {
+    locations,
+    categories,
+    disaggregationData,
+  };
+};
+
+/**
+ * Get disaggregation data of an attachment or measurement. The data is
+ * returned as an array of objects, where each object represents a
+ * location-category pair and has an array of data per each metric.
+ */
+export const getDisaggregationObjects = ({
+  metricsValue,
+  totalsOnly,
+  specificMetricTypes,
+  log,
+}: {
+  metricsValue: CaseloadOrIndicatorMetricsValues;
+  /**
+   * Only fetch the disaggregated data of the category "Total"
+   */
+  totalsOnly: boolean;
+  /**
+   * Only fetch metrics of these types
+   */
+  specificMetricTypes?: string[];
+  log: SharedLogContext;
+}): DisaggregationData | null => {
+  const disaggregations = getDisaggregations({
+    metricsValue,
+    totalsOnly,
+    specificMetricTypes,
+    log,
+  });
+
+  if (!disaggregations) {
+    return null;
+  }
+
+  const result: DisaggregationData = [];
+
+  for (const disaggregation of disaggregations.disaggregationData) {
+    const dataMatrix = disaggregation.dataMatrix
+      /**
+       * Skip values of `null`, empty string and number zero
+       */
+      .filter((dm) => dm.value)
+      .map((dm) => ({
+        metricType: dm.metricType,
+        value: dm.value,
+      }));
+
+    if (!dataMatrix.length) {
+      continue;
+    }
+
+    result.push({
+      ...disaggregation,
+      dataMatrix,
+    });
+  }
+
+  return result;
+};
+
+/**
+ * Get attachment disaggregation targets in matrix format
+ */
+export const getDisaggregationMatrix = ({
+  metricsValue,
+  log,
+}: {
+  metricsValue: CaseloadOrIndicatorMetricsValues;
+  log: SharedLogContext;
+}) => {
+  const disaggregations = getDisaggregations({
+    metricsValue,
+    totalsOnly: false,
+    specificMetricTypes: ['target'],
+    log,
+  });
+
+  if (!disaggregations) {
+    return null;
+  }
+
+  const { categories, locations, disaggregationData } = disaggregations;
+
+  const matrix: DisaggregationMatrix = locations.map(() => []);
+
+  for (const { dataMatrix } of disaggregationData) {
+    for (const { lIndex, cIndex, value } of dataMatrix) {
+      if (value !== null) {
+        matrix[lIndex][cIndex] = [value];
+      } else {
+        matrix[lIndex][cIndex] = [];
+      }
+    }
+  }
+
+  return {
+    locations: locations.map(createBrandedValue),
+    categories: categories.map((c) => ({
+      ids: c.ids,
+      label: c.name,
+    })),
+    data: matrix,
+  };
 };
