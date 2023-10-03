@@ -177,6 +177,7 @@ export const calculatePermissionsFromRolesGrant = async <
         // New Permissions
         global.add(P.global.VIEW_ANY_PLAN_DATA);
         global.add(P.global.EDIT_ANY_PLAN_DATA);
+        global.add(P.global.EDIT_ANY_MEASUREMENT);
         global.add(P.global.CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS);
       } else if (role === 'ftsAdmin') {
         // New Permissions
@@ -274,6 +275,7 @@ export const calculatePermissionsFromRolesGrant = async <
         planSet.add(P.plan.PROJECT_WORKFLOW_MOVE_TO_ANY_STEP);
         planSet.add(P.plan.VIEW_DATA);
         planSet.add(P.plan.EDIT_DATA);
+        planSet.add(P.plan.EDIT_MEASUREMENTS);
         planSet.add(P.plan.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
         planSet.add(P.plan.EDIT_PROJECTS);
         planSet.add(P.plan.DELETE_PROJECTS);
@@ -329,6 +331,7 @@ export const calculatePermissionsFromRolesGrant = async <
       if (role === 'clusterLead') {
         geSet.add(P.governingEntity.EDIT_DATA);
         geSet.add(P.governingEntity.EDIT_PROJECTS);
+        geSet.add(P.governingEntity.EDIT_MEASUREMENTS);
         geSet.add(P.governingEntity.PROJECT_WORKFLOW_MOVE_IF_PLAN_UNLOCKED);
         geSet.add(P.governingEntity.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
         planSet.add(P.plan.VIEW_DATA);
