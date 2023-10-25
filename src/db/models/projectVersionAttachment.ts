@@ -1,9 +1,9 @@
 import * as t from 'io-ts';
 
 import { defineSequelizeModel } from '../util/sequelize-model';
-import { PROJECT_VERSION_ID } from './projectVersion';
 import { ATTACHMENT_ID } from './attachment';
 import { ATTACHMENT_VERSION_ID } from './attachmentVersion';
+import { PROJECT_VERSION_ID } from './projectVersion';
 
 export const PROJECT_VERSION_ATTACHMENT_VALUE = t.type({
   targets: t.union([

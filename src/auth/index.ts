@@ -2,18 +2,19 @@
  * This file is a new (type-safe) interface for common authentication functions
  * ahead of the auth refactor outlined in HPC-6999
  */
+import * as crypto from 'crypto';
+import { promisify } from 'util';
 import v4Models from '../db';
 import { AuthTargetId } from '../db/models/authTarget';
 import { ParticipantId } from '../db/models/participant';
-import { InstanceOfModel } from '../db/util/types';
-import { createBrandedValue } from '../util/types';
-import * as crypto from 'crypto';
-import { promisify } from 'util';
 import type { Database } from '../db/type';
+import { Op } from '../db/util/conditions';
 import { createDeferredFetcher } from '../db/util/deferred';
-import { organizeObjectsByUniqueProperty } from '../util';
+import { InstanceOfModel } from '../db/util/types';
 import { Context } from '../lib/context';
 import { SharedLogContext } from '../lib/logging';
+import { organizeObjectsByUniqueProperty } from '../util';
+import { createBrandedValue } from '../util/types';
 import * as hid from './hid';
 import {
   AUTH_PERMISSIONS,
@@ -27,7 +28,6 @@ import {
   filterValidRoleStrings,
   RolesGrant,
 } from './roles';
-import { Op } from '../db/util/conditions';
 
 const randomBytes = promisify(crypto.randomBytes);
 

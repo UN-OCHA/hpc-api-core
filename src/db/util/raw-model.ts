@@ -7,8 +7,8 @@ import { Condition, prepareCondition } from './conditions';
 
 import {
   FieldDefinition,
-  UserDataOf,
   InstanceDataOf,
+  UserDataOf,
 } from './model-definition';
 import { dataValidator } from './validation';
 

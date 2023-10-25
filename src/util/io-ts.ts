@@ -1,5 +1,5 @@
-import * as t from 'io-ts';
 import { isRight, left, Left } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 
 import { Brand } from './types';
 

@@ -3,12 +3,12 @@ import * as t from 'io-ts';
 import type { Brand } from '../../util/types';
 import { defineVersionedModel } from '../util/versioned-model';
 
-import { OperationId, OPERATION_ID } from './operation';
+import { brandedType } from '../../util/io-ts';
 import { FILE_REFERENCE } from '../util/datatypes';
+import { FORM_ID } from './form';
+import { OPERATION_ID, OperationId } from './operation';
 import operationCluster, { OPERATION_CLUSTER_ID } from './operationCluster';
 import { REPORTING_WINDOW_ID } from './reportingWindow';
-import { FORM_ID } from './form';
-import { brandedType } from '../../util/io-ts';
 
 export type ReportingWindowAssignmentId = Brand<
   number,

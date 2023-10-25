@@ -8,13 +8,13 @@ import * as t from 'io-ts';
 
 import { Brand } from '../../util/types';
 
-import { ConcurrentModificationError } from './errors';
-import { defineSequelizeModel } from './sequelize-model';
-import { ParticipantId, PARTICIPANT_ID } from '../models/participant';
-import { FieldDefinition, UserDataOf } from './model-definition';
-import { defineIDModel } from './id-model';
-import { InstanceDataOfModel, ModelInternals, WhereCond } from './raw-model';
+import { PARTICIPANT_ID, ParticipantId } from '../models/participant';
 import { Op } from './conditions';
+import { ConcurrentModificationError } from './errors';
+import { defineIDModel } from './id-model';
+import { FieldDefinition, UserDataOf } from './model-definition';
+import { InstanceDataOfModel, ModelInternals, WhereCond } from './raw-model';
+import { defineSequelizeModel } from './sequelize-model';
 
 type LookupColumnDefinition = Pick<FieldDefinition, 'optional' | 'required'>;
 

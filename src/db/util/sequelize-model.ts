@@ -4,18 +4,18 @@
  */
 import merge = require('lodash/merge');
 
+import { Cond, Op } from './conditions';
 import { DATE } from './datatypes';
+import { FieldDefinition } from './model-definition';
 import {
-  defineRawModel,
-  ModelInitializer,
   CreateFn,
   CreateManyFn,
-  UpdateFn,
   FindFn,
   FindOneFn,
+  ModelInitializer,
+  UpdateFn,
+  defineRawModel,
 } from './raw-model';
-import { FieldDefinition } from './model-definition';
-import { Cond, Op } from './conditions';
 
 type DeletedAtField<SoftDeletionEnabled extends boolean> =
   SoftDeletionEnabled extends true

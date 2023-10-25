@@ -3,7 +3,7 @@ import type { DeferredFetcherForModel } from '../db/util/deferred';
 import { SharedLogContext } from '../lib/logging';
 import { getOrCreate } from '../util';
 import { createBrandedValue } from '../util/types';
-import { AUTH_PERMISSIONS as P, GrantedPermissions } from './permissions';
+import { GrantedPermissions, AUTH_PERMISSIONS as P } from './permissions';
 
 /**
  * A breakdown of the different types of roles are available

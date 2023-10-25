@@ -1,10 +1,10 @@
+import * as t from 'io-ts';
 import * as fetch from 'node-fetch';
 import { URL } from 'url';
-import * as t from 'io-ts';
 
-import { HashTableCache } from './cache';
 import { Context } from '../lib/context';
 import { ForbiddenError } from '../util/error';
+import { HashTableCache } from './cache';
 
 const HID_ACCOUNT_INFO = t.type({
   sub: t.string,

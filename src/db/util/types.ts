@@ -2,9 +2,9 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import { Model } from './raw-model';
-import { InstanceDataOf, UserDataOf } from './model-definition';
 import { ModelWithId } from './id-model';
+import { InstanceDataOf, UserDataOf } from './model-definition';
+import { Model } from './raw-model';
 
 export type AnyModel = Model<any> | ModelWithId<any, any>;
 

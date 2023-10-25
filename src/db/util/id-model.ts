@@ -1,18 +1,18 @@
 import Knex = require('knex');
 
-import { Model } from './raw-model';
+import { Op } from './conditions';
 import {
   Field,
-  FieldTypeOf,
   FieldDefinition,
+  FieldTypeOf,
   InstanceDataOf,
 } from './model-definition';
+import { Model } from './raw-model';
 import {
   AdditionalFindArgsForSequelizeTables,
-  defineSequelizeModel,
   FieldsWithSequelize,
+  defineSequelizeModel,
 } from './sequelize-model';
-import { Op } from './conditions';
 
 /**
  * Given a definition of fields, and the name of an ID prop,

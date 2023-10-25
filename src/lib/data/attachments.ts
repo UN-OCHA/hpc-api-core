@@ -27,8 +27,8 @@ import { createBrandedValue } from '../../util/types';
 import { SharedLogContext } from '../logging';
 import { MapOfGoverningEntities } from './governingEntities';
 import {
-  calculateReflectiveTransitiveEntitySupport,
   ValidatedPlanEntities,
+  calculateReflectiveTransitiveEntitySupport,
 } from './planEntities';
 import isEqual = require('lodash/isEqual');
 

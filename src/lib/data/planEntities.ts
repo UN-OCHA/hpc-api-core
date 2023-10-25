@@ -7,11 +7,11 @@ import { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
 import { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
-  isDefined,
-  annotatedMap,
   AnnotatedMap,
+  annotatedMap,
   getRequiredData,
   getRequiredDataByValue,
+  isDefined,
 } from '../../util';
 import { MapOfGoverningEntities } from './governingEntities';
 

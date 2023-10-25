@@ -96,7 +96,7 @@ import unitType from './models/unitType';
 import usageYear from './models/usageYear';
 import workflowStatusOption from './models/workflowStatusOption';
 import workflowStatusOptionStep from './models/workflowStatusOptionStep';
-import { Op, Cond } from './util/conditions';
+import { Cond, Op } from './util/conditions';
 
 /**
  * Utilities that are frequently used, and should also be included as part of
