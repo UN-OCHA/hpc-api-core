@@ -26,7 +26,7 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@types/node": "^18.16.19",
+    "@types/node": "^20.8.10",
     "@unocha/hpc-repo-tools": "^3.0.1",
     "eslint": "^8.44.0",
     "husky": "^8.0.3",
