@@ -182,7 +182,7 @@ export const getLoggedInParticipant = async (
  * currently logged in user.
  */
 export const actionIsPermitted = async <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   condition: RequiredPermissionsCondition<AdditionalGlobalPermissions>,
   context: Context
@@ -331,7 +331,7 @@ export const getRoleGrantsForUser = async ({
  * Calculate the complete set of permissions for the logged in participant
  */
 export const calculatePermissions = async <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   context: Context
 ): Promise<GrantedPermissions<AdditionalGlobalPermissions>> => {
@@ -353,7 +353,7 @@ export const calculatePermissions = async <
 };
 
 export const getAllowedPermissionsFromGrants = async <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   participantId: ParticipantId,
   context: Context,
@@ -377,7 +377,7 @@ export const getAllowedPermissionsFromGrants = async <
 };
 
 export const mergePermissionsFromGrants = <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   allowedFromGrants: GrantedPermissions<AdditionalGlobalPermissions>[]
 ): GrantedPermissions<AdditionalGlobalPermissions> => {
@@ -387,7 +387,7 @@ export const mergePermissionsFromGrants = <
     Type extends keyof Omit<
       GrantedPermissions<AdditionalGlobalPermissions>,
       'global'
-    >
+    >,
   >(
     type: Type,
     additions: Map<number, Set<PermissionStrings<Type>>>
@@ -422,7 +422,7 @@ export const mergePermissionsFromGrants = <
     }
     for (const [key, obj] of Object.entries(granted) as [
       keyof typeof granted,
-      any
+      any,
     ][]) {
       if (key !== 'global') {
         mergeAllowedPermissions(key, obj);

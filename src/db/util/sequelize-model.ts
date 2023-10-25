@@ -46,7 +46,7 @@ type SequelizeFields = typeof SEQUELIZE_FIELDS;
 
 export type FieldsWithSequelize<
   F extends FieldDefinition,
-  SoftDeletionEnabled extends boolean
+  SoftDeletionEnabled extends boolean,
 > = F & SequelizeFields & DeletedAtField<SoftDeletionEnabled>;
 
 const genDeletedAtField = <P extends boolean>(

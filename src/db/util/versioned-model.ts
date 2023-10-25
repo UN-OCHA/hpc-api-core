@@ -41,7 +41,7 @@ type VersionedInstanceWithAllData<IDType, Data> = {
 
 type RootColumnDefinition<
   IDType,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = LookupColumns & {
   generated: {
     id: {
@@ -54,7 +54,7 @@ type RootColumnDefinition<
 export type VersionedModel<
   IDType,
   Data,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = {
   _internals: {
     type: 'versioned-model';
@@ -105,7 +105,7 @@ export type VersionedModel<
 type VersionedModelInitializer<
   IDType,
   Data,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = (conn: Knex) => VersionedModel<IDType, Data, LookupColumns>;
 
 export type InstanceOfVersionedModel<M extends VersionedModel<any, any, any>> =
@@ -124,7 +124,7 @@ export const defineVersionedModel =
   <
     IDType extends Brand<any, any, any>,
     Data,
-    LookupColumns extends LookupColumnDefinition
+    LookupColumns extends LookupColumnDefinition,
   >(opts: {
     tableBaseName: string;
     idType: t.Type<IDType>;

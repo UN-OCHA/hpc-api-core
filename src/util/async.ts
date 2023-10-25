@@ -8,7 +8,7 @@
  */
 export const createGroupableAsyncFunction = <
   Args extends readonly any[],
-  Result
+  Result,
 >(opts: {
   /**
    * This function should asynchronously return an array of results where each

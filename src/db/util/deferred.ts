@@ -35,7 +35,7 @@ export type DeferredFetcherForModel<M extends DeferrableModel<any, any>> =
  */
 export const createDeferredFetcher = <
   IDType extends number,
-  Instance extends { id: IDType }
+  Instance extends { id: IDType },
 >(
   model: DeferrableModel<IDType, Instance>
 ): DeferredFetcher<IDType, Instance> => {

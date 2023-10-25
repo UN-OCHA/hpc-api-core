@@ -122,7 +122,7 @@ export async function getAllProjectsForPlan({
 export async function getOrganizationIDsForProjects<
   Data extends {
     projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -160,7 +160,7 @@ export async function getOrganizationIDsForProjects<
 export async function getGoverningEntityIDsForProjects<
   Data extends {
     projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -200,7 +200,7 @@ export async function getGoverningEntityIDsForProjects<
 export const getConditionFieldsForProjects = async <
   Data extends {
     projectVersionPlan: Pick<ProjectData['projectVersionPlan'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -252,7 +252,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       ProjectData['projectVersion'],
       'id' | 'currentRequestedFunds'
     >;
-  }
+  },
 >({
   database,
   projects,

@@ -237,7 +237,7 @@ export const getRequiredData = <
   E extends {
     [key in P]: K;
   },
-  P extends keyof E
+  P extends keyof E,
 >(
   map: AnnotatedMap<K, V>,
   entity: E,

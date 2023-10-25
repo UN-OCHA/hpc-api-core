@@ -25,7 +25,7 @@ type InstanceOf<T extends Table> = T extends Model<any>
  */
 export const findAndOrganizeObjectsByUniqueProperty = <
   T extends Table,
-  P extends keyof InstanceOf<T>
+  P extends keyof InstanceOf<T>,
 >(
   table: T,
   fetch: (tbl: T) => Promise<Iterable<InstanceOf<T>>>,

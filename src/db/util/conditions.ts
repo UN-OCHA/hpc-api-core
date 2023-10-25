@@ -257,7 +257,7 @@ export const prepareCondition =
       // Combine all property conditions in a single
       const propertyConditions = Object.entries(condition) as [
         keyof InstanceData,
-        PropertyConditions.Condition<InstanceData[keyof InstanceData]>
+        PropertyConditions.Condition<InstanceData[keyof InstanceData]>,
       ][];
       for (const [property, propertyCondition] of propertyConditions) {
         if (propertyCondition === undefined) {

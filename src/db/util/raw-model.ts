@@ -103,7 +103,7 @@ export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
  */
 export type ModelInitializer<
   F extends FieldDefinition,
-  AdditionalFindArgs = {}
+  AdditionalFindArgs = {},
 > = (conn: Knex) => Model<F, AdditionalFindArgs>;
 
 export const defineRawModel =

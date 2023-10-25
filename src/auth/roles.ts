@@ -152,7 +152,7 @@ export const getGrantValidator =
  * to implement (such as cluster leads having read access to their operations).
  */
 export const calculatePermissionsFromRolesGrant = async <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   grant: RolesGrant,
   fetchers: {

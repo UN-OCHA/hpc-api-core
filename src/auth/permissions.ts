@@ -283,13 +283,13 @@ export type RequiredPermission<AdditionalGlobalPermissions extends string> =
  * A list of permissions that must all be granted for an access to be permitted
  */
 type RequiredPermissionsConjunctionAnd<
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 > = {
   and: RequiredPermissionsCondition<AdditionalGlobalPermissions>[];
 };
 
 export type RequiredPermissionsConjunction<
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 > =
   | RequiredPermissionsConjunctionAnd<AdditionalGlobalPermissions>
   | RequiredPermission<AdditionalGlobalPermissions>;
@@ -305,13 +305,13 @@ export const isAnd = <AdditionalGlobalPermissions extends string>(
  * Disjunctive Normal Form (https://en.wikipedia.org/wiki/Disjunctive_normal_form)
  */
 export type RequiredPermissionsConditionOr<
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 > = {
   or: RequiredPermissionsCondition<AdditionalGlobalPermissions>[];
 };
 
 export type RequiredPermissionsCondition<
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 > =
   | RequiredPermissionsConditionOr<AdditionalGlobalPermissions>
   | RequiredPermissionsConjunction<AdditionalGlobalPermissions>
@@ -324,7 +324,7 @@ export const isOr = <AdditionalGlobalPermissions extends string>(
   !!(conj as RequiredPermissionsConditionOr<AdditionalGlobalPermissions>).or;
 
 export const hasRequiredPermissions = <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   granted: GrantedPermissions<AdditionalGlobalPermissions>,
   condition: RequiredPermissionsCondition<AdditionalGlobalPermissions>
