@@ -6,4 +6,13 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
+  overrides: [
+    ...baseConfig.overrides,
+    {
+      files: ['*.{ts,tsx}'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'warn',
+      },
+    },
+  ],
 };
