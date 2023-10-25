@@ -167,7 +167,8 @@ export const calculatePermissionsFromRolesGrant = async <
 ): Promise<GrantedPermissions<AdditionalGlobalPermissions>> => {
   const granted: GrantedPermissions<AdditionalGlobalPermissions> = {};
   if (grant.type === 'global') {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     for (const role of grant.roles) {
       if (role === 'hpc_admin') {
         // All new Permissions
@@ -201,7 +202,8 @@ export const calculatePermissionsFromRolesGrant = async <
       }
     }
   } else if (grant.type === 'operation') {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     if (!granted.operation) {
       granted.operation = new Map();
     }
@@ -233,7 +235,8 @@ export const calculatePermissionsFromRolesGrant = async <
       createBrandedValue(grant.id)
     );
     if (cluster) {
-      const global = (granted.global = granted.global || new Set());
+      granted.global ??= new Set();
+      const global = granted.global;
       if (!granted.operation) {
         granted.operation = new Map();
       }
@@ -342,7 +345,8 @@ export const calculatePermissionsFromRolesGrant = async <
 
   // Add additional global permissions
   if (additionalGlobalPermissions) {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     for (const permission of additionalGlobalPermissions) {
       global.add(permission);
     }

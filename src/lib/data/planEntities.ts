@@ -130,7 +130,7 @@ export const getAndValidateAllPlanEntities = async ({
       customRef: refAndType.customRef,
       description: null,
       supports: [],
-      governingEntity: eaByChildId.get(planEntity.id)?.parentId || null,
+      governingEntity: eaByChildId.get(planEntity.id)?.parentId ?? null,
     };
 
     // Use entity details if possible

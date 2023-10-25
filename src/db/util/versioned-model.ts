@@ -210,7 +210,7 @@ export const defineVersionedModel =
       const instance: VersionedInstance<IDType, Data> = {
         id,
         version: version.version,
-        modifiedBy: version.modifiedBy || null,
+        modifiedBy: version.modifiedBy,
         modifiedAt: version.updatedAt,
         data,
         update: (data, modifiedBy) =>
@@ -244,7 +244,7 @@ export const defineVersionedModel =
         const version = await versionModel.create({
           root: root.id,
           version: 1,
-          modifiedBy: modifiedBy || undefined,
+          modifiedBy: modifiedBy ?? undefined,
           isLatest: true,
           data,
         });
@@ -340,7 +340,7 @@ export const defineVersionedModel =
           }
           processedVersions.push({
             version: v.version,
-            modifiedBy: v.modifiedBy || null,
+            modifiedBy: v.modifiedBy,
             modifiedAt: v.updatedAt,
             data: v.data,
           });
@@ -411,7 +411,7 @@ export const defineVersionedModel =
               isLatest: false,
             },
             where: {
-              root: args.id,
+              root: id,
               version: prev.version,
             },
             trx,
@@ -422,7 +422,7 @@ export const defineVersionedModel =
               {
                 root: id,
                 version: prev.version + 1,
-                modifiedBy: modifiedBy || undefined,
+                modifiedBy: modifiedBy ?? undefined,
                 isLatest: true,
                 data: data,
               },
@@ -444,7 +444,7 @@ export const defineVersionedModel =
             values: lookupData as any,
             trx,
             where: {
-              id: args.id,
+              id,
             } as any,
           });
           return createInstance({ root: { id }, data, version });

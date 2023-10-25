@@ -28,7 +28,7 @@ export class HashTableCache<V> {
   public store = (key: string, value: V, cacheTime?: Date): void => {
     this.map.set(sha256(key), {
       value,
-      time: cacheTime || new Date(),
+      time: cacheTime ?? new Date(),
     });
     this.clearExpiredValues();
   };

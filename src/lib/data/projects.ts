@@ -149,7 +149,7 @@ export async function getOrganizationIDsForProjects<
 
   for (const [projectId, projectData] of projects) {
     const projectVersionId = projectData.projectVersion.id;
-    const pvos = groupedPVOs.get(projectVersionId) || [];
+    const pvos = groupedPVOs.get(projectVersionId) ?? [];
     const organizationIds = new Set([...pvos].map((o) => o.organizationId));
     result.set(projectId, organizationIds);
   }
@@ -187,7 +187,7 @@ export async function getGoverningEntityIDsForProjects<
 
   for (const [projectId, projectData] of projects) {
     const projectVersionId = projectData.projectVersion.id;
-    const pvges = groupedPVGEs.get(projectVersionId) || [];
+    const pvges = groupedPVGEs.get(projectVersionId) ?? [];
     const governingEntityIds = new Set(
       [...pvges].map((pvge) => pvge.governingEntityId)
     );
@@ -233,7 +233,7 @@ export const getConditionFieldsForProjects = async <
   for (const [projectId, projectData] of projects) {
     const projectVersionPlanId = projectData.projectVersionPlan.id;
     const conditionFields = groupedConditionFields.get(projectVersionPlanId);
-    result.set(projectId, conditionFields || new Set());
+    result.set(projectId, conditionFields ?? new Set());
   }
 
   return result;
@@ -349,7 +349,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       continue;
     }
 
-    const breakdowns = breakdownsBySegment.get(segment.id) || new Set();
+    const breakdowns = breakdownsBySegment.get(segment.id) ?? new Set();
 
     const projectResult: ProjectBudgetSegmentBreakdown[] = [];
 
@@ -359,9 +359,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       const amountUSD =
         typeof content.amount === 'string'
           ? parseInt(content.amount)
-          : content.amount === null
-          ? 0
-          : content.amount;
+          : content.amount ?? 0;
 
       // Determine all entities associated with the breakdown
 
@@ -369,7 +367,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       let governingEntity: GoverningEntityId | null = null;
       let organization: OrganizationId | null = null;
 
-      const entities = entitiesByBreakdown.get(b.id) || new Set();
+      const entities = entitiesByBreakdown.get(b.id) ?? new Set();
       for (const e of entities) {
         if (e.objectType === 'globalCluster') {
           globalCluster = createBrandedValue(e.objectId);
@@ -432,7 +430,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
     // Ensure that the organization IDs match the projectVersionOrganization
     const budgetOrgIDs = new Set(projectResult.map((i) => i.organization));
     const prvOrgIDs = new Set(
-      [...(orgsByProjectVersion.get(p.projectVersion.id) || [])].map(
+      [...(orgsByProjectVersion.get(p.projectVersion.id) ?? [])].map(
         (pvo) => pvo.organizationId
       )
     );

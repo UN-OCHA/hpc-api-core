@@ -123,7 +123,7 @@ export const defineSequelizeModel =
                 [Op.IS_NULL]: true,
               },
             },
-            args?.where || {},
+            args?.where ?? {},
           ],
         },
       });

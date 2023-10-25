@@ -325,7 +325,7 @@ export const getRoleGrantsForUser = async ({
       users: [user],
       context,
     })
-  ).get(user) || [];
+  ).get(user) ?? [];
 
 /**
  * Calculate the complete set of permissions for the logged in participant
@@ -415,7 +415,7 @@ export const mergePermissionsFromGrants = <
       continue;
     }
     if (granted.global) {
-      allowed.global = allowed.global || new Set();
+      allowed.global = allowed.global ?? new Set();
       for (const p of granted.global) {
         allowed.global.add(p);
       }

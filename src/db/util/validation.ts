@@ -46,7 +46,7 @@ export const validateModelAgainstTable = async (
     keyof FieldDefinition
   >) {
     for (const [name, def] of Object.entries(
-      modelInternals.fields[group] || {}
+      modelInternals.fields[group] ?? {}
     )) {
       if (modelColumns.has(name)) {
         throw new Error(
@@ -140,13 +140,13 @@ export const dataValidator = <F extends FieldDefinition>(
 
   const instanceValidator = t.intersection([
     t.intersection([
-      fieldSetValidator(fields.generated || {}, false),
-      fieldSetValidator(fields.generatedCompositeKey || {}, false),
+      fieldSetValidator(fields.generated ?? {}, false),
+      fieldSetValidator(fields.generatedCompositeKey ?? {}, false),
     ]),
-    fieldSetValidator(fields.nonNullWithDefault || {}, false),
-    fieldSetValidator(fields.required || {}, false),
-    fieldSetValidator(fields.optional || {}, true),
-    fieldSetValidator(fields.accidentallyOptional || {}, true),
+    fieldSetValidator(fields.nonNullWithDefault ?? {}, false),
+    fieldSetValidator(fields.required ?? {}, false),
+    fieldSetValidator(fields.optional ?? {}, true),
+    fieldSetValidator(fields.accidentallyOptional ?? {}, true),
   ]) as t.Type<unknown> as t.Type<Instance>;
 
   const validateAndFilter = (

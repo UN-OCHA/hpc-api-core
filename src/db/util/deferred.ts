@@ -43,7 +43,7 @@ export const createDeferredFetcher = <
     run: async (calls: Array<[IDType]>): Promise<Array<Instance | null>> => {
       const ids = [...new Set(calls.map(([id]) => id))];
       const result = await model.getAll(ids);
-      return calls.map(([id]) => result.get(id) || null);
+      return calls.map(([id]) => result.get(id) ?? null);
     },
   });
 

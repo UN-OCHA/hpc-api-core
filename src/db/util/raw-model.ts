@@ -130,18 +130,18 @@ export const defineRawModel =
 
     const tbl = () => conn<Instance>(tableName);
 
-    const create: CreateFn<F> = async (data, opts) => {
-      const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
+    const create: CreateFn<F> = async (data, options) => {
+      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
       const res = await builder.insert([data as any]).returning('*');
       return validateAndFilter(res[0]);
     };
 
-    const createMany: CreateManyFn<F> = async (data, opts) => {
+    const createMany: CreateManyFn<F> = async (data, options) => {
       if (!data.length) {
         return [];
       }
 
-      const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
+      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
       const res = await builder.insert(data).returning('*');
       return res.map(validateAndFilter);
     };
@@ -155,7 +155,7 @@ export const defineRawModel =
       trx,
     } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
-      const query = builder.where(prepareCondition(where || {})).select('*');
+      const query = builder.where(prepareCondition(where ?? {})).select('*');
 
       if (limit !== undefined && limit > 0) {
         query.limit(limit);
