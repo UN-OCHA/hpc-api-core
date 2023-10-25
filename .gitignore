@@ -4,6 +4,3 @@
 /index.d.ts
 /yarn-error.log
 package-lock.json
-
-# IDE artifacts
-.vscode
