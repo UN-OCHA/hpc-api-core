@@ -6,7 +6,7 @@ import { defineVersionedModel } from '../util/versioned-model';
 import { brandedType } from '../../util/io-ts';
 import { FILE_REFERENCE } from '../util/datatypes';
 import { FORM_ID } from './form';
-import { OPERATION_ID, OperationId } from './operation';
+import { OPERATION_ID, type OperationId } from './operation';
 import operationCluster, { OPERATION_CLUSTER_ID } from './operationCluster';
 import { REPORTING_WINDOW_ID } from './reportingWindow';
 

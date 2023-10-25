@@ -1,5 +1,5 @@
-import { Database } from '../../db';
-import { PlanId } from '../../db/models/plan';
+import type { Database } from '../../db';
+import type { PlanId } from '../../db/models/plan';
 import { Op } from '../../db/util/conditions';
 
 /**

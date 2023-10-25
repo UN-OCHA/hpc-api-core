@@ -1,9 +1,9 @@
 import type { Database } from '../db/type';
 import type { DeferredFetcherForModel } from '../db/util/deferred';
-import { SharedLogContext } from '../lib/logging';
+import { type SharedLogContext } from '../lib/logging';
 import { getOrCreate } from '../util';
 import { createBrandedValue } from '../util/types';
-import { GrantedPermissions, AUTH_PERMISSIONS as P } from './permissions';
+import { AUTH_PERMISSIONS as P, type GrantedPermissions } from './permissions';
 
 /**
  * A breakdown of the different types of roles are available
@@ -106,31 +106,31 @@ export const filterValidRoleStrings = <K extends RoleAuthTargetString>(
 export type RolesGrant =
   | {
       type: 'global';
-      roles: RolesStrings<'global'>[];
+      roles: Array<RolesStrings<'global'>>;
     }
   | {
       type: 'operation';
-      roles: RolesStrings<'operation'>[];
+      roles: Array<RolesStrings<'operation'>>;
       id: number;
     }
   | {
       type: 'operationCluster';
-      roles: RolesStrings<'operationCluster'>[];
+      roles: Array<RolesStrings<'operationCluster'>>;
       id: number;
     }
   | {
       type: 'plan';
-      roles: RolesStrings<'plan'>[];
+      roles: Array<RolesStrings<'plan'>>;
       id: number;
     }
   | {
       type: 'project';
-      roles: RolesStrings<'project'>[];
+      roles: Array<RolesStrings<'project'>>;
       id: number;
     }
   | {
       type: 'governingEntity';
-      roles: RolesStrings<'governingEntity'>[];
+      roles: Array<RolesStrings<'governingEntity'>>;
       id: number;
     };
 
@@ -141,7 +141,8 @@ export type RolesGrant =
 export const getGrantValidator =
   <K extends RoleAuthTargetString>(type: K, role: RolesStrings<K>) =>
   (grant: RolesGrant): grant is RolesGrant & { type: K } =>
-    grant.type === type && (grant.roles as RolesStrings<K>[]).includes(role);
+    grant.type === type &&
+    (grant.roles as Array<RolesStrings<K>>).includes(role);
 
 /**
  * Calculate the effective permissions that are granted to a user based on a

@@ -15,7 +15,7 @@ import type {
   FieldSet,
   InstanceDataOf,
 } from './model-definition';
-import { ModelInternals } from './raw-model';
+import { type ModelInternals } from './raw-model';
 
 /**
  * Given a model definition,
@@ -42,9 +42,9 @@ export const validateModelAgainstTable = async (
   // Get all column names from model, and check for duplicates
   const modelColumns = new Map<string, Field>();
 
-  for (const group of Object.keys(
-    modelInternals.fields
-  ) as (keyof FieldDefinition)[]) {
+  for (const group of Object.keys(modelInternals.fields) as Array<
+    keyof FieldDefinition
+  >) {
     for (const [name, def] of Object.entries(
       modelInternals.fields[group] || {}
     )) {
@@ -134,9 +134,8 @@ export const dataValidator = <F extends FieldDefinition>(
     }
     if (isNullable) {
       return t.exact(nullable(props));
-    } else {
-      return t.exact(t.type(props));
     }
+    return t.exact(t.type(props));
   };
 
   const instanceValidator = t.intersection([
@@ -163,14 +162,13 @@ export const dataValidator = <F extends FieldDefinition>(
         enumerable: false,
       });
       return val;
-    } else {
-      const errors = ioTsErrorFormatter(decoded);
-      throw new DataValidationError({
-        errors,
-        identifier: genIdentifier(),
-        data: val,
-      });
     }
+    const errors = ioTsErrorFormatter(decoded);
+    throw new DataValidationError({
+      errors,
+      identifier: genIdentifier(),
+      data: val,
+    });
   };
 
   return {

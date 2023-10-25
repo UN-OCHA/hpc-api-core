@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 import { LOCALIZED_PLURAL_STRING, LOCALIZED_STRING } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 

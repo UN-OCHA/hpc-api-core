@@ -285,7 +285,7 @@ export type RequiredPermission<AdditionalGlobalPermissions extends string> =
 type RequiredPermissionsConjunctionAnd<
   AdditionalGlobalPermissions extends string,
 > = {
-  and: RequiredPermissionsCondition<AdditionalGlobalPermissions>[];
+  and: Array<RequiredPermissionsCondition<AdditionalGlobalPermissions>>;
 };
 
 export type RequiredPermissionsConjunction<
@@ -307,7 +307,7 @@ export const isAnd = <AdditionalGlobalPermissions extends string>(
 export type RequiredPermissionsConditionOr<
   AdditionalGlobalPermissions extends string,
 > = {
-  or: RequiredPermissionsCondition<AdditionalGlobalPermissions>[];
+  or: Array<RequiredPermissionsCondition<AdditionalGlobalPermissions>>;
 };
 
 export type RequiredPermissionsCondition<

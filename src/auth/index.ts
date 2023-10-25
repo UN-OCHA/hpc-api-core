@@ -2,31 +2,31 @@
  * This file is a new (type-safe) interface for common authentication functions
  * ahead of the auth refactor outlined in HPC-6999
  */
-import * as crypto from 'crypto';
-import { promisify } from 'util';
-import v4Models from '../db';
-import { AuthTargetId } from '../db/models/authTarget';
-import { ParticipantId } from '../db/models/participant';
+import * as crypto from 'node:crypto';
+import { promisify } from 'node:util';
+import type v4Models from '../db';
+import { type AuthTargetId } from '../db/models/authTarget';
+import { type ParticipantId } from '../db/models/participant';
 import type { Database } from '../db/type';
 import { Op } from '../db/util/conditions';
 import { createDeferredFetcher } from '../db/util/deferred';
-import { InstanceOfModel } from '../db/util/types';
-import { Context } from '../lib/context';
-import { SharedLogContext } from '../lib/logging';
+import { type InstanceOfModel } from '../db/util/types';
+import { type Context } from '../lib/context';
+import { type SharedLogContext } from '../lib/logging';
 import { organizeObjectsByUniqueProperty } from '../util';
 import { createBrandedValue } from '../util/types';
 import * as hid from './hid';
 import {
   AUTH_PERMISSIONS,
-  GrantedPermissions,
   hasRequiredPermissions,
-  PermissionStrings,
-  RequiredPermissionsCondition,
+  type GrantedPermissions,
+  type PermissionStrings,
+  type RequiredPermissionsCondition,
 } from './permissions';
 import {
   calculatePermissionsFromRolesGrant,
   filterValidRoleStrings,
-  RolesGrant,
+  type RolesGrant,
 } from './roles';
 
 const randomBytes = promisify(crypto.randomBytes);
@@ -358,7 +358,7 @@ export const getAllowedPermissionsFromGrants = async <
   participantId: ParticipantId,
   context: Context,
   calculatePermissionsFn: typeof calculatePermissionsFromRolesGrant
-): Promise<GrantedPermissions<AdditionalGlobalPermissions>[]> => {
+): Promise<Array<GrantedPermissions<AdditionalGlobalPermissions>>> => {
   const { models } = context;
 
   const grants = await getRoleGrantsForUser({
@@ -373,13 +373,13 @@ export const getAllowedPermissionsFromGrants = async <
   // Calculate the allowed permissions for each of these grants
   return (await Promise.all(
     grants.map((grant) => calculatePermissionsFn(grant, fetchers))
-  )) as GrantedPermissions<AdditionalGlobalPermissions>[];
+  )) as Array<GrantedPermissions<AdditionalGlobalPermissions>>;
 };
 
 export const mergePermissionsFromGrants = <
   AdditionalGlobalPermissions extends string,
 >(
-  allowedFromGrants: GrantedPermissions<AdditionalGlobalPermissions>[]
+  allowedFromGrants: Array<GrantedPermissions<AdditionalGlobalPermissions>>
 ): GrantedPermissions<AdditionalGlobalPermissions> => {
   const allowed: GrantedPermissions<AdditionalGlobalPermissions> = {};
 
@@ -420,10 +420,9 @@ export const mergePermissionsFromGrants = <
         allowed.global.add(p);
       }
     }
-    for (const [key, obj] of Object.entries(granted) as [
-      keyof typeof granted,
-      any,
-    ][]) {
+    for (const [key, obj] of Object.entries(granted) as Array<
+      [keyof typeof granted, any]
+    >) {
       if (key !== 'global') {
         mergeAllowedPermissions(key, obj);
       }

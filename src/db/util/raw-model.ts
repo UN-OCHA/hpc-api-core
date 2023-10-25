@@ -3,9 +3,9 @@
  * Use of `any` in this module is generally deliberate to help with generics
  */
 import Knex = require('knex');
-import { Condition, prepareCondition } from './conditions';
+import { prepareCondition, type Condition } from './conditions';
 
-import {
+import type {
   FieldDefinition,
   InstanceDataOf,
   UserDataOf,
@@ -20,7 +20,7 @@ export type CreateFn<F extends FieldDefinition> = (
 ) => Promise<InstanceDataOf<F>>;
 
 export type CreateManyFn<F extends FieldDefinition> = (
-  data: UserDataOf<F>[],
+  data: Array<UserDataOf<F>>,
   opts?: {
     trx?: Knex.Transaction<any, any>;
   }

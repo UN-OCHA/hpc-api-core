@@ -6,15 +6,15 @@ import merge = require('lodash/merge');
 
 import { Cond, Op } from './conditions';
 import { DATE } from './datatypes';
-import { FieldDefinition } from './model-definition';
+import { type FieldDefinition } from './model-definition';
 import {
-  CreateFn,
-  CreateManyFn,
-  FindFn,
-  FindOneFn,
-  ModelInitializer,
-  UpdateFn,
   defineRawModel,
+  type CreateFn,
+  type CreateManyFn,
+  type FindFn,
+  type FindOneFn,
+  type ModelInitializer,
+  type UpdateFn,
 } from './raw-model';
 
 type DeletedAtField<SoftDeletionEnabled extends boolean> =
@@ -113,21 +113,20 @@ export const defineSequelizeModel =
     ) => {
       if (args?.includeDeleted || !opts.softDeletionEnabled) {
         return model.find(args);
-      } else {
-        return model.find({
-          ...args,
-          where: {
-            [Cond.AND]: [
-              {
-                deletedAt: {
-                  [Op.IS_NULL]: true,
-                },
-              },
-              args?.where || {},
-            ],
-          },
-        });
       }
+      return model.find({
+        ...args,
+        where: {
+          [Cond.AND]: [
+            {
+              deletedAt: {
+                [Op.IS_NULL]: true,
+              },
+            },
+            args?.where || {},
+          ],
+        },
+      });
     };
 
     const findOne: FindOneFn<Fields, AdditionalFindArgsForSequelizeTables> = (
@@ -135,21 +134,20 @@ export const defineSequelizeModel =
     ) => {
       if (args?.includeDeleted || !opts.softDeletionEnabled) {
         return model.findOne(args);
-      } else {
-        return model.findOne({
-          ...args,
-          where: {
-            [Cond.AND]: [
-              {
-                deletedAt: {
-                  [Op.IS_NULL]: true,
-                },
-              },
-              args?.where || {},
-            ],
-          },
-        });
       }
+      return model.findOne({
+        ...args,
+        where: {
+          [Cond.AND]: [
+            {
+              deletedAt: {
+                [Op.IS_NULL]: true,
+              },
+            },
+            args?.where || {},
+          ],
+        },
+      });
     };
 
     const create: CreateFn<Fields> = (data, opts) => {

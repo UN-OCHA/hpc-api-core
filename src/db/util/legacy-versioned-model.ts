@@ -2,11 +2,11 @@ import merge = require('lodash/merge');
 import * as t from 'io-ts';
 
 import {
-  FieldsWithId,
-  ModelWithIdInitializer,
   defineIDModel,
+  type FieldsWithId,
+  type ModelWithIdInitializer,
 } from './id-model';
-import { FieldDefinition } from './model-definition';
+import { type FieldDefinition } from './model-definition';
 
 const VERSIONED_FIELDS = {
   nonNullWithDefault: {

@@ -3,7 +3,11 @@ import * as t from 'io-ts';
 import { DATE } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 import { PARTICIPANT_ID } from './participant';
-import { PROJECT_ID, PROJECT_VERSION_ID, ProjectVersionId } from './project';
+import {
+  PROJECT_ID,
+  PROJECT_VERSION_ID,
+  type ProjectVersionId,
+} from './project';
 
 export { PROJECT_VERSION_ID };
 export type { ProjectVersionId };

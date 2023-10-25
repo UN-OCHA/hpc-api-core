@@ -2,10 +2,10 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import * as t from 'io-ts';
+import type * as t from 'io-ts';
 
-import { Brand } from '../../util/types';
-import { Nullable } from './datatypes';
+import type { Brand } from '../../util/types';
+import type { Nullable } from './datatypes';
 
 // Fields
 

@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 import { defineIDModel } from '../util/id-model';
 
 import { brandedType } from '../../util/io-ts';
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 
 export type AuthTargetId = Brand<
   number,

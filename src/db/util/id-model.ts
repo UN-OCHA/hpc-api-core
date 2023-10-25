@@ -1,17 +1,17 @@
 import Knex = require('knex');
 
 import { Op } from './conditions';
-import {
+import type {
   Field,
   FieldDefinition,
   FieldTypeOf,
   InstanceDataOf,
 } from './model-definition';
-import { Model } from './raw-model';
+import type { Model } from './raw-model';
 import {
-  AdditionalFindArgsForSequelizeTables,
-  FieldsWithSequelize,
   defineSequelizeModel,
+  type AdditionalFindArgsForSequelizeTables,
+  type FieldsWithSequelize,
 } from './sequelize-model';
 
 /**

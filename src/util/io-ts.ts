@@ -1,7 +1,7 @@
-import { isRight, left, Left } from 'fp-ts/lib/Either';
+import { isRight, left, type Left } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 
-import { Brand } from './types';
+import type { Brand } from './types';
 
 /**
  * Create an `io-ts` type from a branded type definition and base `io-ts` type.

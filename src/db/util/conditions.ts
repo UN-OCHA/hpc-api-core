@@ -255,10 +255,12 @@ export const prepareCondition =
       }
     } else {
       // Combine all property conditions in a single
-      const propertyConditions = Object.entries(condition) as [
-        keyof InstanceData,
-        PropertyConditions.Condition<InstanceData[keyof InstanceData]>,
-      ][];
+      const propertyConditions = Object.entries(condition) as Array<
+        [
+          keyof InstanceData,
+          PropertyConditions.Condition<InstanceData[keyof InstanceData]>,
+        ]
+      >;
       for (const [property, propertyCondition] of propertyConditions) {
         if (propertyCondition === undefined) {
           throw new Error(

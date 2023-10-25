@@ -1,7 +1,7 @@
-import { Table } from '.';
-import { AnnotatedMap, organizeObjectsByUniqueValue } from '../util';
-import { InstanceDataOfModel, Model } from './util/raw-model';
-import {
+import type { Table } from '.';
+import { organizeObjectsByUniqueValue, type AnnotatedMap } from '../util';
+import type { InstanceDataOfModel, Model } from './util/raw-model';
+import type {
   InstanceOfVersionedModel,
   VersionedModel,
 } from './util/versioned-model';

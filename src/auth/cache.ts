@@ -4,7 +4,7 @@
  * TODO: extend this with some cross-container cache such as redis or memcached
  */
 
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 
 const sha256 = (str: string) => createHash('sha256').update(str).digest('hex');
 

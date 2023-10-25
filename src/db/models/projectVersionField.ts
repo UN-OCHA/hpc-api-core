@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 import { defineIDModel } from '../util/id-model';
 import { CONDITION_FIELD_ID } from './conditionField';
 import { PROJECT_VERSION_PLAN_ID } from './projectVersionPlan';

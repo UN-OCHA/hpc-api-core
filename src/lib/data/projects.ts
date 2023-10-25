@@ -1,15 +1,15 @@
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
-import { GlobalClusterId } from '../../db/models/globalCluster';
-import { GoverningEntityId } from '../../db/models/governingEntity';
-import { OrganizationId } from '../../db/models/organization';
-import { PlanId } from '../../db/models/plan';
-import { ProjectId } from '../../db/models/project';
-import { Database } from '../../db/type';
+import type { GlobalClusterId } from '../../db/models/globalCluster';
+import type { GoverningEntityId } from '../../db/models/governingEntity';
+import type { OrganizationId } from '../../db/models/organization';
+import type { PlanId } from '../../db/models/plan';
+import type { ProjectId } from '../../db/models/project';
+import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
-import { InstanceOfModel } from '../../db/util/types';
+import type { InstanceOfModel } from '../../db/util/types';
 import { getRequiredData, groupObjectsByProperty } from '../../util';
 import { createBrandedValue } from '../../util/types';
-import { SharedLogContext } from '../logging';
+import type { SharedLogContext } from '../logging';
 import isEqual = require('lodash/isEqual');
 
 /**
@@ -273,7 +273,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
    * to for example calculate a plan's overall requirements.
    */
   ignoreInconsistentBudgets?: true;
-}): Promise<Map<ProjectId, Array<ProjectBudgetSegmentBreakdown>>> => {
+}): Promise<Map<ProjectId, ProjectBudgetSegmentBreakdown[]>> => {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
   );
@@ -318,7 +318,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
     'budgetSegmentBreakdownId'
   );
 
-  const result = new Map<ProjectId, Array<ProjectBudgetSegmentBreakdown>>();
+  const result = new Map<ProjectId, ProjectBudgetSegmentBreakdown[]>();
 
   const pOrgs = await database.projectVersionOrganization.find({
     where: {

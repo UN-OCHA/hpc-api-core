@@ -1,11 +1,11 @@
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
-import { EntityPrototypeId } from '../../db/models/entityPrototype';
-import { GoverningEntityId } from '../../db/models/governingEntity';
-import { PlanId } from '../../db/models/plan';
-import { Database } from '../../db/type';
+import type { EntityPrototypeId } from '../../db/models/entityPrototype';
+import type { GoverningEntityId } from '../../db/models/governingEntity';
+import type { PlanId } from '../../db/models/plan';
+import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
-import { InstanceDataOfModel } from '../../db/util/raw-model';
-import { annotatedMap, AnnotatedMap, getRequiredData } from '../../util';
+import type { InstanceDataOfModel } from '../../db/util/raw-model';
+import { annotatedMap, getRequiredData, type AnnotatedMap } from '../../util';
 
 /**
  * A map from governing entity ids to an object that contains both the

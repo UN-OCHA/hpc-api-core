@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
 import { ENTITY_PROTOTYPE_ID } from './entityPrototype';
 import { PLAN_ID } from './plan';

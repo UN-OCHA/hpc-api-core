@@ -6,14 +6,18 @@ import Knex = require('knex');
 import merge = require('lodash/merge');
 import * as t from 'io-ts';
 
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 
-import { PARTICIPANT_ID, ParticipantId } from '../models/participant';
+import { PARTICIPANT_ID, type ParticipantId } from '../models/participant';
 import { Op } from './conditions';
 import { ConcurrentModificationError } from './errors';
 import { defineIDModel } from './id-model';
-import { FieldDefinition, UserDataOf } from './model-definition';
-import { InstanceDataOfModel, ModelInternals, WhereCond } from './raw-model';
+import type { FieldDefinition, UserDataOf } from './model-definition';
+import type {
+  InstanceDataOfModel,
+  ModelInternals,
+  WhereCond,
+} from './raw-model';
 import { defineSequelizeModel } from './sequelize-model';
 
 type LookupColumnDefinition = Pick<FieldDefinition, 'optional' | 'required'>;
@@ -189,9 +193,8 @@ export const defineVersionedModel =
       genIdentifier: (data) => {
         if (hasRootAndVersion(data)) {
           return `${name}Version ${data.root}-v${data.version}`;
-        } else {
-          return `unknown ${name}Version`;
         }
+        return `unknown ${name}Version`;
       },
     })(conn);
 
@@ -293,13 +296,12 @@ export const defineVersionedModel =
         const [root, version] = await Promise.all([getRoot, getVersion]);
         if (!root || !version) {
           return null;
-        } else {
-          return createInstance({
-            root,
-            version,
-            data: version.data,
-          });
         }
+        return createInstance({
+          root,
+          version,
+          data: version.data,
+        });
       },
       getAll: async (ids) => {
         const items = await result.findAll({
@@ -328,32 +330,31 @@ export const defineVersionedModel =
         if (!root || !versions) {
           // TODO: log invalid data
           return null;
-        } else {
-          versions.sort((a, b) => a.version - b.version);
-          const processedVersions: Array<InstanceVersionData<Data>> = [];
-          let currentVersion: null | number = null;
-          for (const v of versions) {
-            if (v.isLatest) {
-              currentVersion = v.version;
-            }
-            processedVersions.push({
-              version: v.version,
-              modifiedBy: v.modifiedBy || null,
-              modifiedAt: v.updatedAt,
-              data: v.data,
-            });
-          }
-          if (!currentVersion) {
-            throw new Error(
-              `Could not find latest version of ${name} with id ${id}`
-            );
-          }
-          return {
-            id: root.id,
-            currentVersion,
-            versions: processedVersions,
-          };
         }
+        versions.sort((a, b) => a.version - b.version);
+        const processedVersions: Array<InstanceVersionData<Data>> = [];
+        let currentVersion: null | number = null;
+        for (const v of versions) {
+          if (v.isLatest) {
+            currentVersion = v.version;
+          }
+          processedVersions.push({
+            version: v.version,
+            modifiedBy: v.modifiedBy || null,
+            modifiedAt: v.updatedAt,
+            data: v.data,
+          });
+        }
+        if (!currentVersion) {
+          throw new Error(
+            `Could not find latest version of ${name} with id ${id}`
+          );
+        }
+        return {
+          id: root.id,
+          currentVersion,
+          versions: processedVersions,
+        };
       },
       permanentlyDelete: async (id) => {
         const root = rootModel.findOne({
@@ -429,13 +430,13 @@ export const defineVersionedModel =
                 trx,
               }
             )
-            .catch((err) => {
-              if (err && err.name === 'SequelizeUniqueConstraintError') {
+            .catch((error) => {
+              if (error && error.name === 'SequelizeUniqueConstraintError') {
                 throw new ConcurrentModificationError(
                   'New version already created'
                 );
               } else {
-                throw err;
+                throw error;
               }
             });
           // Update lookup data

@@ -1,8 +1,8 @@
 import * as t from 'io-ts';
 import * as fetch from 'node-fetch';
-import { URL } from 'url';
+import { URL } from 'node:url';
 
-import { Context } from '../lib/context';
+import { type Context } from '../lib/context';
 import { ForbiddenError } from '../util/error';
 import { HashTableCache } from './cache';
 
