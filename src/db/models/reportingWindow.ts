@@ -1,8 +1,8 @@
 import * as t from 'io-ts';
 
+import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { defineVersionedModel } from '../util/versioned-model';
-import { brandedType } from '../../util/io-ts';
 import { OPERATION_ID } from './operation';
 
 export type ReportingWindowId = Brand<

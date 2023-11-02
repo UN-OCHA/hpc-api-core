@@ -1,8 +1,8 @@
 import * as t from 'io-ts';
 import { defineIDModel } from '../util/id-model';
 
-import type { Brand } from '../../util/types';
 import { brandedType } from '../../util/io-ts';
+import type { Brand } from '../../util/types';
 
 export type AuthGranteeId = Brand<
   number,

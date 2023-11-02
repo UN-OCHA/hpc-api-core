@@ -1,10 +1,10 @@
-import * as fetch from 'node-fetch';
-import { URL } from 'url';
 import * as t from 'io-ts';
+import * as fetch from 'node-fetch';
+import { URL } from 'node:url';
 
-import { HashTableCache } from './cache';
-import { Context } from '../lib/context';
+import { type Context } from '../lib/context';
 import { ForbiddenError } from '../util/error';
+import { HashTableCache } from './cache';
 
 const HID_ACCOUNT_INFO = t.type({
   sub: t.string,
@@ -38,7 +38,7 @@ export const HID_CACHE = new HashTableCache<HIDResponse>({
 export const getHidInfo = async (
   context: Context
 ): Promise<HIDInfo | undefined> => {
-  const { token } = context;
+  const { config, token } = context;
 
   if (!token) {
     return undefined;
@@ -53,7 +53,7 @@ export const getHidInfo = async (
 
     throw new ForbiddenError(existing.message);
   } else {
-    const accountUrl = new URL('/account.json', context.config.authBaseUrl);
+    const accountUrl = new URL('/account.json', config.authBaseUrl);
     // Reference fetch.default to allow for mocking
     const res = await fetch.default(accountUrl, {
       headers: {

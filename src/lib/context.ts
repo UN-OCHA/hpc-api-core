@@ -1,6 +1,6 @@
-import { Database } from '../db/type';
-import { Config } from '../lib/config';
-import { SharedLogContext, SharedLogData } from '../lib/logging';
+import type { Database } from '../db/type';
+import type { Config } from '../lib/config';
+import type { SharedLogContext, SharedLogData } from '../lib/logging';
 
 /**
  * An object that encapsulates all the context that may need to be passed to

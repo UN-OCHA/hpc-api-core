@@ -1,12 +1,12 @@
 import merge = require('lodash/merge');
 import * as t from 'io-ts';
 
-import { FieldDefinition } from './model-definition';
 import {
-  ModelWithIdInitializer,
-  FieldsWithId,
   defineIDModel,
+  type FieldsWithId,
+  type ModelWithIdInitializer,
 } from './id-model';
+import { type FieldDefinition } from './model-definition';
 
 const VERSIONED_FIELDS = {
   nonNullWithDefault: {
@@ -33,7 +33,7 @@ type ExtendedFields<F extends FieldDefinition> = F & typeof VERSIONED_FIELDS;
 
 export type FieldsWithVersioned<
   F extends FieldDefinition,
-  SoftDeletionEnabled extends boolean
+  SoftDeletionEnabled extends boolean,
 > = FieldsWithId<F, SoftDeletionEnabled> & ExtendedFields<F>;
 
 /**
@@ -46,7 +46,7 @@ export const defineLegacyVersionedModel = <
   F extends FieldDefinition,
   IDField extends string &
     (keyof F['generated'] | keyof F['generatedCompositeKey']),
-  SoftDeletionEnabled extends boolean
+  SoftDeletionEnabled extends boolean,
 >(opts: {
   tableName: string;
   fields: F;

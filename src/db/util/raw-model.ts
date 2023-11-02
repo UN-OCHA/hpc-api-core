@@ -3,12 +3,12 @@
  * Use of `any` in this module is generally deliberate to help with generics
  */
 import Knex = require('knex');
-import { Condition, prepareCondition } from './conditions';
+import { prepareCondition, type Condition } from './conditions';
 
-import {
+import type {
   FieldDefinition,
-  UserDataOf,
   InstanceDataOf,
+  UserDataOf,
 } from './model-definition';
 import { dataValidator } from './validation';
 
@@ -20,7 +20,7 @@ export type CreateFn<F extends FieldDefinition> = (
 ) => Promise<InstanceDataOf<F>>;
 
 export type CreateManyFn<F extends FieldDefinition> = (
-  data: UserDataOf<F>[],
+  data: Array<UserDataOf<F>>,
   opts?: {
     trx?: Knex.Transaction<any, any>;
   }
@@ -103,7 +103,7 @@ export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
  */
 export type ModelInitializer<
   F extends FieldDefinition,
-  AdditionalFindArgs = {}
+  AdditionalFindArgs = {},
 > = (conn: Knex) => Model<F, AdditionalFindArgs>;
 
 export const defineRawModel =
@@ -130,18 +130,18 @@ export const defineRawModel =
 
     const tbl = () => conn<Instance>(tableName);
 
-    const create: CreateFn<F> = async (data, opts) => {
-      const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
+    const create: CreateFn<F> = async (data, options) => {
+      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
       const res = await builder.insert([data as any]).returning('*');
       return validateAndFilter(res[0]);
     };
 
-    const createMany: CreateManyFn<F> = async (data, opts) => {
+    const createMany: CreateManyFn<F> = async (data, options) => {
       if (!data.length) {
         return [];
       }
 
-      const builder = opts?.trx ? tbl().transacting(opts.trx) : tbl();
+      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
       const res = await builder.insert(data).returning('*');
       return res.map(validateAndFilter);
     };
@@ -155,7 +155,7 @@ export const defineRawModel =
       trx,
     } = {}) => {
       const builder = trx ? tbl().transacting(trx) : tbl();
-      const query = builder.where(prepareCondition(where || {})).select('*');
+      const query = builder.where(prepareCondition(where ?? {})).select('*');
 
       if (limit !== undefined && limit > 0) {
         query.limit(limit);

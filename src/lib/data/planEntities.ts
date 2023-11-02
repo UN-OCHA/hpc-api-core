@@ -1,19 +1,19 @@
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
-import { EntityPrototypeId } from '../../db/models/entityPrototype';
-import { GoverningEntityId } from '../../db/models/governingEntity';
-import { PlanId } from '../../db/models/plan';
-import { PlanEntityId } from '../../db/models/planEntity';
-import { Database } from '../../db/type';
+import type { EntityPrototypeId } from '../../db/models/entityPrototype';
+import type { GoverningEntityId } from '../../db/models/governingEntity';
+import type { PlanId } from '../../db/models/plan';
+import type { PlanEntityId } from '../../db/models/planEntity';
+import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
-import { InstanceDataOfModel } from '../../db/util/raw-model';
+import type { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
-  isDefined,
   annotatedMap,
-  AnnotatedMap,
   getRequiredData,
   getRequiredDataByValue,
+  isDefined,
+  type AnnotatedMap,
 } from '../../util';
-import { MapOfGoverningEntities } from './governingEntities';
+import type { MapOfGoverningEntities } from './governingEntities';
 
 export type ValidatedPlanEntity = {
   id: PlanEntityId;
@@ -130,7 +130,7 @@ export const getAndValidateAllPlanEntities = async ({
       customRef: refAndType.customRef,
       description: null,
       supports: [],
-      governingEntity: eaByChildId.get(planEntity.id)?.parentId || null,
+      governingEntity: eaByChildId.get(planEntity.id)?.parentId ?? null,
     };
 
     // Use entity details if possible
@@ -181,7 +181,7 @@ export const calculateReflectiveTransitiveEntitySupport = ({
   planEntity: ValidatedPlanEntity;
   planEntities: ValidatedPlanEntities;
 }): Set<PlanEntityId> => {
-  const supportsEntitiesIDs: Set<PlanEntityId> = new Set();
+  const supportsEntitiesIDs = new Set<PlanEntityId>();
   const entities = [planEntity];
   let entity: ValidatedPlanEntity | undefined;
   while ((entity = entities.pop())) {

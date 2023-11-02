@@ -8,7 +8,7 @@
  */
 export const createGroupableAsyncFunction = <
   Args extends readonly any[],
-  Result
+  Result,
 >(opts: {
   /**
    * This function should asynchronously return an array of results where each
@@ -39,13 +39,13 @@ export const createGroupableAsyncFunction = <
       if (result.length !== cs.length) {
         throw new Error('Received unexpected number of results');
       }
-      for (let i = 0; i < cs.length; i++) {
-        cs[i].resolve(result[i]);
+      for (const [i, c] of cs.entries()) {
+        c.resolve(result[i]);
       }
-    } catch (err) {
+    } catch (error) {
       for (const call of cs) {
-        if (err instanceof Error) {
-          call.reject(err);
+        if (error instanceof Error) {
+          call.reject(error);
         }
       }
     }

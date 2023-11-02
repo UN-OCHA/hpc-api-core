@@ -1,34 +1,34 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
-import { AttachmentId } from '../../db/models/attachment';
-import {
+import type { AttachmentId } from '../../db/models/attachment';
+import type {
   AttachmentPrototypeId,
   AttachmentType,
 } from '../../db/models/attachmentPrototype';
-import { GoverningEntityId } from '../../db/models/governingEntity';
+import type { GoverningEntityId } from '../../db/models/governingEntity';
 import { ATTACHMENT_VERSION_VALUE } from '../../db/models/json/attachment';
 import type { CaseloadOrIndicatorMetricsValues } from '../../db/models/json/indicatorsAndCaseloads';
 import { LOCATION_ID } from '../../db/models/location';
-import { PlanId } from '../../db/models/plan';
-import { PlanEntityId } from '../../db/models/planEntity';
-import { Database } from '../../db/type';
+import type { PlanId } from '../../db/models/plan';
+import type { PlanEntityId } from '../../db/models/planEntity';
+import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
-import { InstanceDataOfModel } from '../../db/util/raw-model';
+import type { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
-  AnnotatedMap,
   cleanNumberVal,
   getRequiredData,
   getRequiredDataByValue,
   toCamelCase,
+  type AnnotatedMap,
 } from '../../util';
 import { EMPTY_TUPLE, ioTsErrorFormatter } from '../../util/io-ts';
 import { createBrandedValue } from '../../util/types';
-import { SharedLogContext } from '../logging';
-import { MapOfGoverningEntities } from './governingEntities';
+import type { SharedLogContext } from '../logging';
+import type { MapOfGoverningEntities } from './governingEntities';
 import {
   calculateReflectiveTransitiveEntitySupport,
-  ValidatedPlanEntities,
+  type ValidatedPlanEntities,
 } from './planEntities';
 import isEqual = require('lodash/isEqual');
 
@@ -471,7 +471,7 @@ const getDisaggregations = ({
     throw new Error('Unexpected number of datamatrix rows');
   }
 
-  for (let lIndex = 0; lIndex < locations.length; lIndex++) {
+  for (const [lIndex, location] of locations.entries()) {
     const dmRow = disaggregated.dataMatrix[lIndex + 1];
     if (dmRow.length !== categories.length * allMetrics.length) {
       throw new Error('Unexpected number of datamatrix columns');
@@ -485,16 +485,15 @@ const getDisaggregations = ({
     ) {
       const dataMatrix: ExtendedDisaggregationData[number]['dataMatrix'] = [];
 
-      for (let mIndex = 0; mIndex < metrics.length; mIndex++) {
-        const dmCell =
-          dmRow[cIndex * allMetrics.length + metrics[mIndex].offset];
+      for (const metric of metrics) {
+        const dmCell = dmRow[cIndex * allMetrics.length + metric.offset];
 
         const value = cleanNumberVal(dmCell);
 
         dataMatrix.push({
           metricType: !specificMetricTypes?.length
-            ? metrics[mIndex].type
-            : toCamelCase(metrics[mIndex].name),
+            ? metric.type
+            : toCamelCase(metric.name),
           lIndex,
           cIndex,
           value: value !== null && !Number.isNaN(value) ? value : null,
@@ -503,7 +502,7 @@ const getDisaggregations = ({
 
       if (dataMatrix.length) {
         disaggregationData.push({
-          locationId: createBrandedValue(locations[lIndex]),
+          locationId: createBrandedValue(location),
           categoryLabel: categories[cIndex].label,
           categoryName: categories[cIndex].name,
           dataMatrix,

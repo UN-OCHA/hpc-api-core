@@ -6,15 +6,19 @@ import Knex = require('knex');
 import merge = require('lodash/merge');
 import * as t from 'io-ts';
 
-import { Brand } from '../../util/types';
+import type { Brand } from '../../util/types';
 
-import { ConcurrentModificationError } from './errors';
-import { defineSequelizeModel } from './sequelize-model';
-import { ParticipantId, PARTICIPANT_ID } from '../models/participant';
-import { FieldDefinition, UserDataOf } from './model-definition';
-import { defineIDModel } from './id-model';
-import { InstanceDataOfModel, ModelInternals, WhereCond } from './raw-model';
+import { PARTICIPANT_ID, type ParticipantId } from '../models/participant';
 import { Op } from './conditions';
+import { ConcurrentModificationError } from './errors';
+import { defineIDModel } from './id-model';
+import type { FieldDefinition, UserDataOf } from './model-definition';
+import type {
+  InstanceDataOfModel,
+  ModelInternals,
+  WhereCond,
+} from './raw-model';
+import { defineSequelizeModel } from './sequelize-model';
 
 type LookupColumnDefinition = Pick<FieldDefinition, 'optional' | 'required'>;
 
@@ -41,7 +45,7 @@ type VersionedInstanceWithAllData<IDType, Data> = {
 
 type RootColumnDefinition<
   IDType,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = LookupColumns & {
   generated: {
     id: {
@@ -54,7 +58,7 @@ type RootColumnDefinition<
 export type VersionedModel<
   IDType,
   Data,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = {
   _internals: {
     type: 'versioned-model';
@@ -105,7 +109,7 @@ export type VersionedModel<
 type VersionedModelInitializer<
   IDType,
   Data,
-  LookupColumns extends LookupColumnDefinition
+  LookupColumns extends LookupColumnDefinition,
 > = (conn: Knex) => VersionedModel<IDType, Data, LookupColumns>;
 
 export type InstanceOfVersionedModel<M extends VersionedModel<any, any, any>> =
@@ -124,7 +128,7 @@ export const defineVersionedModel =
   <
     IDType extends Brand<any, any, any>,
     Data,
-    LookupColumns extends LookupColumnDefinition
+    LookupColumns extends LookupColumnDefinition,
   >(opts: {
     tableBaseName: string;
     idType: t.Type<IDType>;
@@ -189,9 +193,8 @@ export const defineVersionedModel =
       genIdentifier: (data) => {
         if (hasRootAndVersion(data)) {
           return `${name}Version ${data.root}-v${data.version}`;
-        } else {
-          return `unknown ${name}Version`;
         }
+        return `unknown ${name}Version`;
       },
     })(conn);
 
@@ -207,7 +210,7 @@ export const defineVersionedModel =
       const instance: VersionedInstance<IDType, Data> = {
         id,
         version: version.version,
-        modifiedBy: version.modifiedBy || null,
+        modifiedBy: version.modifiedBy,
         modifiedAt: version.updatedAt,
         data,
         update: (data, modifiedBy) =>
@@ -241,7 +244,7 @@ export const defineVersionedModel =
         const version = await versionModel.create({
           root: root.id,
           version: 1,
-          modifiedBy: modifiedBy || undefined,
+          modifiedBy: modifiedBy ?? undefined,
           isLatest: true,
           data,
         });
@@ -293,13 +296,12 @@ export const defineVersionedModel =
         const [root, version] = await Promise.all([getRoot, getVersion]);
         if (!root || !version) {
           return null;
-        } else {
-          return createInstance({
-            root,
-            version,
-            data: version.data,
-          });
         }
+        return createInstance({
+          root,
+          version,
+          data: version.data,
+        });
       },
       getAll: async (ids) => {
         const items = await result.findAll({
@@ -328,32 +330,31 @@ export const defineVersionedModel =
         if (!root || !versions) {
           // TODO: log invalid data
           return null;
-        } else {
-          versions.sort((a, b) => a.version - b.version);
-          const processedVersions: Array<InstanceVersionData<Data>> = [];
-          let currentVersion: null | number = null;
-          for (const v of versions) {
-            if (v.isLatest) {
-              currentVersion = v.version;
-            }
-            processedVersions.push({
-              version: v.version,
-              modifiedBy: v.modifiedBy || null,
-              modifiedAt: v.updatedAt,
-              data: v.data,
-            });
-          }
-          if (!currentVersion) {
-            throw new Error(
-              `Could not find latest version of ${name} with id ${id}`
-            );
-          }
-          return {
-            id: root.id,
-            currentVersion,
-            versions: processedVersions,
-          };
         }
+        versions.sort((a, b) => a.version - b.version);
+        const processedVersions: Array<InstanceVersionData<Data>> = [];
+        let currentVersion: null | number = null;
+        for (const v of versions) {
+          if (v.isLatest) {
+            currentVersion = v.version;
+          }
+          processedVersions.push({
+            version: v.version,
+            modifiedBy: v.modifiedBy,
+            modifiedAt: v.updatedAt,
+            data: v.data,
+          });
+        }
+        if (!currentVersion) {
+          throw new Error(
+            `Could not find latest version of ${name} with id ${id}`
+          );
+        }
+        return {
+          id: root.id,
+          currentVersion,
+          versions: processedVersions,
+        };
       },
       permanentlyDelete: async (id) => {
         const root = rootModel.findOne({
@@ -410,7 +411,7 @@ export const defineVersionedModel =
               isLatest: false,
             },
             where: {
-              root: args.id,
+              root: id,
               version: prev.version,
             },
             trx,
@@ -421,7 +422,7 @@ export const defineVersionedModel =
               {
                 root: id,
                 version: prev.version + 1,
-                modifiedBy: modifiedBy || undefined,
+                modifiedBy: modifiedBy ?? undefined,
                 isLatest: true,
                 data: data,
               },
@@ -429,13 +430,13 @@ export const defineVersionedModel =
                 trx,
               }
             )
-            .catch((err) => {
-              if (err && err.name === 'SequelizeUniqueConstraintError') {
+            .catch((error) => {
+              if (error && error.name === 'SequelizeUniqueConstraintError') {
                 throw new ConcurrentModificationError(
                   'New version already created'
                 );
               } else {
-                throw err;
+                throw error;
               }
             });
           // Update lookup data
@@ -443,7 +444,7 @@ export const defineVersionedModel =
             values: lookupData as any,
             trx,
             where: {
-              id: args.id,
+              id,
             } as any,
           });
           return createInstance({ root: { id }, data, version });

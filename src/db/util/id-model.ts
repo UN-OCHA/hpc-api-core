@@ -1,18 +1,18 @@
 import Knex = require('knex');
 
-import { Model } from './raw-model';
-import {
+import { Op } from './conditions';
+import type {
   Field,
-  FieldTypeOf,
   FieldDefinition,
+  FieldTypeOf,
   InstanceDataOf,
 } from './model-definition';
+import type { Model } from './raw-model';
 import {
-  AdditionalFindArgsForSequelizeTables,
   defineSequelizeModel,
-  FieldsWithSequelize,
+  type AdditionalFindArgsForSequelizeTables,
+  type FieldsWithSequelize,
 } from './sequelize-model';
-import { Op } from './conditions';
 
 /**
  * Given a definition of fields, and the name of an ID prop,
@@ -20,7 +20,7 @@ import { Op } from './conditions';
  */
 type IdOf<
   F extends FieldDefinition,
-  IDField extends null | keyof F['generated']
+  IDField extends null | keyof F['generated'],
 > = IDField extends string
   ? F['generated'] extends {
       [K in IDField]: Field;
@@ -39,7 +39,10 @@ type IdOf<
  */
 export interface ModelWithId<
   F extends FieldDefinition,
-  IDField extends null | keyof F['generated'] | keyof F['generatedCompositeKey']
+  IDField extends
+    | null
+    | keyof F['generated']
+    | keyof F['generatedCompositeKey'],
 > extends Model<F, AdditionalFindArgsForSequelizeTables> {
   readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
   readonly getAll: (
@@ -52,7 +55,10 @@ export interface ModelWithId<
  */
 export type ModelWithIdInitializer<
   F extends FieldDefinition,
-  IDField extends null | keyof F['generated'] | keyof F['generatedCompositeKey']
+  IDField extends
+    | null
+    | keyof F['generated']
+    | keyof F['generatedCompositeKey'],
 > = (conn: Knex) => ModelWithId<F, IDField>;
 
 const hasField = <F extends string>(
@@ -74,7 +80,7 @@ export const defineIDModel =
     F extends FieldDefinition,
     IDField extends string &
       (keyof F['generated'] | keyof F['generatedCompositeKey']),
-    SoftDeletionEnabled extends boolean
+    SoftDeletionEnabled extends boolean,
   >(opts: {
     tableName: string;
     fields: F;

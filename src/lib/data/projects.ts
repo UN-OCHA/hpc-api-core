@@ -1,15 +1,15 @@
-import { GoverningEntityId } from '../../db/models/governingEntity';
-import { OrganizationId } from '../../db/models/organization';
 import { findAndOrganizeObjectsByUniqueProperty } from '../../db/fetching';
-import { PlanId } from '../../db/models/plan';
-import { ProjectId } from '../../db/models/project';
-import { Database } from '../../db/type';
-import { InstanceOfModel } from '../../db/util/types';
-import { getRequiredData, groupObjectsByProperty } from '../../util';
+import type { GlobalClusterId } from '../../db/models/globalCluster';
+import type { GoverningEntityId } from '../../db/models/governingEntity';
+import type { OrganizationId } from '../../db/models/organization';
+import type { PlanId } from '../../db/models/plan';
+import type { ProjectId } from '../../db/models/project';
+import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
-import { GlobalClusterId } from '../../db/models/globalCluster';
+import type { InstanceOfModel } from '../../db/util/types';
+import { getRequiredData, groupObjectsByProperty } from '../../util';
 import { createBrandedValue } from '../../util/types';
-import { SharedLogContext } from '../logging';
+import type { SharedLogContext } from '../logging';
 import isEqual = require('lodash/isEqual');
 
 /**
@@ -122,7 +122,7 @@ export async function getAllProjectsForPlan({
 export async function getOrganizationIDsForProjects<
   Data extends {
     projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -149,7 +149,7 @@ export async function getOrganizationIDsForProjects<
 
   for (const [projectId, projectData] of projects) {
     const projectVersionId = projectData.projectVersion.id;
-    const pvos = groupedPVOs.get(projectVersionId) || [];
+    const pvos = groupedPVOs.get(projectVersionId) ?? [];
     const organizationIds = new Set([...pvos].map((o) => o.organizationId));
     result.set(projectId, organizationIds);
   }
@@ -160,7 +160,7 @@ export async function getOrganizationIDsForProjects<
 export async function getGoverningEntityIDsForProjects<
   Data extends {
     projectVersion: Pick<ProjectData['projectVersion'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -187,7 +187,7 @@ export async function getGoverningEntityIDsForProjects<
 
   for (const [projectId, projectData] of projects) {
     const projectVersionId = projectData.projectVersion.id;
-    const pvges = groupedPVGEs.get(projectVersionId) || [];
+    const pvges = groupedPVGEs.get(projectVersionId) ?? [];
     const governingEntityIds = new Set(
       [...pvges].map((pvge) => pvge.governingEntityId)
     );
@@ -200,7 +200,7 @@ export async function getGoverningEntityIDsForProjects<
 export const getConditionFieldsForProjects = async <
   Data extends {
     projectVersionPlan: Pick<ProjectData['projectVersionPlan'], 'id'>;
-  }
+  },
 >({
   database,
   projects,
@@ -233,7 +233,7 @@ export const getConditionFieldsForProjects = async <
   for (const [projectId, projectData] of projects) {
     const projectVersionPlanId = projectData.projectVersionPlan.id;
     const conditionFields = groupedConditionFields.get(projectVersionPlanId);
-    result.set(projectId, conditionFields || new Set());
+    result.set(projectId, conditionFields ?? new Set());
   }
 
   return result;
@@ -252,7 +252,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       ProjectData['projectVersion'],
       'id' | 'currentRequestedFunds'
     >;
-  }
+  },
 >({
   database,
   projects,
@@ -273,7 +273,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
    * to for example calculate a plan's overall requirements.
    */
   ignoreInconsistentBudgets?: true;
-}): Promise<Map<ProjectId, Array<ProjectBudgetSegmentBreakdown>>> => {
+}): Promise<Map<ProjectId, ProjectBudgetSegmentBreakdown[]>> => {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
   );
@@ -318,7 +318,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
     'budgetSegmentBreakdownId'
   );
 
-  const result = new Map<ProjectId, Array<ProjectBudgetSegmentBreakdown>>();
+  const result = new Map<ProjectId, ProjectBudgetSegmentBreakdown[]>();
 
   const pOrgs = await database.projectVersionOrganization.find({
     where: {
@@ -349,7 +349,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       continue;
     }
 
-    const breakdowns = breakdownsBySegment.get(segment.id) || new Set();
+    const breakdowns = breakdownsBySegment.get(segment.id) ?? new Set();
 
     const projectResult: ProjectBudgetSegmentBreakdown[] = [];
 
@@ -359,9 +359,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       const amountUSD =
         typeof content.amount === 'string'
           ? parseInt(content.amount)
-          : content.amount === null
-          ? 0
-          : content.amount;
+          : content.amount ?? 0;
 
       // Determine all entities associated with the breakdown
 
@@ -369,7 +367,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       let governingEntity: GoverningEntityId | null = null;
       let organization: OrganizationId | null = null;
 
-      const entities = entitiesByBreakdown.get(b.id) || new Set();
+      const entities = entitiesByBreakdown.get(b.id) ?? new Set();
       for (const e of entities) {
         if (e.objectType === 'globalCluster') {
           globalCluster = createBrandedValue(e.objectId);
@@ -432,7 +430,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
     // Ensure that the organization IDs match the projectVersionOrganization
     const budgetOrgIDs = new Set(projectResult.map((i) => i.organization));
     const prvOrgIDs = new Set(
-      [...(orgsByProjectVersion.get(p.projectVersion.id) || [])].map(
+      [...(orgsByProjectVersion.get(p.projectVersion.id) ?? [])].map(
         (pvo) => pvo.organizationId
       )
     );

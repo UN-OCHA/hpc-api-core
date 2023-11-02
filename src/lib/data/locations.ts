@@ -32,7 +32,7 @@ export const getPlanCountries = async (
 export const getAllCountryLocations = async (
   database: Database,
   countryId: LocationId
-): Promise<Map<number, InstanceOfModel<Database['location']>[]>> => {
+): Promise<Map<number, Array<InstanceOfModel<Database['location']>>>> => {
   const country = await database.location.findOne({
     where: {
       id: countryId,

@@ -1,9 +1,9 @@
 import * as t from 'io-ts';
 
+import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
 import { ATTACHMENT_ID } from './attachment';
-import { brandedType } from '../../util/io-ts';
 import { ANY_ATTACHMENT_VERSION_VALUE } from './json/attachment';
 
 export type AttachmentVersionId = Brand<

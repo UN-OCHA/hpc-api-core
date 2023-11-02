@@ -8,7 +8,7 @@ export const isDefined = <T>(v: T | null | undefined): v is T =>
 export const definedEntries = <K extends string, V>(o: {
   [key in K]?: V;
 }): Array<[K, V]> =>
-  [...(Object.entries(o) as [K, V][])].filter(([_k, v]) => isDefined(v));
+  [...(Object.entries(o) as Array<[K, V]>)].filter(([_k, v]) => isDefined(v));
 
 export const delay = (ms: number): Promise<unknown> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -194,7 +194,7 @@ export const mapObjectEntries = <K extends string | symbol, V1, V2>(
   map: (v: V1) => V2
 ): { [key in K]: V2 } => {
   return Object.fromEntries(
-    (Object.entries<V1>(obj) as [K, V1][]).map(([k, v]) => [k, map(v)])
+    (Object.entries<V1>(obj) as Array<[K, V1]>).map(([k, v]) => [k, map(v)])
   ) as { [key in K]: V2 };
 };
 
@@ -237,7 +237,7 @@ export const getRequiredData = <
   E extends {
     [key in P]: K;
   },
-  P extends keyof E
+  P extends keyof E,
 >(
   map: AnnotatedMap<K, V>,
   entity: E,
@@ -277,7 +277,7 @@ export const cleanNumberVal = (value: number | string | null): number | null =>
   typeof value === 'number'
     ? value
     : typeof value === 'string' && value !== ''
-    ? parseFloat(value.trim().replace(/,/g, ''))
+    ? parseFloat(value.trim().replaceAll(',', ''))
     : null;
 
 export const toCamelCase = (originalString: string) => {

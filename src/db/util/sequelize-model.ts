@@ -4,18 +4,18 @@
  */
 import merge = require('lodash/merge');
 
+import { Cond, Op } from './conditions';
 import { DATE } from './datatypes';
+import { type FieldDefinition } from './model-definition';
 import {
   defineRawModel,
-  ModelInitializer,
-  CreateFn,
-  CreateManyFn,
-  UpdateFn,
-  FindFn,
-  FindOneFn,
+  type CreateFn,
+  type CreateManyFn,
+  type FindFn,
+  type FindOneFn,
+  type ModelInitializer,
+  type UpdateFn,
 } from './raw-model';
-import { FieldDefinition } from './model-definition';
-import { Cond, Op } from './conditions';
 
 type DeletedAtField<SoftDeletionEnabled extends boolean> =
   SoftDeletionEnabled extends true
@@ -46,7 +46,7 @@ type SequelizeFields = typeof SEQUELIZE_FIELDS;
 
 export type FieldsWithSequelize<
   F extends FieldDefinition,
-  SoftDeletionEnabled extends boolean
+  SoftDeletionEnabled extends boolean,
 > = F & SequelizeFields & DeletedAtField<SoftDeletionEnabled>;
 
 const genDeletedAtField = <P extends boolean>(
@@ -113,21 +113,20 @@ export const defineSequelizeModel =
     ) => {
       if (args?.includeDeleted || !opts.softDeletionEnabled) {
         return model.find(args);
-      } else {
-        return model.find({
-          ...args,
-          where: {
-            [Cond.AND]: [
-              {
-                deletedAt: {
-                  [Op.IS_NULL]: true,
-                },
-              },
-              args?.where || {},
-            ],
-          },
-        });
       }
+      return model.find({
+        ...args,
+        where: {
+          [Cond.AND]: [
+            {
+              deletedAt: {
+                [Op.IS_NULL]: true,
+              },
+            },
+            args?.where ?? {},
+          ],
+        },
+      });
     };
 
     const findOne: FindOneFn<Fields, AdditionalFindArgsForSequelizeTables> = (
@@ -135,21 +134,20 @@ export const defineSequelizeModel =
     ) => {
       if (args?.includeDeleted || !opts.softDeletionEnabled) {
         return model.findOne(args);
-      } else {
-        return model.findOne({
-          ...args,
-          where: {
-            [Cond.AND]: [
-              {
-                deletedAt: {
-                  [Op.IS_NULL]: true,
-                },
-              },
-              args?.where || {},
-            ],
-          },
-        });
       }
+      return model.findOne({
+        ...args,
+        where: {
+          [Cond.AND]: [
+            {
+              deletedAt: {
+                [Op.IS_NULL]: true,
+              },
+            },
+            args?.where || {},
+          ],
+        },
+      });
     };
 
     const create: CreateFn<Fields> = (data, opts) => {

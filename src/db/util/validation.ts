@@ -3,19 +3,19 @@
  * Use of `any` in this module is generally deliberate to help with generics
  */
 import Knex = require('knex');
-import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 
+import { ioTsErrorFormatter } from '../../util/io-ts';
 import { nullable } from './datatypes';
+import { DataValidationError } from './errors';
 import type {
   Field,
   FieldDefinition,
   FieldSet,
   InstanceDataOf,
 } from './model-definition';
-import { ModelInternals } from './raw-model';
-import { ioTsErrorFormatter } from '../../util/io-ts';
-import { DataValidationError } from './errors';
+import { type ModelInternals } from './raw-model';
 
 /**
  * Given a model definition,
@@ -42,11 +42,11 @@ export const validateModelAgainstTable = async (
   // Get all column names from model, and check for duplicates
   const modelColumns = new Map<string, Field>();
 
-  for (const group of Object.keys(
-    modelInternals.fields
-  ) as (keyof FieldDefinition)[]) {
+  for (const group of Object.keys(modelInternals.fields) as Array<
+    keyof FieldDefinition
+  >) {
     for (const [name, def] of Object.entries(
-      modelInternals.fields[group] || {}
+      modelInternals.fields[group] ?? {}
     )) {
       if (modelColumns.has(name)) {
         throw new Error(
@@ -134,20 +134,19 @@ export const dataValidator = <F extends FieldDefinition>(
     }
     if (isNullable) {
       return t.exact(nullable(props));
-    } else {
-      return t.exact(t.type(props));
     }
+    return t.exact(t.type(props));
   };
 
   const instanceValidator = t.intersection([
     t.intersection([
-      fieldSetValidator(fields.generated || {}, false),
-      fieldSetValidator(fields.generatedCompositeKey || {}, false),
+      fieldSetValidator(fields.generated ?? {}, false),
+      fieldSetValidator(fields.generatedCompositeKey ?? {}, false),
     ]),
-    fieldSetValidator(fields.nonNullWithDefault || {}, false),
-    fieldSetValidator(fields.required || {}, false),
-    fieldSetValidator(fields.optional || {}, true),
-    fieldSetValidator(fields.accidentallyOptional || {}, true),
+    fieldSetValidator(fields.nonNullWithDefault ?? {}, false),
+    fieldSetValidator(fields.required ?? {}, false),
+    fieldSetValidator(fields.optional ?? {}, true),
+    fieldSetValidator(fields.accidentallyOptional ?? {}, true),
   ]) as t.Type<unknown> as t.Type<Instance>;
 
   const validateAndFilter = (
@@ -163,14 +162,13 @@ export const dataValidator = <F extends FieldDefinition>(
         enumerable: false,
       });
       return val;
-    } else {
-      const errors = ioTsErrorFormatter(decoded);
-      throw new DataValidationError({
-        errors,
-        identifier: genIdentifier(),
-        data: val,
-      });
     }
+    const errors = ioTsErrorFormatter(decoded);
+    throw new DataValidationError({
+      errors,
+      identifier: genIdentifier(),
+      data: val,
+    });
   };
 
   return {

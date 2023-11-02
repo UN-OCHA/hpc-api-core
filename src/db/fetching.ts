@@ -1,7 +1,7 @@
-import { Table } from '.';
-import { AnnotatedMap, organizeObjectsByUniqueValue } from '../util';
-import { InstanceDataOfModel, Model } from './util/raw-model';
-import {
+import type { Table } from '.';
+import { organizeObjectsByUniqueValue, type AnnotatedMap } from '../util';
+import type { InstanceDataOfModel, Model } from './util/raw-model';
+import type {
   InstanceOfVersionedModel,
   VersionedModel,
 } from './util/versioned-model';
@@ -25,7 +25,7 @@ type InstanceOf<T extends Table> = T extends Model<any>
  */
 export const findAndOrganizeObjectsByUniqueProperty = <
   T extends Table,
-  P extends keyof InstanceOf<T>
+  P extends keyof InstanceOf<T>,
 >(
   table: T,
   fetch: (tbl: T) => Promise<Iterable<InstanceOf<T>>>,

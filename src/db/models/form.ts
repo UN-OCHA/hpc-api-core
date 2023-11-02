@@ -3,9 +3,9 @@ import * as t from 'io-ts';
 import type { Brand } from '../../util/types';
 import { defineVersionedModel } from '../util/versioned-model';
 
-import { OPERATION_ID } from './operation';
-import { FILE_REFERENCE } from '../util/datatypes';
 import { brandedType } from '../../util/io-ts';
+import { FILE_REFERENCE } from '../util/datatypes';
+import { OPERATION_ID } from './operation';
 
 export type FormId = Brand<number, { readonly s: unique symbol }, 'form.id'>;
 

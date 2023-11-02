@@ -35,15 +35,15 @@ export type DeferredFetcherForModel<M extends DeferrableModel<any, any>> =
  */
 export const createDeferredFetcher = <
   IDType extends number,
-  Instance extends { id: IDType }
+  Instance extends { id: IDType },
 >(
   model: DeferrableModel<IDType, Instance>
 ): DeferredFetcher<IDType, Instance> => {
   const get = createGroupableAsyncFunction({
-    run: async (calls: [IDType][]): Promise<(Instance | null)[]> => {
+    run: async (calls: Array<[IDType]>): Promise<Array<Instance | null>> => {
       const ids = [...new Set(calls.map(([id]) => id))];
       const result = await model.getAll(ids);
-      return calls.map(([id]) => result.get(id) || null);
+      return calls.map(([id]) => result.get(id) ?? null);
     },
   });
 

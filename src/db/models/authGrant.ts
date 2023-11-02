@@ -1,12 +1,12 @@
 import * as t from 'io-ts';
 import Knex = require('knex');
 
-import { InstanceOfModel, UserDataOfModel } from '../util/types';
-import { AUTH_TARGET_ID } from './authTarget';
-import { ParticipantId } from './participant';
-import { AUTH_GRANTEE_ID } from './authGrantee';
 import { defineSequelizeModel } from '../util/sequelize-model';
+import type { InstanceOfModel, UserDataOfModel } from '../util/types';
 import initAuthGrantLog from './authGrantLog';
+import { AUTH_GRANTEE_ID } from './authGrantee';
+import { AUTH_TARGET_ID } from './authTarget';
+import type { ParticipantId } from './participant';
 
 const authGrantModel = (conn: Knex) => {
   const authGrantLog = initAuthGrantLog(conn);

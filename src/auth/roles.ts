@@ -1,9 +1,9 @@
 import type { Database } from '../db/type';
 import type { DeferredFetcherForModel } from '../db/util/deferred';
-import { SharedLogContext } from '../lib/logging';
+import { type SharedLogContext } from '../lib/logging';
 import { getOrCreate } from '../util';
 import { createBrandedValue } from '../util/types';
-import { AUTH_PERMISSIONS as P, GrantedPermissions } from './permissions';
+import { AUTH_PERMISSIONS as P, type GrantedPermissions } from './permissions';
 
 /**
  * A breakdown of the different types of roles are available
@@ -106,31 +106,31 @@ export const filterValidRoleStrings = <K extends RoleAuthTargetString>(
 export type RolesGrant =
   | {
       type: 'global';
-      roles: RolesStrings<'global'>[];
+      roles: Array<RolesStrings<'global'>>;
     }
   | {
       type: 'operation';
-      roles: RolesStrings<'operation'>[];
+      roles: Array<RolesStrings<'operation'>>;
       id: number;
     }
   | {
       type: 'operationCluster';
-      roles: RolesStrings<'operationCluster'>[];
+      roles: Array<RolesStrings<'operationCluster'>>;
       id: number;
     }
   | {
       type: 'plan';
-      roles: RolesStrings<'plan'>[];
+      roles: Array<RolesStrings<'plan'>>;
       id: number;
     }
   | {
       type: 'project';
-      roles: RolesStrings<'project'>[];
+      roles: Array<RolesStrings<'project'>>;
       id: number;
     }
   | {
       type: 'governingEntity';
-      roles: RolesStrings<'governingEntity'>[];
+      roles: Array<RolesStrings<'governingEntity'>>;
       id: number;
     };
 
@@ -141,7 +141,8 @@ export type RolesGrant =
 export const getGrantValidator =
   <K extends RoleAuthTargetString>(type: K, role: RolesStrings<K>) =>
   (grant: RolesGrant): grant is RolesGrant & { type: K } =>
-    grant.type === type && (grant.roles as RolesStrings<K>[]).includes(role);
+    grant.type === type &&
+    (grant.roles as Array<RolesStrings<K>>).includes(role);
 
 /**
  * Calculate the effective permissions that are granted to a user based on a
@@ -152,7 +153,7 @@ export const getGrantValidator =
  * to implement (such as cluster leads having read access to their operations).
  */
 export const calculatePermissionsFromRolesGrant = async <
-  AdditionalGlobalPermissions extends string
+  AdditionalGlobalPermissions extends string,
 >(
   grant: RolesGrant,
   fetchers: {
@@ -166,7 +167,8 @@ export const calculatePermissionsFromRolesGrant = async <
 ): Promise<GrantedPermissions<AdditionalGlobalPermissions>> => {
   const granted: GrantedPermissions<AdditionalGlobalPermissions> = {};
   if (grant.type === 'global') {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     for (const role of grant.roles) {
       if (role === 'hpc_admin') {
         // All new Permissions
@@ -200,7 +202,8 @@ export const calculatePermissionsFromRolesGrant = async <
       }
     }
   } else if (grant.type === 'operation') {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     if (!granted.operation) {
       granted.operation = new Map();
     }
@@ -232,7 +235,8 @@ export const calculatePermissionsFromRolesGrant = async <
       createBrandedValue(grant.id)
     );
     if (cluster) {
-      const global = (granted.global = granted.global || new Set());
+      granted.global ??= new Set();
+      const global = granted.global;
       if (!granted.operation) {
         granted.operation = new Map();
       }
@@ -341,7 +345,8 @@ export const calculatePermissionsFromRolesGrant = async <
 
   // Add additional global permissions
   if (additionalGlobalPermissions) {
-    const global = (granted.global = granted.global || new Set());
+    granted.global ??= new Set();
+    const global = granted.global;
     for (const permission of additionalGlobalPermissions) {
       global.add(permission);
     }

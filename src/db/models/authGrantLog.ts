@@ -1,13 +1,13 @@
 import * as t from 'io-ts';
 
-import { Brand } from '../../util/types';
 import { brandedType } from '../../util/io-ts';
+import type { Brand } from '../../util/types';
 import { defineSequelizeModel } from '../util/sequelize-model';
 
-import { AUTH_TARGET_ID } from './authTarget';
-import { AUTH_GRANTEE_ID } from './authGrantee';
-import { PARTICIPANT_ID } from './participant';
 import { DATE } from '../util/datatypes';
+import { AUTH_GRANTEE_ID } from './authGrantee';
+import { AUTH_TARGET_ID } from './authTarget';
+import { PARTICIPANT_ID } from './participant';
 
 export type AuthGrantLogId = Brand<
   number,

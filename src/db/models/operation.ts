@@ -1,9 +1,9 @@
 import * as t from 'io-ts';
 
-import type { Brand } from '../../util/types';
-import { PLAN_ID } from './plan';
-import { defineVersionedModel } from '../util/versioned-model';
 import { brandedType } from '../../util/io-ts';
+import type { Brand } from '../../util/types';
+import { defineVersionedModel } from '../util/versioned-model';
+import { PLAN_ID } from './plan';
 
 export type OperationId = Brand<
   number,

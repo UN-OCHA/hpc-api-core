@@ -4,7 +4,7 @@
  * TODO: extend this with some cross-container cache such as redis or memcached
  */
 
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 
 const sha256 = (str: string) => createHash('sha256').update(str).digest('hex');
 
@@ -28,7 +28,7 @@ export class HashTableCache<V> {
   public store = (key: string, value: V, cacheTime?: Date): void => {
     this.map.set(sha256(key), {
       value,
-      time: cacheTime || new Date(),
+      time: cacheTime ?? new Date(),
     });
     this.clearExpiredValues();
   };
