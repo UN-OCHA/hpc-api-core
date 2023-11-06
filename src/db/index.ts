@@ -88,6 +88,8 @@ import projectVersionHistory from './models/projectVersionHistory';
 import projectVersionOrganization from './models/projectVersionOrganization';
 import projectVersionPlan from './models/projectVersionPlan';
 import projectVersionPlanEntity from './models/projectVersionPlanEntity';
+import reportDetail from './models/reportDetail';
+import reportFile from './models/reportFile';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 import tag from './models/tag';
@@ -198,6 +200,8 @@ const initializeTables = (conn: Knex) => ({
   projectVersionOrganization: projectVersionOrganization(conn),
   projectVersionPlan: projectVersionPlan(conn),
   projectVersionPlanEntity: projectVersionPlanEntity(conn),
+  reportDetail: reportDetail(conn),
+  reportFile: reportFile(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
   tag: tag(conn),
