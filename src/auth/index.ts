@@ -4,7 +4,6 @@
  */
 import * as crypto from 'node:crypto';
 import { promisify } from 'node:util';
-import type v4Models from '../db';
 import { type AuthTargetId } from '../db/models/authTarget';
 import { type ParticipantId } from '../db/models/participant';
 import type { Database } from '../db/type';
@@ -30,8 +29,6 @@ import {
 } from './roles';
 
 const randomBytes = promisify(crypto.randomBytes);
-
-type Models = ReturnType<typeof v4Models>;
 
 type Participant = InstanceOfModel<Database['participant']>;
 type AuthGrantee = InstanceOfModel<Database['authGrantee']>;
@@ -471,11 +468,11 @@ export const getParticipantFromToken = async (
 export const createToken = async ({
   participant,
   expires,
-  models,
+  database,
 }: {
   participant: ParticipantId;
   expires?: Date;
-  models: Models;
+  database: Database;
 }): Promise<{
   instance: AuthToken;
   token: string;
@@ -487,7 +484,7 @@ export const createToken = async ({
     .digest()
     .toString('hex');
   return {
-    instance: await models.authToken.create({
+    instance: await database.authToken.create({
       tokenHash,
       participant,
       expires,
