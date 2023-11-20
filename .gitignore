@@ -4,3 +4,4 @@
 /index.d.ts
 /yarn-error.log
 package-lock.json
+tests/data/*
