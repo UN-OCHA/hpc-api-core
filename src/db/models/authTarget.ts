@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { defineIDModel } from '../util/id-model';
+import Knex = require('knex');
 
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
@@ -21,28 +22,38 @@ const AUTH_TARGET_TYPE = {
   governingEntity: null,
 };
 
-export default defineIDModel({
-  tableName: 'authTarget',
-  fields: {
-    generated: {
-      id: {
-        kind: 'branded-integer',
-        brand: AUTH_TARGET_ID,
+export default (conn: Knex) => {
+  const model = defineIDModel({
+    tableName: 'authTarget',
+    fields: {
+      generated: {
+        id: {
+          kind: 'branded-integer',
+          brand: AUTH_TARGET_ID,
+        },
+      },
+      optional: {
+        targetId: {
+          kind: 'checked',
+          type: t.number,
+        },
+      },
+      required: {
+        type: {
+          kind: 'enum',
+          values: AUTH_TARGET_TYPE,
+        },
       },
     },
-    optional: {
-      targetId: {
-        kind: 'checked',
-        type: t.number,
-      },
-    },
-    required: {
-      type: {
-        kind: 'enum',
-        values: AUTH_TARGET_TYPE,
-      },
-    },
-  },
-  idField: 'id',
-  softDeletionEnabled: false,
-});
+    idField: 'id',
+    softDeletionEnabled: false,
+  })(conn);
+
+  return {
+    ...model,
+    /**
+     * @deprecated Use `deleteAuthTarget` utility method instead
+     */
+    destroy: model.destroy,
+  };
+};

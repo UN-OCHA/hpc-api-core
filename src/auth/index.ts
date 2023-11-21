@@ -2,15 +2,15 @@
  * This file is a new (type-safe) interface for common authentication functions
  * ahead of the auth refactor outlined in HPC-6999
  */
+import Knex = require('knex');
 import * as crypto from 'node:crypto';
 import { promisify } from 'node:util';
-import type v4Models from '../db';
 import { type AuthTargetId } from '../db/models/authTarget';
 import { type ParticipantId } from '../db/models/participant';
 import type { Database } from '../db/type';
 import { Op } from '../db/util/conditions';
 import { createDeferredFetcher } from '../db/util/deferred';
-import { type InstanceOfModel } from '../db/util/types';
+import type { InstanceOfModel, UserDataOfModel } from '../db/util/types';
 import { type Context } from '../lib/context';
 import { type SharedLogContext } from '../lib/logging';
 import { organizeObjectsByUniqueProperty } from '../util';
@@ -30,8 +30,6 @@ import {
 } from './roles';
 
 const randomBytes = promisify(crypto.randomBytes);
-
-type Models = ReturnType<typeof v4Models>;
 
 type Participant = InstanceOfModel<Database['participant']>;
 type AuthGrantee = InstanceOfModel<Database['authGrantee']>;
@@ -471,11 +469,11 @@ export const getParticipantFromToken = async (
 export const createToken = async ({
   participant,
   expires,
-  models,
+  database,
 }: {
   participant: ParticipantId;
   expires?: Date;
-  models: Models;
+  database: Database;
 }): Promise<{
   instance: AuthToken;
   token: string;
@@ -487,11 +485,59 @@ export const createToken = async ({
     .digest()
     .toString('hex');
   return {
-    instance: await models.authToken.create({
+    instance: await database.authToken.create({
       tokenHash,
       participant,
       expires,
     }),
     token,
   };
+};
+
+export const deleteAuthTarget = async (
+  database: Database,
+  where: UserDataOfModel<Database['authTarget']>,
+  actor: ParticipantId,
+  trx: Knex.Transaction<any, any>
+): Promise<void> => {
+  const authTargets = await database.authTarget.find({ where, trx });
+  const authGrants = await database.authGrant.find({
+    where: {
+      target: { [Op.IN]: authTargets.map((at) => at.id) },
+    },
+    trx,
+  });
+
+  await Promise.all(
+    authGrants.map(async (grant) => {
+      await database.authGrant.update(
+        {
+          grantee: grant.grantee,
+          target: grant.target,
+          roles: [], // Delete `authGrant` entry
+        },
+        actor,
+        trx
+      );
+    })
+  );
+
+  await Promise.all(
+    authTargets.map(async ({ id }) => {
+      await database.authGrantLog.destroy({
+        where: { target: id },
+        trx,
+      });
+
+      await database.authInvite.destroy({
+        where: { target: id },
+        trx,
+      });
+
+      await database.authTarget.destroy({
+        where: { id },
+        trx,
+      });
+    })
+  );
 };

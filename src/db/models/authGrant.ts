@@ -42,9 +42,10 @@ const authGrantModel = (conn: Knex) => {
   const create = (
     data: UserData,
     actor: ParticipantId,
-    date = new Date()
+    date = new Date(),
+    trx?: Knex.Transaction<any, any>
   ): Promise<Instance> => {
-    return conn.transaction(async (trx) => {
+    const createCallback = async (trx: Knex.Transaction<any, any>) => {
       await authGrantLog.create(
         {
           grantee: data.grantee,
@@ -58,11 +59,17 @@ const authGrantModel = (conn: Knex) => {
         }
       );
       return await model.create(data, { trx });
-    });
+    };
+
+    return trx ? createCallback(trx) : conn.transaction(createCallback);
   };
 
-  const update = (data: UserData, actor: ParticipantId): Promise<void> => {
-    return conn.transaction(async (trx) => {
+  const update = (
+    data: UserData,
+    actor: ParticipantId,
+    trx?: Knex.Transaction<any, any>
+  ): Promise<void> => {
+    const updateCallback = async (trx: Knex.Transaction<any, any>) => {
       await authGrantLog.create(
         {
           grantee: data.grantee,
@@ -95,7 +102,9 @@ const authGrantModel = (conn: Knex) => {
           },
         });
       }
-    });
+    };
+
+    return trx ? updateCallback(trx) : conn.transaction(updateCallback);
   };
 
   const createOrUpdate = async (

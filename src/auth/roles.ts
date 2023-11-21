@@ -181,6 +181,7 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.EDIT_ANY_PLAN_DATA);
         global.add(P.global.EDIT_ANY_MEASUREMENT);
         global.add(P.global.CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS);
+        global.add(P.global.DELETE_ANY_PLAN);
       } else if (role === 'ftsAdmin') {
         // New Permissions
         global.add(P.global.VIEW_ANY_FLOW);

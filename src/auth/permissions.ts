@@ -85,6 +85,7 @@ export const AUTH_PERMISSIONS = {
      */
     CLONE_ANY_PROJECT: 'cloneAnyProject',
     DELETE_ANY_PROJECT: 'canDeleteAnyProject',
+    DELETE_ANY_PLAN: 'canDeleteAnyPlan',
     /**
      * Can change visibility of any plan in Projects Module
      */
