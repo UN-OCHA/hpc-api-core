@@ -77,11 +77,11 @@ namespace PropertyConditions {
 
   // Simple binary operator conditions
 
-  export type LikeCondition<T> = {
-    [Op.LIKE]: T & string;
+  export type LikeCondition = {
+    [Op.LIKE]: string;
   };
-  export type ILikeCondition<T> = {
-    [Op.ILIKE]: T & string;
+  export type ILikeCondition = {
+    [Op.ILIKE]: string;
   };
   export type LtCondition<T> = {
     [Op.LT]: T;
@@ -104,8 +104,8 @@ namespace PropertyConditions {
     | NotInCondition<T>
     | IsNullCondition
     | BetweenCondition<T>
-    | LikeCondition<T>
-    | ILikeCondition<T>
+    | LikeCondition
+    | ILikeCondition
     | LtCondition<T>
     | LteCondition<T>
     | GtCondition<T>
@@ -138,12 +138,12 @@ namespace PropertyConditions {
 
   export const isLikeCondition = <T>(
     condition: Condition<T>
-  ): condition is LikeCondition<T> =>
+  ): condition is LikeCondition =>
     Object.prototype.hasOwnProperty.call(condition, Op.LIKE);
 
   export const isILikeCondition = <T>(
     condition: Condition<T>
-  ): condition is ILikeCondition<T> =>
+  ): condition is ILikeCondition =>
     Object.prototype.hasOwnProperty.call(condition, Op.ILIKE);
 
   export const isLtCondition = <T>(
@@ -284,13 +284,15 @@ export const prepareCondition =
             propertyCondition[Op.BETWEEN][1],
           ]);
         } else if (PropertyConditions.isLikeCondition(propertyCondition)) {
-          builder.where(property as string, 'like', propertyCondition[Op.LIKE]);
+          builder.whereRaw('unaccent(:column:) like unaccent(:value)', {
+            column: String(property),
+            value: propertyCondition[Op.LIKE],
+          });
         } else if (PropertyConditions.isILikeCondition(propertyCondition)) {
-          builder.where(
-            property as string,
-            'ilike',
-            propertyCondition[Op.ILIKE]
-          );
+          builder.whereRaw('unaccent(:column:) ilike unaccent(:value)', {
+            column: String(property),
+            value: propertyCondition[Op.ILIKE],
+          });
         } else if (PropertyConditions.isLtCondition(propertyCondition)) {
           builder.where(property, '<', propertyCondition[Op.LT] as any);
         } else if (PropertyConditions.isLteCondition(propertyCondition)) {
