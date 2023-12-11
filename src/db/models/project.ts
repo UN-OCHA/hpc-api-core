@@ -38,7 +38,7 @@ const PROJECT_IMPLEMENTATION_STATUS = {
   'Ended - Not started and abandoned': null,
 };
 
-const PROJECT_PDF_ENTRY = t.type({
+export const PROJECT_PDF_ENTRY = t.type({
   /**
    * TODO: use something more stable, like UNIX OFFSET as a number
    *
@@ -55,6 +55,7 @@ export const PROJECT_PDF = t.partial({
   anonymous: PROJECT_PDF_ENTRY,
   withComments: PROJECT_PDF_ENTRY,
   commentsOnly: PROJECT_PDF_ENTRY,
+  checkedAt: t.number,
 });
 
 export default defineIDModel({
