@@ -17,12 +17,16 @@ export const OUTPUT_FIELD = t.keyof({
   FLOW_STATUS: null,
   ORGANIZATION_DIRECT: null,
   ORGANIZATION_INTERSECTION: null,
+  LOCATION: null,
+  EARMARKING_TYPE: null,
 });
 
 export const INPUT_FIELD = t.keyof({
   DONOR: null,
   FUNDING_SOURCE: null,
   ALLOCATION_STATUS: null,
+  IMIS_CODE: null,
+  GRAND_BARGAIN_EARMARKING: null,
 });
 
 export default defineIDModel({
