@@ -95,6 +95,10 @@ export const AUTH_PERMISSIONS = {
      * Can edit measurements of any plan
      */
     EDIT_ANY_MEASUREMENT: 'canEditAnyMeasurement',
+    /**
+     * Can add comments to any project
+     */
+    ADD_COMMENT_TO_ANY_PROJECT: 'canAddCommentToAnyProject',
   },
   operation: {
     /**
@@ -184,6 +188,10 @@ export const AUTH_PERMISSIONS = {
      * Can edit measurements under this plan
      */
     EDIT_MEASUREMENTS: 'canEditMeasurements',
+    /**
+     * Can add comment to any project under this plan
+     */
+    ADD_COMMENT_TO_PROJECTS: 'canAddCommentToProjects',
   },
   project: {
     MODIFY_ACCESS_AND_PERMISSIONS: 'canModifyAccessAndPermissions',
@@ -197,6 +205,10 @@ export const AUTH_PERMISSIONS = {
      */
     CLONE: 'clone',
     DELETE: 'canDelete',
+    /**
+     * Can add comments to the project
+     */
+    ADD_COMMENT: 'canAddComment',
   },
   governingEntity: {
     /**
@@ -221,6 +233,10 @@ export const AUTH_PERMISSIONS = {
      * Can edit measurements with the governing entity
      */
     EDIT_MEASUREMENTS: 'canEditMeasurements',
+    /**
+     * Can add comment to any project under this governing entity
+     */
+    ADD_COMMENT_TO_PROJECTS: 'canAddCommentToProjects',
   },
 } as const;
 
