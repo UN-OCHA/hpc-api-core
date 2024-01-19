@@ -52,6 +52,7 @@ import iatiRecipientCountry from './models/iatiRecipientCountry';
 import iatiTransaction from './models/iatiTransaction';
 import job from './models/job';
 import jobAssociation from './models/jobAssociation';
+import legacy from './models/legacy';
 import location from './models/location';
 import lookup from './models/lookup';
 import measurement from './models/measurement';
@@ -164,6 +165,7 @@ const initializeTables = (conn: Knex) => ({
   iatiTransaction: iatiTransaction(conn),
   job: job(conn),
   jobAssociation: jobAssociation(conn),
+  legacy: legacy(conn),
   location: location(conn),
   lookup: lookup(conn),
   measurement: measurement(conn),
