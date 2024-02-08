@@ -44,6 +44,7 @@ export const getAndValidateAllPlanEntities = async ({
   version,
   prototypes,
   allowMissingPlanEntities,
+  skipValidation = false,
 }: {
   database: Database;
   planId: PlanId;
@@ -71,6 +72,11 @@ export const getAndValidateAllPlanEntities = async ({
    * This can happen for example when another entity is soft-deleted.
    */
   allowMissingPlanEntities?: boolean;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify
+   */
+  skipValidation?: boolean;
 }): Promise<ValidatedPlanEntities> => {
   const planEntities = await database.planEntity.find({
     where: {
@@ -94,6 +100,7 @@ export const getAndValidateAllPlanEntities = async ({
             ? { latestVersion: true }
             : { currentVersion: true }),
         },
+        skipValidation,
       }),
     'planEntityId'
   );

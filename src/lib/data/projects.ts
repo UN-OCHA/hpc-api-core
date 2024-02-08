@@ -258,6 +258,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
   projects,
   log,
   ignoreInconsistentBudgets,
+  skipValidation = false,
 }: {
   database: Database;
   projects: Map<ProjectId, Data>;
@@ -273,6 +274,11 @@ export const getProjectBudgetsByOrgAndCluster = async <
    * to for example calculate a plan's overall requirements.
    */
   ignoreInconsistentBudgets?: true;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify
+   */
+  skipValidation?: boolean;
 }): Promise<Map<ProjectId, ProjectBudgetSegmentBreakdown[]>> => {
   const projectVersionIds = [...projects.values()].map(
     (p) => p.projectVersion.id
@@ -298,6 +304,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
         [Op.IN]: segments.map((s) => s.id),
       },
     },
+    skipValidation,
   });
 
   const breakdownsBySegment = groupObjectsByProperty(

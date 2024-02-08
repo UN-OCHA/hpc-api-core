@@ -107,6 +107,7 @@ export const getAllAttachments = async ({
   planEntities,
   governingEntities,
   log,
+  skipValidation = false,
 }: {
   database: Database;
   planId: PlanId;
@@ -127,6 +128,13 @@ export const getAllAttachments = async ({
    */
   governingEntities: MapOfGoverningEntities;
   log: SharedLogContext;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify.
+   *
+   * Also, skip type-checking attachment values against their types.
+   */
+  skipValidation?: boolean;
 }): Promise<AttachmentResults> => {
   const attachmentPrototypesById = await findAndOrganizeObjectsByUniqueProperty(
     database.attachmentPrototype,
@@ -138,6 +146,7 @@ export const getAllAttachments = async ({
             [Op.IN]: types,
           },
         },
+        skipValidation,
       }),
     'id'
   );
@@ -165,6 +174,7 @@ export const getAllAttachments = async ({
               ? { latestVersion: true }
               : { currentVersion: true }),
           },
+          skipValidation,
         }),
       'attachmentId'
     );
@@ -206,11 +216,22 @@ export const getAllAttachments = async ({
         })
       );
     }
-    const data = typeCheckAttachmentData({
-      attachment,
-      attachmentVersion,
-      log,
-    });
+
+    let data: AttachmentData;
+    if (!skipValidation) {
+      data = typeCheckAttachmentData({
+        attachment,
+        attachmentVersion,
+        log,
+      });
+    } else {
+      // Here, we sacrifice type-safety for speed, if `skipValidation` is enabled
+      data = {
+        type: attachment.type,
+        value: attachmentVersion.value,
+      } as unknown as AttachmentData;
+    }
+
     result.set(attachment.id, {
       id: attachment.id,
       customRef,

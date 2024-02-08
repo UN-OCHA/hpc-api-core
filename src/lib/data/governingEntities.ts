@@ -27,6 +27,7 @@ export const getAllGoverningEntitiesForPlan = async ({
   planId,
   version,
   prototypes,
+  skipValidation = false,
 }: {
   database: Database;
   planId: PlanId;
@@ -41,6 +42,11 @@ export const getAllGoverningEntitiesForPlan = async ({
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify
+   */
+  skipValidation?: boolean;
 }): Promise<MapOfGoverningEntities> => {
   const ges = await database.governingEntity.find({
     where: {
@@ -63,6 +69,7 @@ export const getAllGoverningEntitiesForPlan = async ({
             ? { latestVersion: true }
             : { currentVersion: true }),
         },
+        skipValidation,
       }),
     'governingEntityId'
   );
