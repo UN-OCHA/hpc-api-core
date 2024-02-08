@@ -25,11 +25,12 @@ export type MapOfGoverningEntities = AnnotatedMap<
 export const getAllGoverningEntitiesForPlan = async ({
   database,
   planId,
+  version,
   prototypes,
 }: {
   database: Database;
   planId: PlanId;
-  version: 'latest';
+  version: 'latest' | 'current';
   /**
    * A map of prototypes that **must** include the prototype for governing
    * entities of this plan.
@@ -44,6 +45,9 @@ export const getAllGoverningEntitiesForPlan = async ({
   const ges = await database.governingEntity.find({
     where: {
       planId,
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
     },
   });
 
@@ -52,10 +56,12 @@ export const getAllGoverningEntitiesForPlan = async ({
     (t) =>
       t.find({
         where: {
-          latestVersion: true,
           governingEntityId: {
             [Op.IN]: ges.map((ge) => ge.id),
           },
+          ...(version === 'latest'
+            ? { latestVersion: true }
+            : { currentVersion: true }),
         },
       }),
     'governingEntityId'

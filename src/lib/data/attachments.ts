@@ -103,6 +103,7 @@ export const getAllAttachments = async ({
   database,
   planId,
   types,
+  version,
   planEntities,
   governingEntities,
   log,
@@ -110,7 +111,7 @@ export const getAllAttachments = async ({
   database: Database;
   planId: PlanId;
   types: AttachmentType[];
-  version: 'latest';
+  version: 'latest' | 'current';
   /**
    * A map of plan entities, which **must** include any entity that is the
    * parent of the given attachment.
@@ -146,6 +147,9 @@ export const getAllAttachments = async ({
       type: {
         [Op.IN]: types,
       },
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
     },
   });
   const attachmentVersionsByAttachmentId =
@@ -154,10 +158,12 @@ export const getAllAttachments = async ({
       (t) =>
         t.find({
           where: {
-            latestVersion: true,
             attachmentId: {
               [Op.IN]: attachments.map((pa) => pa.id),
             },
+            ...(version === 'latest'
+              ? { latestVersion: true }
+              : { currentVersion: true }),
           },
         }),
       'attachmentId'

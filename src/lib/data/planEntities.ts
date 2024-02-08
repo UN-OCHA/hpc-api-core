@@ -41,6 +41,7 @@ export const getAndValidateAllPlanEntities = async ({
   database,
   planId,
   governingEntities,
+  version,
   prototypes,
   allowMissingPlanEntities,
 }: {
@@ -51,7 +52,7 @@ export const getAndValidateAllPlanEntities = async ({
    * generating references
    */
   governingEntities: MapOfGoverningEntities;
-  version: 'latest';
+  version: 'latest' | 'current';
   /**
    * A map of prototypes that **must** include the prototype for governing
    * entities of this plan.
@@ -74,6 +75,9 @@ export const getAndValidateAllPlanEntities = async ({
   const planEntities = await database.planEntity.find({
     where: {
       planId,
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
     },
   });
   const planEntityIDs = new Set(planEntities.map((pe) => pe.id));
@@ -83,10 +87,12 @@ export const getAndValidateAllPlanEntities = async ({
     (t) =>
       t.find({
         where: {
-          latestVersion: true,
           planEntityId: {
             [Op.IN]: planEntityIDs,
           },
+          ...(version === 'latest'
+            ? { latestVersion: true }
+            : { currentVersion: true }),
         },
       }),
     'planEntityId'
