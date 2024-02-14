@@ -25,7 +25,7 @@ export const EXTERNAL_REFERENCE_IMPORT_INFORMATION = t.partial({
         reason: t.string,
       }),
       t.partial({
-        valueId: t.number,
+        valueId: t.any,
       }),
     ])
   ),
@@ -35,7 +35,7 @@ export const EXTERNAL_REFERENCE_IMPORT_INFORMATION = t.partial({
         key: t.string,
       }),
       t.partial({
-        valueId: t.number,
+        valueId: t.any,
       }),
     ])
   ),
