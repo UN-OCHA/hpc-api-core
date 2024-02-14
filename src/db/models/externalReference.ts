@@ -17,33 +17,29 @@ export const EXTERNAL_REFERENCE_ID = brandedType<number, ExternalReferenceId>(
   t.number
 );
 
-export const EXTERNAL_REFERENCE_IMPORT_INFORMATION = t.intersection([
-  t.type({
-    inferred: t.array(
-      t.intersection([
-        t.type({
-          key: t.string,
-          reason: t.string,
-        }),
-        t.partial({
-          valueId: t.number,
-        }),
-      ])
-    ),
-  }),
-  t.partial({
-    transferred: t.array(
-      t.intersection([
-        t.type({
-          key: t.string,
-        }),
-        t.partial({
-          valueId: t.number,
-        }),
-      ])
-    ),
-  }),
-]);
+export const EXTERNAL_REFERENCE_IMPORT_INFORMATION = t.partial({
+  inferred: t.array(
+    t.intersection([
+      t.type({
+        key: t.string,
+        reason: t.string,
+      }),
+      t.partial({
+        valueId: t.number,
+      }),
+    ])
+  ),
+  transferred: t.array(
+    t.intersection([
+      t.type({
+        key: t.string,
+      }),
+      t.partial({
+        valueId: t.number,
+      }),
+    ])
+  ),
+});
 
 export default defineIDModel({
   tableName: 'externalReference',
