@@ -20,17 +20,27 @@ export const EXTERNAL_REFERENCE_ID = brandedType<number, ExternalReferenceId>(
 export const EXTERNAL_REFERENCE_IMPORT_INFORMATION = t.intersection([
   t.type({
     inferred: t.array(
-      t.type({
-        key: t.string,
-        reason: t.string,
-      })
+      t.intersection([
+        t.type({
+          key: t.string,
+          reason: t.string,
+        }),
+        t.partial({
+          valueId: t.number,
+        }),
+      ])
     ),
   }),
   t.partial({
     transferred: t.array(
-      t.type({
-        key: t.string,
-      })
+      t.intersection([
+        t.type({
+          key: t.string,
+        }),
+        t.partial({
+          valueId: t.number,
+        }),
+      ])
     ),
   }),
 ]);
