@@ -8,6 +8,9 @@ import { defineSequelizeModel } from '../util/sequelize-model';
 export const HIGHWATER_JOB_NAME = t.keyof({
   ftsSolrIndexFlow: null,
   ftsSolrIndexProject: null,
+  ftsOctCerfIngestion: null,
+  ftsOctCbpfIngestion: null,
+  ftsOctOchaIngestion: null,
 });
 
 export default defineSequelizeModel({
