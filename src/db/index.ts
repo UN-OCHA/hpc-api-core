@@ -53,6 +53,7 @@ import iatiTransaction from './models/iatiTransaction';
 import job from './models/job';
 import jobAssociation from './models/jobAssociation';
 import location from './models/location';
+import lookup from './models/lookup';
 import measurement from './models/measurement';
 import measurementVersion from './models/measurementVersion';
 import operation from './models/operation';
@@ -87,6 +88,8 @@ import projectVersionHistory from './models/projectVersionHistory';
 import projectVersionOrganization from './models/projectVersionOrganization';
 import projectVersionPlan from './models/projectVersionPlan';
 import projectVersionPlanEntity from './models/projectVersionPlanEntity';
+import reportDetail from './models/reportDetail';
+import reportFile from './models/reportFile';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
 import tag from './models/tag';
@@ -162,6 +165,7 @@ const initializeTables = (conn: Knex) => ({
   job: job(conn),
   jobAssociation: jobAssociation(conn),
   location: location(conn),
+  lookup: lookup(conn),
   measurement: measurement(conn),
   measurementVersion: measurementVersion(conn),
   operation: operation(conn),
@@ -196,6 +200,8 @@ const initializeTables = (conn: Knex) => ({
   projectVersionOrganization: projectVersionOrganization(conn),
   projectVersionPlan: projectVersionPlan(conn),
   projectVersionPlanEntity: projectVersionPlanEntity(conn),
+  reportDetail: reportDetail(conn),
+  reportFile: reportFile(conn),
   reportingWindow: reportingWindow(conn),
   reportingWindowAssignment: reportingWindowAssignment(conn),
   tag: tag(conn),
