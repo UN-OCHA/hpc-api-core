@@ -18,4 +18,12 @@ describe('Ensure creation of a currency', () => {
     expect(currency.id).toBeDefined();
     expect(currency.code).toEqual('TST');
   });
+
+  it('should purge tables between tests', async () => {
+    const trx = await getTransaction();
+
+    const currency = await context.models.currency.find({ trx });
+
+    expect(currency.length).toBe(0);
+  });
 });
