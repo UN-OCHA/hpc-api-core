@@ -20,6 +20,11 @@ const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
   multi: null,
 });
 
+const PLAN_VISIBILITY_PREFERENCES = t.type({
+  isDisaggregationForCaseloads: t.boolean,
+  isDisaggregationForIndicators: t.boolean,
+});
+
 export default defineLegacyVersionedModel({
   tableName: 'planVersion',
   fields: {
@@ -28,6 +33,10 @@ export default defineLegacyVersionedModel({
     },
     nonNullWithDefault: {
       isForHPCProjects: { kind: 'checked', type: t.boolean },
+      visibilityPreferences: {
+        kind: 'checked',
+        type: PLAN_VISIBILITY_PREFERENCES,
+      },
     },
     required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
