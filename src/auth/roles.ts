@@ -191,6 +191,7 @@ export const calculatePermissionsFromRolesGrant = async <
       } else if (role === 'projectsAdmin') {
         // New Permissions
         global.add(P.global.PROJECT_WORKFLOW_MOVE_TO_ANY_STEP);
+        global.add(P.global.ADD_COMMENT_TO_ANY_PROJECT);
       } else if (role === 'swaps') {
         global.add(P.global.MODIFY_OPERATION_ACCESS_AND_PERMISSIONS);
         global.add(P.global.ADD_OPERATION);
@@ -286,6 +287,7 @@ export const calculatePermissionsFromRolesGrant = async <
         planSet.add(P.plan.DELETE_PROJECTS);
         planSet.add(P.plan.CLONE_PROJECTS);
         planSet.add(P.plan.MAKE_VISIBLE_IN_PROJECTS);
+        planSet.add(P.plan.ADD_COMMENT_TO_PROJECTS);
       }
     }
   } else if (grant.type === 'project') {
@@ -303,6 +305,7 @@ export const calculatePermissionsFromRolesGrant = async <
         projectSet.add(P.project.DELETE);
         projectSet.add(P.project.MODIFY_ACCESS_AND_PERMISSIONS);
         projectSet.add(P.project.VIEW_DATA);
+        projectSet.add(P.project.ADD_COMMENT);
       }
     }
   } else if (grant.type === 'governingEntity') {
@@ -339,6 +342,7 @@ export const calculatePermissionsFromRolesGrant = async <
         geSet.add(P.governingEntity.EDIT_MEASUREMENTS);
         geSet.add(P.governingEntity.PROJECT_WORKFLOW_MOVE_IF_PLAN_UNLOCKED);
         geSet.add(P.governingEntity.MODIFY_ACCESS_AND_PERMISSIONS_OF_PROJECTS);
+        geSet.add(P.governingEntity.ADD_COMMENT_TO_PROJECTS);
         planSet.add(P.plan.VIEW_DATA);
       }
     }
