@@ -25,11 +25,13 @@ export type MapOfGoverningEntities = AnnotatedMap<
 export const getAllGoverningEntitiesForPlan = async ({
   database,
   planId,
+  version,
   prototypes,
+  skipValidation = false,
 }: {
   database: Database;
   planId: PlanId;
-  version: 'latest';
+  version: 'latest' | 'current';
   /**
    * A map of prototypes that **must** include the prototype for governing
    * entities of this plan.
@@ -40,10 +42,18 @@ export const getAllGoverningEntitiesForPlan = async ({
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
   >;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify
+   */
+  skipValidation?: boolean;
 }): Promise<MapOfGoverningEntities> => {
   const ges = await database.governingEntity.find({
     where: {
       planId,
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
     },
   });
 
@@ -52,11 +62,14 @@ export const getAllGoverningEntitiesForPlan = async ({
     (t) =>
       t.find({
         where: {
-          latestVersion: true,
           governingEntityId: {
             [Op.IN]: ges.map((ge) => ge.id),
           },
+          ...(version === 'latest'
+            ? { latestVersion: true }
+            : { currentVersion: true }),
         },
+        skipValidation,
       }),
     'governingEntityId'
   );

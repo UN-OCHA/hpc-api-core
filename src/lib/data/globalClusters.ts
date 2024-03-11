@@ -8,12 +8,19 @@ import { Op } from '../../db/util/conditions';
 export const getAllGlobalClustersForPlan = async ({
   database,
   planId,
+  version,
 }: {
   database: Database;
   planId: PlanId;
+  version: 'current' | 'latest';
 }) => {
   const governingEntities = await database.governingEntity.find({
-    where: { planId },
+    where: {
+      planId,
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
+    },
   });
 
   const globalClusterAssociations =

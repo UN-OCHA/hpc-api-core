@@ -103,14 +103,16 @@ export const getAllAttachments = async ({
   database,
   planId,
   types,
+  version,
   planEntities,
   governingEntities,
   log,
+  skipValidation = false,
 }: {
   database: Database;
   planId: PlanId;
   types: AttachmentType[];
-  version: 'latest';
+  version: 'latest' | 'current';
   /**
    * A map of plan entities, which **must** include any entity that is the
    * parent of the given attachment.
@@ -126,6 +128,13 @@ export const getAllAttachments = async ({
    */
   governingEntities: MapOfGoverningEntities;
   log: SharedLogContext;
+  /**
+   * Skip validation when fetching data from tables which have
+   * JSON columns, as those are expensive to verify.
+   *
+   * Also, skip type-checking attachment values against their types.
+   */
+  skipValidation?: boolean;
 }): Promise<AttachmentResults> => {
   const attachmentPrototypesById = await findAndOrganizeObjectsByUniqueProperty(
     database.attachmentPrototype,
@@ -137,6 +146,7 @@ export const getAllAttachments = async ({
             [Op.IN]: types,
           },
         },
+        skipValidation,
       }),
     'id'
   );
@@ -146,6 +156,9 @@ export const getAllAttachments = async ({
       type: {
         [Op.IN]: types,
       },
+      ...(version === 'latest'
+        ? { latestVersion: true }
+        : { currentVersion: true }),
     },
   });
   const attachmentVersionsByAttachmentId =
@@ -154,11 +167,14 @@ export const getAllAttachments = async ({
       (t) =>
         t.find({
           where: {
-            latestVersion: true,
             attachmentId: {
               [Op.IN]: attachments.map((pa) => pa.id),
             },
+            ...(version === 'latest'
+              ? { latestVersion: true }
+              : { currentVersion: true }),
           },
+          skipValidation,
         }),
       'attachmentId'
     );
@@ -200,11 +216,22 @@ export const getAllAttachments = async ({
         })
       );
     }
-    const data = typeCheckAttachmentData({
-      attachment,
-      attachmentVersion,
-      log,
-    });
+
+    let data: AttachmentData;
+    if (!skipValidation) {
+      data = typeCheckAttachmentData({
+        attachment,
+        attachmentVersion,
+        log,
+      });
+    } else {
+      // Here, we sacrifice type-safety for speed, if `skipValidation` is enabled
+      data = {
+        type: attachment.type,
+        value: attachmentVersion.value,
+      } as unknown as AttachmentData;
+    }
+
     result.set(attachment.id, {
       id: attachment.id,
       customRef,
