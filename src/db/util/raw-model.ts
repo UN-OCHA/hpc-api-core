@@ -104,7 +104,7 @@ export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
 export type ModelInitializer<
   F extends FieldDefinition,
   AdditionalFindArgs = {},
-> = (conn: Knex) => Model<F, AdditionalFindArgs>;
+> = (masterConn: Knex, replicaConn?: Knex) => Model<F, AdditionalFindArgs>;
 
 export const defineRawModel =
   <F extends FieldDefinition>(opts: {
@@ -116,7 +116,7 @@ export const defineRawModel =
      */
     genIdentifier?: (data: unknown) => string;
   }): ModelInitializer<F> =>
-  (conn): Model<F> => {
+  (masterConn, replicaConn): Model<F> => {
     const { tableName, fields, genIdentifier } = opts;
 
     const validateAndFilter = (row: unknown) =>
@@ -128,10 +128,15 @@ export const defineRawModel =
 
     const validator = dataValidator(fields);
 
-    const tbl = () => conn<Instance>(tableName);
+    const masterTable = () => masterConn<Instance>(tableName);
+    const replicaTable = replicaConn
+      ? () => replicaConn<Instance>(tableName)
+      : masterTable;
 
     const create: CreateFn<F> = async (data, options) => {
-      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
+      const builder = options?.trx
+        ? masterTable().transacting(options.trx)
+        : masterTable();
       const res = await builder.insert([data as any]).returning('*');
       return validateAndFilter(res[0]);
     };
@@ -141,7 +146,9 @@ export const defineRawModel =
         return [];
       }
 
-      const builder = options?.trx ? tbl().transacting(options.trx) : tbl();
+      const builder = options?.trx
+        ? masterTable().transacting(options.trx)
+        : masterTable();
       const res = await builder.insert(data).returning('*');
       return res.map(validateAndFilter);
     };
@@ -154,7 +161,7 @@ export const defineRawModel =
       skipValidation = false,
       trx,
     } = {}) => {
-      const builder = trx ? tbl().transacting(trx) : tbl();
+      const builder = trx ? masterTable().transacting(trx) : replicaTable();
       const query = builder.where(prepareCondition(where ?? {})).select('*');
 
       if (limit !== undefined && limit > 0) {
@@ -198,7 +205,7 @@ export const defineRawModel =
       skipValidation = false,
       trx,
     }) => {
-      const builder = trx ? tbl().transacting(trx) : tbl();
+      const builder = trx ? masterTable().transacting(trx) : masterTable();
       const res = await builder
         .where(prepareCondition(where || {}))
         .update(values as any)
@@ -212,13 +219,13 @@ export const defineRawModel =
     };
 
     const destroy: DestroyFn<F> = async ({ where, trx }) => {
-      const builder = trx ? tbl().transacting(trx) : tbl();
+      const builder = trx ? masterTable().transacting(trx) : masterTable();
       const count = await builder.where(prepareCondition(where || {})).delete();
       return count;
     };
 
     const truncate: TruncateFn = async (trx) => {
-      const builder = trx ? tbl().transacting(trx) : tbl();
+      const builder = trx ? masterTable().transacting(trx) : masterTable();
       await builder.truncate();
     };
 
@@ -226,7 +233,7 @@ export const defineRawModel =
       _internals: {
         type: 'single-table',
         tableName,
-        query: tbl,
+        query: masterTable,
         fields,
       },
       create,

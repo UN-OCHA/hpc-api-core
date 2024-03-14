@@ -8,8 +8,8 @@ import { AUTH_GRANTEE_ID } from './authGrantee';
 import { AUTH_TARGET_ID } from './authTarget';
 import type { ParticipantId } from './participant';
 
-const authGrantModel = (conn: Knex) => {
-  const authGrantLog = initAuthGrantLog(conn);
+const authGrantModel = (masterConn: Knex, replicaConn?: Knex) => {
+  const authGrantLog = initAuthGrantLog(masterConn, replicaConn);
 
   const model = defineSequelizeModel({
     tableName: 'authGrant',
@@ -30,7 +30,7 @@ const authGrantModel = (conn: Knex) => {
       },
     },
     softDeletionEnabled: false,
-  })(conn);
+  })(masterConn, replicaConn);
 
   type UserData = UserDataOfModel<typeof model>;
   type Instance = InstanceOfModel<typeof model>;
@@ -61,7 +61,7 @@ const authGrantModel = (conn: Knex) => {
       return await model.create(data, { trx });
     };
 
-    return trx ? createCallback(trx) : conn.transaction(createCallback);
+    return trx ? createCallback(trx) : masterConn.transaction(createCallback);
   };
 
   const update = (
@@ -104,7 +104,7 @@ const authGrantModel = (conn: Knex) => {
       }
     };
 
-    return trx ? updateCallback(trx) : conn.transaction(updateCallback);
+    return trx ? updateCallback(trx) : masterConn.transaction(updateCallback);
   };
 
   const createOrUpdate = async (

@@ -94,7 +94,7 @@ export const defineSequelizeModel =
     FieldsWithSequelize<F, SoftDeletionEnabled>,
     AdditionalFindArgsForSequelizeTables
   > =>
-  (conn) => {
+  (masterConn, replicaConn) => {
     type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
 
     const fields: Fields = merge(
@@ -106,7 +106,7 @@ export const defineSequelizeModel =
     const model = defineRawModel({
       ...opts,
       fields,
-    })(conn);
+    })(masterConn, replicaConn);
 
     const find: FindFn<Fields, AdditionalFindArgsForSequelizeTables> = (
       args
@@ -154,8 +154,8 @@ export const defineSequelizeModel =
       return model.create(
         {
           ...data,
-          createdAt: conn.fn.now(3),
-          updatedAt: conn.fn.now(3),
+          createdAt: masterConn.fn.now(3),
+          updatedAt: masterConn.fn.now(3),
         },
         opts
       );
@@ -165,8 +165,8 @@ export const defineSequelizeModel =
       return model.createMany(
         data.map((data) => ({
           ...data,
-          createdAt: conn.fn.now(3),
-          updatedAt: conn.fn.now(3),
+          createdAt: masterConn.fn.now(3),
+          updatedAt: masterConn.fn.now(3),
         })),
         opts
       );
@@ -177,7 +177,7 @@ export const defineSequelizeModel =
         ...args,
         values: {
           ...args.values,
-          updatedAt: conn.fn.now(3),
+          updatedAt: masterConn.fn.now(3),
         },
       });
     };
