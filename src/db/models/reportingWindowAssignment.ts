@@ -106,14 +106,14 @@ export default defineVersionedModel({
         },
       },
     },
-    prepare: async (data, conn) => {
+    prepare: async (data, masterConn, replicaConn) => {
       let assigneeOperation: OperationId;
       let assigneeId: number;
       if (data.assignee.type === 'operation') {
         assigneeOperation = data.assignee.operation;
         assigneeId = data.assignee.operation;
       } else if (data.assignee.type === 'operationCluster') {
-        const oc = operationCluster(conn);
+        const oc = operationCluster(masterConn, replicaConn);
         const cluster = await oc.get(data.assignee.cluster);
         if (!cluster) {
           throw new Error(

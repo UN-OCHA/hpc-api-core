@@ -110,7 +110,10 @@ type VersionedModelInitializer<
   IDType,
   Data,
   LookupColumns extends LookupColumnDefinition,
-> = (conn: Knex) => VersionedModel<IDType, Data, LookupColumns>;
+> = (
+  masterConn: Knex,
+  replicaConn?: Knex
+) => VersionedModel<IDType, Data, LookupColumns>;
 
 export type InstanceOfVersionedModel<M extends VersionedModel<any, any, any>> =
   M extends VersionedModel<infer IDType, infer Data, any>
@@ -135,10 +138,14 @@ export const defineVersionedModel =
     data: t.Type<Data>;
     lookupColumns: {
       columns: LookupColumns;
-      prepare: (data: Data, conn: Knex) => Promise<UserDataOf<LookupColumns>>;
+      prepare: (
+        data: Data,
+        masterConn: Knex,
+        replicaConn?: Knex
+      ) => Promise<UserDataOf<LookupColumns>>;
     };
   }): VersionedModelInitializer<IDType, Data, LookupColumns> =>
-  (conn) => {
+  (masterConn, replicaConn) => {
     const name = opts.tableBaseName;
 
     const rootFields = merge(
@@ -159,7 +166,7 @@ export const defineVersionedModel =
       idField: 'id',
       fields: rootFields,
       softDeletionEnabled: false,
-    })(conn);
+    })(masterConn, replicaConn);
 
     const versionModel = defineSequelizeModel({
       tableName: `${name}Version`,
@@ -196,7 +203,7 @@ export const defineVersionedModel =
         }
         return `unknown ${name}Version`;
       },
-    })(conn);
+    })(masterConn, replicaConn);
 
     const createInstance = ({
       root: { id },
@@ -237,7 +244,11 @@ export const defineVersionedModel =
         tablesToClear: () => [`${name}Version`, name],
       },
       create: async (data, modifiedBy) => {
-        const lookupData = await opts.lookupColumns.prepare(data, conn);
+        const lookupData = await opts.lookupColumns.prepare(
+          data,
+          masterConn,
+          replicaConn
+        );
 
         const root = await rootModel.create(lookupData as any);
 
@@ -399,12 +410,16 @@ export const defineVersionedModel =
             `version ${prev.version} is not the latest version`
           );
         }
-        const lookupData = await opts.lookupColumns.prepare(data, conn);
+        const lookupData = await opts.lookupColumns.prepare(
+          data,
+          masterConn,
+          replicaConn
+        );
 
         // Create new version, update previous version's isLatest flag,
         // and update lookup tables
 
-        return await conn.transaction(async (trx) => {
+        return await masterConn.transaction(async (trx) => {
           // Make new version not the latest
           await versionModel.update({
             values: {

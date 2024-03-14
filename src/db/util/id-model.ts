@@ -59,7 +59,7 @@ export type ModelWithIdInitializer<
     | null
     | keyof F['generated']
     | keyof F['generatedCompositeKey'],
-> = (conn: Knex) => ModelWithId<F, IDField>;
+> = (masterConn: Knex, replicaConn?: Knex) => ModelWithId<F, IDField>;
 
 const hasField = <F extends string>(
   data: unknown,
@@ -90,7 +90,7 @@ export const defineIDModel =
     FieldsWithSequelize<F, SoftDeletionEnabled>,
     IDField
   > =>
-  (conn) => {
+  (masterConn, replicaConn) => {
     const { idField, tableName } = opts;
     type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
     type ID = IdOf<Fields, IDField>;
@@ -102,7 +102,7 @@ export const defineIDModel =
         hasField(data, idField)
           ? `${tableName} ${data[idField]}`
           : `Unknown ${tableName}`,
-    })(conn);
+    })(masterConn, replicaConn);
 
     const get = (id: ID): Promise<Instance | null> =>
       model.findOne({
