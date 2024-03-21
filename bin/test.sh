@@ -15,6 +15,7 @@ where:
 KEEP=0
 FORCE_STOP_JEST='--forceExit'
 ONLY_CONTAINERS=0
+STOP_CONTAINERS=0
 COMMAND_ARGS=''
 
 function moveToTestDir {
@@ -52,19 +53,18 @@ while [ "$1" != "" ]; do
   shift
 done
 
+# ONLY_CONTAINERS must be 1 and STOP_CONTAINERS must be 0
+if [ $ONLY_CONTAINERS -eq 1 ] && [ "$STOP_CONTAINERS" -eq 1 ]; then
+  echo "$USAGE"
+  exit 1
+fi
+
 # STOP_CONTAINERS is a final option
-if [ "$STOP_CONTAINERS" -eq 1 ]; then
+if [[ "$STOP_CONTAINERS" -eq 1 ]]; then
   echo 'Stopping Docker containers'
   moveToTestDir
   docker compose down
   exit 0
-fi
-
-# ONLY_CONTAINERS must be 1 and STOP must be 0
-if [ $ONLY_CONTAINERS -eq 1 ] && [ "$STOP" -eq 1 ]; then
-  echo 'Invalid options - when using option -oc, option -ns must be used as well'
-  echo "$USAGE"
-  exit 1
 fi
 
 echo 'Starting Docker containers'
