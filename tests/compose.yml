@@ -9,4 +9,4 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./migration/schema-2024-02-29.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./migration/schema-2024-03-13.sql:/docker-entrypoint-initdb.d/init.sql

@@ -2772,8 +2772,7 @@ CREATE TABLE public."planVersion" (
     "updatedAt" timestamp with time zone NOT NULL,
     "lastPublishedReportingPeriodId" integer,
     "clusterSelectionType" character varying(255),
-    "isDisaggregationVisibleForCaseloads" boolean DEFAULT true,
-    "isDisaggregationVisibleForIndicators" boolean DEFAULT true
+    "visibilityPreferences" jsonb DEFAULT '{"isDisaggregationForCaseloads": true, "isDisaggregationForIndicators": true}'::jsonb NOT NULL
 );
 
 
