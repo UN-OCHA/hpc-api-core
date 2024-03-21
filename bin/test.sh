@@ -53,7 +53,7 @@ while [ "$1" != "" ]; do
 done
 
 # STOP_CONTAINERS is a final option
-if [ "$STOP_CONTAINERS" -eq 1 ]; then
+if [[ "$STOP_CONTAINERS" -eq 1 ]]; then
   echo 'Stopping Docker containers'
   moveToTestDir
   docker compose down
