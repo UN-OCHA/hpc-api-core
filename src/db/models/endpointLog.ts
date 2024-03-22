@@ -38,7 +38,6 @@ export const ENDPOINT_LOG_ENTITY_TYPE = t.keyof({
 
 export const ENDPOINT_LOG_EDIT_TYPE = t.keyof({
   creation: null,
-  delete: null,
   deletion: null,
   merge: null,
   update: null,
