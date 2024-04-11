@@ -27,6 +27,12 @@ export default defineLegacyVersionedModel({
         brand: PLAN_REPORTING_PERIOD_ID,
       },
     },
+    nonNullWithDefault: {
+      isCommentPublic: {
+        kind: 'checked',
+        type: t.boolean,
+      },
+    },
   },
   idField: 'id',
   softDeletionEnabled: true,
