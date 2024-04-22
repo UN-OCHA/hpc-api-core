@@ -28,7 +28,6 @@ import emergency from './models/emergency';
 import emergencyLocation from './models/emergencyLocation';
 import endpointLog from './models/endpointLog';
 import endpointUsage from './models/endpointUsage';
-import entitiesAssociation from './models/entitiesAssociation';
 import entityPrototype from './models/entityPrototype';
 import expiredData from './models/expiredData';
 import externalData from './models/externalData';
@@ -141,7 +140,6 @@ const initializeTables = (conn: Knex) => ({
   emergencyLocation: emergencyLocation(conn),
   endpointLog: endpointLog(conn),
   endpointUsage: endpointUsage(conn),
-  entitiesAssociation: entitiesAssociation(conn),
   entityPrototype: entityPrototype(conn),
   expiredData: expiredData(conn),
   externalData: externalData(conn),
