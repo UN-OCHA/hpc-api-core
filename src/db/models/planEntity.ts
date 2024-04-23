@@ -4,6 +4,7 @@ import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
 import { ENTITY_PROTOTYPE_ID } from './entityPrototype';
+import { GOVERNING_ENTITY_ID } from './governingEntity';
 import { PLAN_ID } from './plan';
 
 export type PlanEntityId = Brand<
@@ -25,6 +26,12 @@ export default defineLegacyVersionedModel({
       entityPrototypeId: {
         kind: 'branded-integer',
         brand: ENTITY_PROTOTYPE_ID,
+      },
+    },
+    optional: {
+      parentGoverningEntityId: {
+        kind: 'branded-integer',
+        brand: GOVERNING_ENTITY_ID,
       },
     },
   },
