@@ -105,21 +105,6 @@ export const getAndValidateAllPlanEntities = async ({
     'planEntityId'
   );
 
-  const eaByChildId = await findAndOrganizeObjectsByUniqueProperty(
-    database.entitiesAssociation,
-    (t) =>
-      t.find({
-        where: {
-          childType: 'planEntity',
-          parentType: 'governingEntity',
-          childId: {
-            [Op.IN]: planEntityIDs,
-          },
-        },
-      }),
-    'childId'
-  );
-
   const result: ValidatedPlanEntities = annotatedMap('planEntity');
 
   for (const planEntity of planEntities) {
@@ -133,7 +118,6 @@ export const getAndValidateAllPlanEntities = async ({
       planEntity,
       planEntityVersion,
       prototypes,
-      entityAssociations: eaByChildId,
       governingEntities,
     });
 
@@ -143,7 +127,7 @@ export const getAndValidateAllPlanEntities = async ({
       customRef: refAndType.customRef,
       description: null,
       supports: [],
-      governingEntity: eaByChildId.get(planEntity.id)?.parentId ?? null,
+      governingEntity: planEntity.parentGoverningEntityId,
     };
 
     // Use entity details if possible
@@ -219,7 +203,6 @@ const getCustomReferenceAndTypeForPlanEntity = ({
   planEntity,
   planEntityVersion,
   prototypes,
-  entityAssociations,
   governingEntities,
 }: {
   planEntity: InstanceDataOfModel<Database['planEntity']>;
@@ -232,14 +215,6 @@ const getCustomReferenceAndTypeForPlanEntity = ({
   prototypes: AnnotatedMap<
     EntityPrototypeId,
     InstanceDataOfModel<Database['entityPrototype']>
-  >;
-  /**
-   * A map of associations from the `entitiesAssociation` table, that **must**
-   * include any rows that reference this entity.
-   */
-  entityAssociations: Map<
-    PlanEntityId,
-    InstanceDataOfModel<Database['entitiesAssociation']>
   >;
   /**
    * A map from governing entity IDs to an object containing the .
@@ -257,13 +232,12 @@ const getCustomReferenceAndTypeForPlanEntity = ({
     planEntity,
     'entityPrototypeId'
   );
-  const parent = entityAssociations.get(planEntity.id);
   let ref = '';
-  if (parent) {
+  if (planEntity.parentGoverningEntityId) {
     const ge = getRequiredDataByValue(
       governingEntities,
       planEntity,
-      () => parent.parentId
+      (pE) => pE.parentGoverningEntityId
     );
     ref = `${ge.customRef}/`;
   }
