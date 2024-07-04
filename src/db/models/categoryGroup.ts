@@ -18,6 +18,7 @@ export const CATEGORY_GROUP_TYPE = t.keyof({
   organizationLevel: null,
   organizationType: null,
   pendingStatus: null,
+  planClusterType: null,
   planCosting: null,
   planIndicated: null,
   planLanguage: null,
