@@ -22,7 +22,7 @@ export const deleteProjectById = async (
 
   // Cannot delete already published project
   if (
-    project.latestVersionId !== null && // TODO: Remove once HPC-9121 is done and `latestVersionId` can no longer be `null`
+    project.latestVersionId !== null &&
     project.currentPublishedVersionId === project.latestVersionId
   ) {
     throw new PreconditionFailedError(
