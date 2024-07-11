@@ -45,6 +45,16 @@ export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
      */
     skipValidation?: boolean;
     trx?: Knex.Transaction<any, any>;
+    /**
+     * Uses `DISTINCT ON`, which is a feature unique to PostgreSQL.
+     *
+     * Keeps only the first row of each set of rows where the given (set of) column(s) is unique.
+     * Note that the “first row” of each set is unpredictable unless `ORDER BY` is used to
+     * ensure that the desired row appears first. If ordering is used, there is an important
+     * constraint, because the first expression of `ORDER BY` must be present **somewhere** in
+     * `DISTINCT ON` expressions. But, not all expressions of `ORDER BY` need to be in `DISTINCT ON`.
+     */
+    distinct?: Array<keyof InstanceDataOf<F>>;
   } & AdditionalArgs
 ) => Promise<Array<InstanceDataOf<F>>>;
 
@@ -160,6 +170,7 @@ export const defineRawModel =
       orderBy,
       skipValidation = false,
       trx,
+      distinct,
     } = {}) => {
       const builder = trx ? masterTable().transacting(trx) : replicaTable();
       const query = builder.where(prepareCondition(where ?? {})).select('*');
@@ -177,6 +188,18 @@ export const defineRawModel =
           orderBy = [orderBy];
         }
         query.orderBy(orderBy);
+      }
+
+      if (distinct && distinct.length >= 1) {
+        if (
+          (orderBy?.length ?? 0) >= 1 &&
+          orderBy?.at(0)?.column !== distinct.at(0)
+        ) {
+          throw new Error(
+            'SELECT DISTINCT ON expressions must match initial ORDER BY expression'
+          );
+        }
+        query.distinctOn(distinct);
       }
 
       const res = await query;
