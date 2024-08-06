@@ -45,6 +45,16 @@ export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
      */
     skipValidation?: boolean;
     trx?: Knex.Transaction<any, any>;
+    /**
+     * Uses `DISTINCT ON`, which is a feature unique to PostgreSQL.
+     *
+     * Keeps only the first row of each set of rows where the given (set of) column(s) is unique.
+     * Note that the “first row” of each set is unpredictable unless `ORDER BY` is used to
+     * ensure that the desired row appears first. If ordering is used, there is an important
+     * constraint, because the first expression of `ORDER BY` must be present **somewhere** in
+     * `DISTINCT ON` expressions. But, not all expressions of `ORDER BY` need to be in `DISTINCT ON`.
+     */
+    distinct?: Array<keyof InstanceDataOf<F>>;
   } & AdditionalArgs
 ) => Promise<Array<InstanceDataOf<F>>>;
 
@@ -73,6 +83,20 @@ export type DestroyFn<F extends FieldDefinition> = (args: {
 
 export type TruncateFn = (trx?: Knex.Transaction<any, any>) => Promise<void>;
 
+export type CountFn<F extends FieldDefinition, AdditionalArgs = {}> = (
+  args?: {
+    where?: WhereCond<F>;
+    trx?: Knex.Transaction<any, any>;
+    /**
+     * Will produce `SELECT COUNT(DISTINCT "columnName")` and if there
+     * is an expression in `COUNT`, it will compute the number of input
+     * rows in which the input value is **not null**. So, besides selecting
+     * unique values of "columnName", it will also filter out `NULL` values
+     */
+    distinct?: Array<keyof InstanceDataOf<F>>;
+  } & AdditionalArgs
+) => Promise<bigint>;
+
 export type ModelInternals<F extends FieldDefinition> = {
   readonly type: 'single-table';
   readonly tableName: string;
@@ -92,6 +116,7 @@ export type Model<F extends FieldDefinition, AdditionalFindArgs = {}> = {
   readonly update: UpdateFn<F>;
   readonly destroy: DestroyFn<F>;
   readonly truncate: TruncateFn;
+  readonly count: CountFn<F, AdditionalFindArgs>;
 };
 
 export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
@@ -160,6 +185,7 @@ export const defineRawModel =
       orderBy,
       skipValidation = false,
       trx,
+      distinct,
     } = {}) => {
       const builder = trx ? masterTable().transacting(trx) : replicaTable();
       const query = builder.where(prepareCondition(where ?? {})).select('*');
@@ -177,6 +203,18 @@ export const defineRawModel =
           orderBy = [orderBy];
         }
         query.orderBy(orderBy);
+      }
+
+      if (distinct && distinct.length >= 1) {
+        if (
+          (orderBy?.length ?? 0) >= 1 &&
+          orderBy?.at(0)?.column !== distinct.at(0)
+        ) {
+          throw new Error(
+            'SELECT DISTINCT ON expressions must match initial ORDER BY expression'
+          );
+        }
+        query.distinctOn(distinct);
       }
 
       const res = await query;
@@ -229,6 +267,25 @@ export const defineRawModel =
       await builder.truncate();
     };
 
+    const count: CountFn<F> = async ({ where, trx, distinct } = {}) => {
+      const builder = trx ? masterTable().transacting(trx) : replicaTable();
+      const query = builder.where(prepareCondition(where ?? {}));
+
+      if (distinct !== undefined) {
+        query.countDistinct(distinct);
+      } else {
+        query.count('*');
+      }
+
+      const res = (await query) as unknown as [{ count: string }];
+
+      if (res.length !== 1) {
+        throw new Error('Count result must be an array of single element');
+      }
+
+      return BigInt(res[0].count);
+    };
+
     return {
       _internals: {
         type: 'single-table',
@@ -243,5 +300,6 @@ export const defineRawModel =
       update,
       destroy,
       truncate,
+      count,
     };
   };
