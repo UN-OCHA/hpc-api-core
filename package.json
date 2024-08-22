@@ -7,6 +7,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky install",
+    "reinstall": "rm -rf node_modules/ && yarn",
     "lint-prettier": "prettier -c .",
     "lint-eslint": "eslint --quiet .",
     "lint": "yarn lint-prettier && yarn lint-eslint"
