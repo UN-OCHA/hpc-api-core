@@ -162,7 +162,7 @@ export const defineRawModel =
       const builder = options?.trx
         ? masterTable().transacting(options.trx)
         : masterTable();
-      const res = await builder.insert([data as any]).returning('*');
+      const res = await builder.insert([data]).returning('*');
       return validateAndFilter(res[0]);
     };
 

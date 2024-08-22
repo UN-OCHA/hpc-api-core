@@ -292,13 +292,13 @@ export const prepareCondition =
             propertyCondition[Op.ILIKE]
           );
         } else if (PropertyConditions.isLtCondition(propertyCondition)) {
-          builder.where(property, '<', propertyCondition[Op.LT] as any);
+          builder.where(property, '<', propertyCondition[Op.LT]);
         } else if (PropertyConditions.isLteCondition(propertyCondition)) {
-          builder.where(property, '<=', propertyCondition[Op.LTE] as any);
+          builder.where(property, '<=', propertyCondition[Op.LTE]);
         } else if (PropertyConditions.isGtCondition(propertyCondition)) {
-          builder.where(property, '>', propertyCondition[Op.GT] as any);
+          builder.where(property, '>', propertyCondition[Op.GT]);
         } else if (PropertyConditions.isGteCondition(propertyCondition)) {
-          builder.where(property, '>=', propertyCondition[Op.GTE] as any);
+          builder.where(property, '>=', propertyCondition[Op.GTE]);
         } else {
           throw new Error(`Unexpected condition: ${propertyCondition}`);
         }
