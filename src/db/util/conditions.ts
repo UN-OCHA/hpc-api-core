@@ -267,11 +267,13 @@ export const prepareCondition =
             `Unexpected undefined value for ${property.toString()}`
           );
         } else if (PropertyConditions.isEqualityCondition(propertyCondition)) {
-          builder.where(property, propertyCondition);
+          builder.where(property as string, propertyCondition as any);
         } else if (PropertyConditions.isInCondition(propertyCondition)) {
-          builder.whereIn(property, [...propertyCondition[Op.IN]]);
+          builder.whereIn(property, [...propertyCondition[Op.IN]] as any);
         } else if (PropertyConditions.isNotInCondition(propertyCondition)) {
-          builder.whereNotIn(property, [...propertyCondition[Op.NOT_IN]]);
+          builder.whereNotIn(property, [
+            ...propertyCondition[Op.NOT_IN],
+          ] as any);
         } else if (PropertyConditions.isNullCondition(propertyCondition)) {
           if (propertyCondition[Op.IS_NULL]) {
             builder.whereNull(property);
@@ -292,13 +294,29 @@ export const prepareCondition =
             propertyCondition[Op.ILIKE]
           );
         } else if (PropertyConditions.isLtCondition(propertyCondition)) {
-          builder.where(property, '<', propertyCondition[Op.LT]);
+          builder.where(
+            property as string,
+            '<',
+            propertyCondition[Op.LT] as any
+          );
         } else if (PropertyConditions.isLteCondition(propertyCondition)) {
-          builder.where(property, '<=', propertyCondition[Op.LTE]);
+          builder.where(
+            property as string,
+            '<=',
+            propertyCondition[Op.LTE] as any
+          );
         } else if (PropertyConditions.isGtCondition(propertyCondition)) {
-          builder.where(property, '>', propertyCondition[Op.GT]);
+          builder.where(
+            property as string,
+            '>',
+            propertyCondition[Op.GT] as any
+          );
         } else if (PropertyConditions.isGteCondition(propertyCondition)) {
-          builder.where(property, '>=', propertyCondition[Op.GTE]);
+          builder.where(
+            property as string,
+            '>=',
+            propertyCondition[Op.GTE] as any
+          );
         } else {
           throw new Error(`Unexpected condition: ${propertyCondition}`);
         }
