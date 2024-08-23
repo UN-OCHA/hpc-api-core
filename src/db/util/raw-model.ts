@@ -31,6 +31,7 @@ export type WhereCond<F extends FieldDefinition> = Condition<InstanceDataOf<F>>;
 export type OrderByCond<F extends FieldDefinition> = {
   column: keyof InstanceDataOf<F>;
   order?: 'asc' | 'desc';
+  nulls?: 'first' | 'last';
 };
 
 export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
