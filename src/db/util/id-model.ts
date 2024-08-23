@@ -1,4 +1,4 @@
-import Knex = require('knex');
+import type { Knex } from 'knex';
 
 import { Op } from './conditions';
 import type {

@@ -2,12 +2,9 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import Knex = require('knex');
-import merge = require('lodash/merge');
 import * as t from 'io-ts';
-
+import type { Knex } from 'knex';
 import type { Brand } from '../../util/types';
-
 import { PARTICIPANT_ID, type ParticipantId } from '../models/participant';
 import { Op } from './conditions';
 import { ConcurrentModificationError } from './errors';
@@ -19,6 +16,7 @@ import type {
   WhereCond,
 } from './raw-model';
 import { defineSequelizeModel } from './sequelize-model';
+import merge = require('lodash/merge');
 
 type LookupColumnDefinition = Pick<FieldDefinition, 'optional' | 'required'>;
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 // we use namespaces here to neatly organize and scope the many type and type guard definitions
 
-import Knex = require('knex');
+import type { Knex } from 'knex';
 
 /**
  * Symbols to use for where condition construction

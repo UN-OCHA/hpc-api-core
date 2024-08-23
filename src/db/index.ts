@@ -1,10 +1,10 @@
-import Knex = require('knex');
+import type { Knex } from 'knex';
 import attachment from './models/attachment';
 import attachmentPrototype from './models/attachmentPrototype';
 import attachmentVersion from './models/attachmentVersion';
 import authGrant from './models/authGrant';
-import authGrantee from './models/authGrantee';
 import authGrantLog from './models/authGrantLog';
+import authGrantee from './models/authGrantee';
 import authInvite from './models/authInvite';
 import authTarget from './models/authTarget';
 import authToken from './models/authToken';

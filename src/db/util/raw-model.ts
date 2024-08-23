@@ -2,7 +2,7 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import Knex = require('knex');
+import type { Knex } from 'knex';
 import { prepareCondition, type Condition } from './conditions';
 
 import type {

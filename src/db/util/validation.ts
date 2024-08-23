@@ -2,10 +2,9 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import Knex = require('knex');
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
-
+import type { Knex } from 'knex';
 import { ioTsErrorFormatter } from '../../util/io-ts';
 import { nullable } from './datatypes';
 import { DataValidationError } from './errors';
