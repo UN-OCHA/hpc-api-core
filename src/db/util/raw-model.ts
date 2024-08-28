@@ -120,9 +120,8 @@ export type Model<F extends FieldDefinition, AdditionalFindArgs = {}> = {
   readonly count: CountFn<F, AdditionalFindArgs>;
 };
 
-export type InstanceDataOfModel<M extends Model<any>> = M extends Model<infer F>
-  ? InstanceDataOf<F>
-  : never;
+export type InstanceDataOfModel<M extends Model<any>> =
+  M extends Model<infer F> ? InstanceDataOf<F> : never;
 
 /**
  * A function that takes a knex connection and returns the model definition

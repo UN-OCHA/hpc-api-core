@@ -34,10 +34,10 @@ export type Field = BrandedField | EnumField | CheckedField;
 export type FieldTypeOf<F extends Field> = F extends EnumField
   ? keyof F['values']
   : F extends CheckedField
-  ? t.TypeOf<F['type']>
-  : F extends BrandedField
-  ? BrandedFieldTypeOf<F['brand']>
-  : never;
+    ? t.TypeOf<F['type']>
+    : F extends BrandedField
+      ? BrandedFieldTypeOf<F['brand']>
+      : never;
 
 // Field Sets
 

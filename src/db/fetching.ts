@@ -10,11 +10,12 @@ import type {
  * Generic type that can be used to obtain the type of an instance of either a
  * standard table, or a versioned table.
  */
-type InstanceOf<T extends Table> = T extends Model<any>
-  ? InstanceDataOfModel<T>
-  : T extends VersionedModel<any, any, any>
-  ? InstanceOfVersionedModel<T>
-  : never;
+type InstanceOf<T extends Table> =
+  T extends Model<any>
+    ? InstanceDataOfModel<T>
+    : T extends VersionedModel<any, any, any>
+      ? InstanceOfVersionedModel<T>
+      : never;
 
 /**
  * Fetch a number of items of a particular type from the database,

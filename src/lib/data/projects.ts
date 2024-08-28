@@ -366,7 +366,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       const amountUSD =
         typeof content.amount === 'string'
           ? parseInt(content.amount)
-          : content.amount ?? 0;
+          : (content.amount ?? 0);
 
       // Determine all entities associated with the breakdown
 

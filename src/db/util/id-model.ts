@@ -27,10 +27,10 @@ type IdOf<
     }
     ? FieldTypeOf<F['generated'][IDField]>
     : F['generatedCompositeKey'] extends {
-        [K in IDField]: Field;
-      }
-    ? FieldTypeOf<F['generatedCompositeKey'][IDField]>
-    : never
+          [K in IDField]: Field;
+        }
+      ? FieldTypeOf<F['generatedCompositeKey'][IDField]>
+      : never
   : never;
 
 /**
