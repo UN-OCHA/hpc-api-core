@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 // we use namespaces here to neatly organize and scope the many type and type guard definitions
 
-import Knex = require('knex');
+import type { Knex } from 'knex';
 
 /**
  * Symbols to use for where condition construction
@@ -180,15 +180,15 @@ namespace OverallConditions {
     >;
   };
 
-  export type QueryBuilderCondition<InstanceData> = {
+  export type QueryBuilderCondition<InstanceData extends object> = {
     [Cond.BUILDER]: Knex.QueryCallback<InstanceData, InstanceData>;
   };
 
-  export type ConjunctionCondition<InstanceData> = {
+  export type ConjunctionCondition<InstanceData extends object> = {
     [Cond.AND]: Array<Condition<InstanceData>>;
   };
 
-  export type DisjunctionCondition<InstanceData> = {
+  export type DisjunctionCondition<InstanceData extends object> = {
     [Cond.OR]: Array<Condition<InstanceData>>;
   };
 
@@ -196,23 +196,23 @@ namespace OverallConditions {
    * The root type for a custom condition that can be passed to `prepareCondition`
    * to construct a knex condition / query in a type-safe manner
    */
-  export type Condition<InstanceData> =
+  export type Condition<InstanceData extends object> =
     | PropertyConjunctionCondition<InstanceData>
     | QueryBuilderCondition<InstanceData>
     | ConjunctionCondition<InstanceData>
     | DisjunctionCondition<InstanceData>;
 
-  export const isQueryBuilderCondition = <T>(
+  export const isQueryBuilderCondition = <T extends object>(
     condition: Condition<T>
   ): condition is QueryBuilderCondition<T> =>
     Object.prototype.hasOwnProperty.call(condition, Cond.BUILDER);
 
-  export const isConjunctionCondition = <T>(
+  export const isConjunctionCondition = <T extends object>(
     condition: Condition<T>
   ): condition is ConjunctionCondition<T> =>
     Object.prototype.hasOwnProperty.call(condition, Cond.AND);
 
-  export const isDisjunctionCondition = <T>(
+  export const isDisjunctionCondition = <T extends object>(
     condition: Condition<T>
   ): condition is DisjunctionCondition<T> =>
     Object.prototype.hasOwnProperty.call(condition, Cond.OR);
@@ -222,7 +222,8 @@ namespace OverallConditions {
  * The root type for a custom condition that can be passed to `prepareCondition`
  * to construct a knex condition / query in a type-safe manner
  */
-export type Condition<InstanceData> = OverallConditions.Condition<InstanceData>;
+export type Condition<InstanceData extends object> =
+  OverallConditions.Condition<InstanceData>;
 
 /**
  * Given a knex query builder, and one of our own custom conditions,
@@ -239,7 +240,7 @@ export type Condition<InstanceData> = OverallConditions.Condition<InstanceData>;
  * However, we retain the ability to use a query builder when needed.
  */
 export const prepareCondition =
-  <InstanceData>(
+  <InstanceData extends object>(
     condition: Condition<InstanceData>
   ): Knex.QueryCallback<InstanceData, InstanceData> =>
   (builder) => {
@@ -267,11 +268,13 @@ export const prepareCondition =
             `Unexpected undefined value for ${property.toString()}`
           );
         } else if (PropertyConditions.isEqualityCondition(propertyCondition)) {
-          builder.where(property, propertyCondition);
+          builder.where(property as any, propertyCondition);
         } else if (PropertyConditions.isInCondition(propertyCondition)) {
-          builder.whereIn(property, [...propertyCondition[Op.IN]]);
+          builder.whereIn(property as any, [...propertyCondition[Op.IN]]);
         } else if (PropertyConditions.isNotInCondition(propertyCondition)) {
-          builder.whereNotIn(property, [...propertyCondition[Op.NOT_IN]]);
+          builder.whereNotIn(property as any, [
+            ...propertyCondition[Op.NOT_IN],
+          ]);
         } else if (PropertyConditions.isNullCondition(propertyCondition)) {
           if (propertyCondition[Op.IS_NULL]) {
             builder.whereNull(property);
@@ -292,13 +295,13 @@ export const prepareCondition =
             propertyCondition[Op.ILIKE]
           );
         } else if (PropertyConditions.isLtCondition(propertyCondition)) {
-          builder.where(property, '<', propertyCondition[Op.LT] as any);
+          builder.where(property as any, '<', propertyCondition[Op.LT]);
         } else if (PropertyConditions.isLteCondition(propertyCondition)) {
-          builder.where(property, '<=', propertyCondition[Op.LTE] as any);
+          builder.where(property as any, '<=', propertyCondition[Op.LTE]);
         } else if (PropertyConditions.isGtCondition(propertyCondition)) {
-          builder.where(property, '>', propertyCondition[Op.GT] as any);
+          builder.where(property as any, '>', propertyCondition[Op.GT]);
         } else if (PropertyConditions.isGteCondition(propertyCondition)) {
-          builder.where(property, '>=', propertyCondition[Op.GTE] as any);
+          builder.where(property as any, '>=', propertyCondition[Op.GTE]);
         } else {
           throw new Error(`Unexpected condition: ${propertyCondition}`);
         }

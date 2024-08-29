@@ -1,4 +1,4 @@
-import type Knex from 'knex';
+import type { Knex } from 'knex';
 import v4Models, { type Database } from '../src/db';
 import { createDbConnection } from './utils/connection';
 

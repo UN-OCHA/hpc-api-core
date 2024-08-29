@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import Knex = require('knex');
+import type { Knex } from 'knex';
 
 import { defineSequelizeModel } from '../util/sequelize-model';
 import type { InstanceOfModel, UserDataOfModel } from '../util/types';

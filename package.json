@@ -1,12 +1,13 @@
 {
   "name": "@unocha/hpc-api-core",
-  "version": "8.2.0",
+  "version": "9.0.0",
   "description": "Core libraries supporting HPC.Tools API Backend",
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
     "check-types": "tsc --noEmit",
     "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky install",
+    "reinstall": "rm -rf node_modules/ && yarn",
     "lint-prettier": "prettier -c .",
     "lint-eslint": "eslint --quiet .",
     "lint": "yarn lint-prettier && yarn lint-eslint"
@@ -20,16 +21,16 @@
     "@types/node-fetch": "2.6.3",
     "fp-ts": "^2.14.0",
     "io-ts": "2.2.20",
-    "knex": "0.21.1",
+    "knex": "3.1.0",
     "lodash": "^4.17.21",
     "node-fetch": "2.6.9",
-    "pg": "^8.11.3",
+    "pg": "^8.12.0",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^20.8.10",
-    "@types/pg": "^8.11.2",
+    "@types/pg": "^8.11.6",
     "@unocha/hpc-repo-tools": "^4.0.0",
     "eslint": "^8.52.0",
     "husky": "^8.0.3",

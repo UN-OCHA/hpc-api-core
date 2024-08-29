@@ -1,4 +1,4 @@
-import Knex = require('knex');
+import type { Knex } from 'knex';
 import type { Database } from '..';
 import { deleteAuthTarget } from '../../auth';
 import { NotFoundError, PreconditionFailedError } from '../../util/error';

@@ -2,7 +2,7 @@
 /**
  * Use of `any` in this module is generally deliberate to help with generics
  */
-import Knex = require('knex');
+import type { Knex } from 'knex';
 import { prepareCondition, type Condition } from './conditions';
 
 import type {
@@ -31,6 +31,7 @@ export type WhereCond<F extends FieldDefinition> = Condition<InstanceDataOf<F>>;
 export type OrderByCond<F extends FieldDefinition> = {
   column: keyof InstanceDataOf<F>;
   order?: 'asc' | 'desc';
+  nulls?: 'first' | 'last';
 };
 
 export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
@@ -162,7 +163,7 @@ export const defineRawModel =
       const builder = options?.trx
         ? masterTable().transacting(options.trx)
         : masterTable();
-      const res = await builder.insert([data as any]).returning('*');
+      const res = await builder.insert([data] as any).returning('*');
       return validateAndFilter(res[0]);
     };
 
@@ -174,7 +175,7 @@ export const defineRawModel =
       const builder = options?.trx
         ? masterTable().transacting(options.trx)
         : masterTable();
-      const res = await builder.insert(data).returning('*');
+      const res = await builder.insert(data as any).returning('*');
       return res.map(validateAndFilter);
     };
 

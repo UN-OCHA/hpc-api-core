@@ -2,7 +2,7 @@
  * This file is a new (type-safe) interface for common authentication functions
  * ahead of the auth refactor outlined in HPC-6999
  */
-import Knex = require('knex');
+import type { Knex } from 'knex';
 import * as crypto from 'node:crypto';
 import { promisify } from 'node:util';
 import { type AuthTargetId } from '../db/models/authTarget';
