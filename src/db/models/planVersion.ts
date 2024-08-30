@@ -15,12 +15,12 @@ export type PlanVersionId = Brand<
 
 export const PLAN_VERSION_ID = brandedType<number, PlanVersionId>(t.number);
 
-const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
+export const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
   single: null,
   multi: null,
 });
 
-const PLAN_VISIBILITY_PREFERENCES = t.type({
+export const PLAN_VISIBILITY_PREFERENCES = t.type({
   isDisaggregationForCaseloads: t.boolean,
   isDisaggregationForIndicators: t.boolean,
 });
