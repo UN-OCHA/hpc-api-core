@@ -27,12 +27,19 @@ export const BLUEPRINT_TYPE = t.keyof({
   operation: null,
 });
 
-const ENTITY_REFS = t.array(
+export const ENTITY_REFS = t.array(
   t.type({
     refCode: t.string,
     cardinality: t.string,
   })
 );
+
+export const ENTITY_REFS_OR_XOR = t.union([
+  ENTITY_REFS,
+  t.type({
+    xor: ENTITY_REFS,
+  }),
+]);
 
 const BLUEPRINT_MODEL_ATTACHMENT_TYPE = t.union([
   ATTACHMENT_TYPE,
@@ -84,12 +91,7 @@ export const BLUEPRINT_MODEL = t.type({
       t.partial({
         possibleChildren: ENTITY_REFS,
         description: LOCALIZED_STRING,
-        canSupport: t.union([
-          ENTITY_REFS,
-          t.type({
-            xor: ENTITY_REFS,
-          }),
-        ]),
+        canSupport: ENTITY_REFS_OR_XOR,
       }),
     ])
   ),

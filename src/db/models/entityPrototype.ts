@@ -39,6 +39,11 @@ export const ENTITY_PROTOTYPE_TYPE = t.keyof({
   PE: null,
 });
 
+export const ENTITY_PROTOTYPE_CARDINALITY = t.union([
+  t.literal('1-1'),
+  t.literal('0-N'),
+]);
+
 const ENTITY_REFS = t.array(
   t.intersection([
     t.type({
@@ -52,7 +57,7 @@ const ENTITY_REFS = t.array(
       refCode: t.string,
     }),
     t.partial({
-      cardinality: t.union([t.literal('1-1'), t.literal('0-N')]),
+      cardinality: ENTITY_PROTOTYPE_CARDINALITY,
       /**
        * @deprecated
        * There are records in database that have
@@ -61,7 +66,7 @@ const ENTITY_REFS = t.array(
        * TODO: Rename this property to "cardinality" in DB, then,
        * drop this definition and make "cardinality" required
        */
-      cadinality: t.union([t.literal('1-1'), t.literal('0-N')]),
+      cadinality: ENTITY_PROTOTYPE_CARDINALITY,
     }),
   ])
 );
