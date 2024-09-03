@@ -12,7 +12,7 @@ export type LocationId = Brand<
 
 export const LOCATION_ID = brandedType<number, LocationId>(t.number);
 
-const LOCATION_STATUS = t.keyof({
+export const LOCATION_STATUS = t.keyof({
   active: null,
   expired: null,
 });
