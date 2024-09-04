@@ -56,8 +56,8 @@ export const sortBy =
         typeof prop === 'string'
           ? getDiff(a[prop], b[prop])
           : typeof prop === 'function'
-          ? getDiff(prop(a), prop(b))
-          : 0;
+            ? getDiff(prop(a), prop(b))
+            : 0;
       if (diff !== 0) {
         return diff;
       }
@@ -69,9 +69,8 @@ export const sortBy =
 /**
  * Obtain the type parameter of a promise type
  */
-export type PromiseType<P extends Promise<any>> = P extends Promise<infer V>
-  ? V
-  : never;
+export type PromiseType<P extends Promise<any>> =
+  P extends Promise<infer V> ? V : never;
 
 /**
  * A map with additional information stored about the items contained within.
@@ -198,9 +197,8 @@ export const mapObjectEntries = <K extends string | symbol, V1, V2>(
   ) as { [key in K]: V2 };
 };
 
-export type MapValue<M extends Map<any, any>> = M extends Map<any, infer V>
-  ? V
-  : unknown;
+export type MapValue<M extends Map<any, any>> =
+  M extends Map<any, infer V> ? V : unknown;
 
 export const getOrCreate = <K, V>(map: Map<K, V>, k: K, val: () => V): V => {
   let v = map.get(k);
@@ -277,8 +275,8 @@ export const cleanNumberVal = (value: number | string | null): number | null =>
   typeof value === 'number'
     ? value
     : typeof value === 'string' && value !== ''
-    ? parseFloat(value.trim().replaceAll(',', ''))
-    : null;
+      ? parseFloat(value.trim().replaceAll(',', ''))
+      : null;
 
 export const toCamelCase = (originalString: string) => {
   let isNextLetterUppercase = false;

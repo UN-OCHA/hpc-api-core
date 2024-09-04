@@ -8,11 +8,12 @@ import type { Model } from './raw-model';
 
 export type AnyModel = Model<any> | ModelWithId<any, any>;
 
-export type FieldsOfModel<M extends AnyModel> = M extends Model<infer F>
-  ? F
-  : M extends ModelWithId<infer F, any>
-  ? F
-  : never;
+export type FieldsOfModel<M extends AnyModel> =
+  M extends Model<infer F>
+    ? F
+    : M extends ModelWithId<infer F, any>
+      ? F
+      : never;
 
 export type InstanceOfModel<M extends AnyModel> = InstanceDataOf<
   FieldsOfModel<M>
