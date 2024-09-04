@@ -21,7 +21,7 @@ const AUTH_TARGET_TYPE = {
   governingEntity: null,
 };
 
-export default (masterConn: Knex, replicaConn?: Knex) => {
+const authTarget = (masterConn: Knex, replicaConn?: Knex) => {
   const model = defineIDModel({
     tableName: 'authTarget',
     fields: {
@@ -56,3 +56,5 @@ export default (masterConn: Knex, replicaConn?: Knex) => {
     destroy: model.destroy,
   };
 };
+
+export default authTarget;
