@@ -405,18 +405,20 @@ const disaggregationData = <T extends t.Mixed>(additionalFields: T) =>
 export const DISAGGREGATION_DATA = disaggregationData(t.type({}));
 type DisaggregationData = t.TypeOf<typeof DISAGGREGATION_DATA>;
 
-const EXTENDED_DISAGGREGATION_DATA = disaggregationData(
+const _EXTENDED_DISAGGREGATION_DATA = disaggregationData(
   t.type({
     lIndex: t.number,
     cIndex: t.number,
   })
 );
-type ExtendedDisaggregationData = t.TypeOf<typeof EXTENDED_DISAGGREGATION_DATA>;
+type ExtendedDisaggregationData = t.TypeOf<
+  typeof _EXTENDED_DISAGGREGATION_DATA
+>;
 
-const DISAGGREGATION_MATRIX = t.array(
+const _DISAGGREGATION_MATRIX = t.array(
   t.array(t.union([EMPTY_TUPLE, t.tuple([t.number])]))
 );
-type DisaggregationMatrix = t.TypeOf<typeof DISAGGREGATION_MATRIX>;
+type DisaggregationMatrix = t.TypeOf<typeof _DISAGGREGATION_MATRIX>;
 
 /**
  * Utility method that gets disaggregation data of an
