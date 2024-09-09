@@ -19,14 +19,18 @@ export const OUTPUT_FIELD = t.keyof({
   ORGANIZATION_INTERSECTION: null,
   LOCATION: null,
   EARMARKING_TYPE: null,
+  GLOBAL_CLUSTER: null,
 });
 
 export const INPUT_FIELD = t.keyof({
+  ONEGMS_DONOR: null,
   DONOR: null,
   FUNDING_SOURCE: null,
   ALLOCATION_STATUS: null,
   IMIS_CODE: null,
   GRAND_BARGAIN_EARMARKING: null,
+  ONEGMS_GLOBAL_CLUSTER: null,
+  ONEGMS_FIELD_SECTOR: null,
 });
 
 export default defineIDModel({
