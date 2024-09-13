@@ -71,6 +71,7 @@ import planLocation from './models/planLocation';
 import planReportingPeriod from './models/planReportingPeriod';
 import planTag from './models/planTag';
 import planVersion from './models/planVersion';
+import planVersionOrganization from './models/planVersionOrganization';
 import planYear from './models/planYear';
 import procedureEntityPrototype from './models/procedureEntityPrototype';
 import procedureSection from './models/procedureSection';
@@ -189,6 +190,7 @@ const initializeTables = (masterConn: Knex, replicaConn?: Knex) => ({
   planReportingPeriod: planReportingPeriod(masterConn, replicaConn),
   planTag: planTag(masterConn, replicaConn),
   planVersion: planVersion(masterConn, replicaConn),
+  planVersionOrganization: planVersionOrganization(masterConn, replicaConn),
   planYear: planYear(masterConn, replicaConn),
   procedureEntityPrototype: procedureEntityPrototype(masterConn, replicaConn),
   procedureSection: procedureSection(masterConn, replicaConn),

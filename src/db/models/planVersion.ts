@@ -37,6 +37,7 @@ export default defineLegacyVersionedModel({
         kind: 'checked',
         type: PLAN_VISIBILITY_PREFERENCES,
       },
+      isPartOfGHO: { kind: 'checked', type: t.boolean },
     },
     required: {
       planId: { kind: 'branded-integer', brand: PLAN_ID },
@@ -57,6 +58,11 @@ export default defineLegacyVersionedModel({
         kind: 'checked',
         type: PLAN_VERSION_CLUSTER_SELECTION_TYPE,
       },
+      pdfPublishDate: { kind: 'checked', type: DATE },
+    },
+    accidentallyOptional: {
+      shortName: { kind: 'checked', type: t.string },
+      subtitle: { kind: 'checked', type: t.string },
     },
   },
   idField: 'id',

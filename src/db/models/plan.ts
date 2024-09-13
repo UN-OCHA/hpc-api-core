@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
+import { DATE } from '../util/datatypes';
 import { defineIDModel } from '../util/id-model';
 
 export type PlanId = Brand<number, { readonly s: unique symbol }, 'plan.id'>;
@@ -26,6 +27,10 @@ export default defineIDModel({
     },
     optional: {
       revisionState: { kind: 'checked', type: PLAN_REVISION_STATE },
+      releasedDate: { kind: 'checked', type: DATE },
+    },
+    nonNullWithDefault: {
+      isReleased: { kind: 'checked', type: t.boolean },
     },
   },
   idField: 'id',
