@@ -23,6 +23,7 @@ export const OUTPUT_FIELD = t.keyof({
 });
 
 export const INPUT_FIELD = t.keyof({
+  ONEGMS_DONOR: null,
   DONOR: null,
   FUNDING_SOURCE: null,
   ALLOCATION_STATUS: null,
