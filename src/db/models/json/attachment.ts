@@ -22,7 +22,19 @@ const COST_ATTACHMENT_VALUE = t.intersection([
        * and the total sum of the breakdown must match the overall cost when
        * non-empty.
        */
-      breakdown: t.array(
+      breakdownByGlobalCluster: t.array(
+        t.exact(
+          t.type({
+            objectId: t.number,
+            cost: t.number,
+          })
+        )
+      ),
+      /**
+       * Unlike global cluster breakdown, service modality breakdown
+       * doesn't need to add up to the total cost
+       */
+      breakdownByServiceModality: t.array(
         t.exact(
           t.type({
             objectId: t.number,
