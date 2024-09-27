@@ -22,16 +22,11 @@ const COST_ATTACHMENT_VALUE = t.intersection([
   t.exact(
     t.partial({
       /**
-       * When necessary, a cost breakdown can be provided with respect to a
-       * particular collection of objects.
-       *
-       * For example, when the object of this attachment is a governing entity,
-       * a breakdown needs to be provided for each of the global clusters,
-       * (even if the governing entity has 0 global clusters)
-       * and the total sum of the breakdown must match the overall cost when
-       * non-empty.
+       * When necessary, a cost breakdown can be provided for each of the global
+       * clusters (even if the governing entity has 0 global clusters), and the
+       * total sum of the breakdown must match the overall cost when non-empty.
        */
-      breakdown: COST_BREAKDOWN,
+      breakdownByGlobalCluster: COST_BREAKDOWN,
       /**
        * Unlike global cluster breakdown, service modality breakdown
        * doesn't need to add up to the total cost
