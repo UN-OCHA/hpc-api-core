@@ -49,7 +49,7 @@ export const DISAGGREGATED_LOCATIONS = t.array(
  * Disaggregated data that may be present in a caseload, indicator, or
  * measurement for a caseload or indicator.
  */
-const DISAGGREGATED_DATA = t.type({
+export const DISAGGREGATED_DATA = t.type({
   categories: t.array(
     t.type({
       ids: t.array(t.number),
