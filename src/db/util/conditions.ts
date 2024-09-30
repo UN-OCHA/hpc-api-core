@@ -38,7 +38,7 @@ export namespace PropertySymbols {
   export const GT = Symbol('greater than');
   export const GTE = Symbol('greater than or equal to');
   export const SIMILAR = Symbol('similar to');
-
+  export const CONTAINS = Symbol('contains');
   /**
    * Symbols to use when constructing conditions for a single property
    */
@@ -54,6 +54,7 @@ export namespace PropertySymbols {
     GT: GT,
     GTE: GTE,
     SIMILAR: SIMILAR,
+    CONTAINS: CONTAINS,
   } as const;
 }
 
@@ -100,6 +101,9 @@ namespace PropertyConditions {
   export type SimilarCondition<T> = {
     [Op.SIMILAR]: T & string;
   };
+  export type ContainsCondition<T> = {
+    [Op.CONTAINS]: T;
+  };
   /**
    * A condition that must hold over a single property whose type is T
    */
@@ -115,7 +119,8 @@ namespace PropertyConditions {
     | LteCondition<T>
     | GtCondition<T>
     | GteCondition<T>
-    | SimilarCondition<T>;
+    | SimilarCondition<T>
+    | ContainsCondition<T>;
 
   export const isEqualityCondition = <T>(
     condition: Condition<T>
@@ -176,6 +181,11 @@ namespace PropertyConditions {
     condition: Condition<T>
   ): condition is SimilarCondition<T> =>
     Object.prototype.hasOwnProperty.call(condition, Op.SIMILAR);
+
+  export const isContainsCondition = <T>(
+    condition: Condition<T>
+  ): condition is ContainsCondition<T> =>
+    Object.prototype.hasOwnProperty.call(condition, Op.CONTAINS);
 }
 
 namespace OverallConditions {
@@ -319,6 +329,14 @@ export const prepareCondition =
             'similar to',
             propertyCondition[Op.SIMILAR]
           );
+        } else if (PropertyConditions.isContainsCondition(propertyCondition)) {
+          const prop = `"${String(property)}"::varchar[]`;
+          const value = propertyCondition[Op.CONTAINS];
+          const values = (Array.isArray(value) ? value : [value])
+            .map((v) => `'${v}'`)
+            .join(',');
+          const wrappedValues = `ARRAY[${values}]::varchar[]`;
+          builder.whereRaw(`${prop} @> ${wrappedValues}`);
         } else {
           throw new Error(`Unexpected condition: ${propertyCondition}`);
         }
