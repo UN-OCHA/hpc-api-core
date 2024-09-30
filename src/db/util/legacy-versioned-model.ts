@@ -29,7 +29,8 @@ const VERSIONED_FIELDS = {
   },
 } as const;
 
-type ExtendedFields<F extends FieldDefinition> = F & typeof VERSIONED_FIELDS;
+export type ExtendedFields<F extends FieldDefinition> = F &
+  typeof VERSIONED_FIELDS;
 
 export type FieldsWithVersioned<
   F extends FieldDefinition,
