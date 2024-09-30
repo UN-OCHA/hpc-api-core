@@ -20,7 +20,7 @@ export const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
   multi: null,
 });
 
-const PLAN_VISIBILITY_PREFERENCES = t.type({
+export const PLAN_VISIBILITY_PREFERENCES = t.type({
   isDisaggregationForCaseloads: t.boolean,
   isDisaggregationForIndicators: t.boolean,
 });
