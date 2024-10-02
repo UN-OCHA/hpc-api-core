@@ -24,13 +24,13 @@
     "knex": "3.1.0",
     "lodash": "^4.17.21",
     "node-fetch": "2.7.0",
-    "pg": "^8.12.0",
+    "pg": "^8.13.0",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.3",
-    "@types/pg": "^8.11.8",
+    "@types/pg": "^8.11.10",
     "@unocha/hpc-repo-tools": "^5.0.0",
     "eslint": "^9.9.1",
     "husky": "^9.1.5",
