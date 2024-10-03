@@ -23,3 +23,11 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: 'fp-ts'
       - dependency-name: 'io-ts'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      time: '11:00'
+      timezone: 'Europe/Zurich'
+    reviewers:
+      - '@UN-OCHA/hpc-js-reviewers'
