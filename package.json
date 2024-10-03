@@ -17,7 +17,7 @@
     "yarn": ">=1.22.22"
   },
   "dependencies": {
-    "@types/lodash": "^4.17.9",
+    "@types/lodash": "^4.17.10",
     "@types/node-fetch": "2.6.11",
     "fp-ts": "^2.14.0",
     "io-ts": "2.2.20",
