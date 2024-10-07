@@ -37,7 +37,8 @@ export namespace PropertySymbols {
   export const LTE = Symbol('less than or equal to');
   export const GT = Symbol('greater than');
   export const GTE = Symbol('greater than or equal to');
-
+  export const SIMILAR = Symbol('similar to');
+  export const CONTAINS = Symbol('contains');
   /**
    * Symbols to use when constructing conditions for a single property
    */
@@ -52,6 +53,8 @@ export namespace PropertySymbols {
     LTE: LTE,
     GT: GT,
     GTE: GTE,
+    SIMILAR: SIMILAR,
+    CONTAINS: CONTAINS,
   } as const;
 }
 
@@ -95,6 +98,12 @@ namespace PropertyConditions {
   export type GteCondition<T> = {
     [Op.GTE]: T;
   };
+  export type SimilarCondition<T> = {
+    [Op.SIMILAR]: T & string;
+  };
+  export type ContainsCondition<T> = {
+    [Op.CONTAINS]: T;
+  };
   /**
    * A condition that must hold over a single property whose type is T
    */
@@ -109,7 +118,9 @@ namespace PropertyConditions {
     | LtCondition<T>
     | LteCondition<T>
     | GtCondition<T>
-    | GteCondition<T>;
+    | GteCondition<T>
+    | SimilarCondition<T>
+    | ContainsCondition<T>;
 
   export const isEqualityCondition = <T>(
     condition: Condition<T>
@@ -165,6 +176,16 @@ namespace PropertyConditions {
     condition: Condition<T>
   ): condition is GteCondition<T> =>
     Object.prototype.hasOwnProperty.call(condition, Op.GTE);
+
+  export const isSimilarCondition = <T>(
+    condition: Condition<T>
+  ): condition is SimilarCondition<T> =>
+    Object.prototype.hasOwnProperty.call(condition, Op.SIMILAR);
+
+  export const isContainsCondition = <T>(
+    condition: Condition<T>
+  ): condition is ContainsCondition<T> =>
+    Object.prototype.hasOwnProperty.call(condition, Op.CONTAINS);
 }
 
 namespace OverallConditions {
@@ -302,6 +323,20 @@ export const prepareCondition =
           builder.where(property as any, '>', propertyCondition[Op.GT]);
         } else if (PropertyConditions.isGteCondition(propertyCondition)) {
           builder.where(property as any, '>=', propertyCondition[Op.GTE]);
+        } else if (PropertyConditions.isSimilarCondition(propertyCondition)) {
+          builder.where(
+            property as string,
+            'similar to',
+            propertyCondition[Op.SIMILAR]
+          );
+        } else if (PropertyConditions.isContainsCondition(propertyCondition)) {
+          const prop = `"${String(property)}"::varchar[]`;
+          const value = propertyCondition[Op.CONTAINS];
+          const values = (Array.isArray(value) ? value : [value])
+            .map((v) => `'${v}'`)
+            .join(',');
+          const wrappedValues = `ARRAY[${values}]::varchar[]`;
+          builder.whereRaw(`${prop} @> ${wrappedValues}`);
         } else {
           throw new Error(`Unexpected condition: ${propertyCondition}`);
         }

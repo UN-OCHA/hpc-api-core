@@ -177,6 +177,7 @@ export const calculatePermissionsFromRolesGrant = async <
         }
       } else if (role === 'rpmAdmin') {
         // New Permissions
+        global.add(P.global.CREATE_PLAN);
         global.add(P.global.VIEW_ANY_PLAN_DATA);
         global.add(P.global.EDIT_ANY_PLAN_DATA);
         global.add(P.global.EDIT_ANY_MEASUREMENT);
