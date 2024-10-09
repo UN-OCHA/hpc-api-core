@@ -20,6 +20,7 @@ import client from './models/client';
 import conditionField from './models/conditionField';
 import conditionFieldReliesOn from './models/conditionFieldReliesOn';
 import conditionFieldType from './models/conditionFieldType';
+import configurationField from './models/configurationField';
 import currency from './models/currency';
 import disaggregationCategory from './models/disaggregationCategory';
 import disaggregationCategoryGroup from './models/disaggregationCategoryGroup';
@@ -136,6 +137,7 @@ const initializeTables = (masterConn: Knex, replicaConn?: Knex) => ({
   conditionField: conditionField(masterConn, replicaConn),
   conditionFieldReliesOn: conditionFieldReliesOn(masterConn, replicaConn),
   conditionFieldType: conditionFieldType(masterConn, replicaConn),
+  configurationField: configurationField(masterConn, replicaConn),
   currency: currency(masterConn, replicaConn),
   disaggregationCategory: disaggregationCategory(masterConn, replicaConn),
   disaggregationCategoryGroup: disaggregationCategoryGroup(
