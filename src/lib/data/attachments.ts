@@ -557,6 +557,7 @@ export const getDisaggregationObjects = ({
   totalsOnly,
   specificMetricTypes,
   log,
+  shouldNotSkipNullDataMatrix = false,
 }: {
   metricsValue: CaseloadOrIndicatorMetricsValues;
   /**
@@ -568,6 +569,7 @@ export const getDisaggregationObjects = ({
    */
   specificMetricTypes?: string[];
   log: SharedLogContext;
+  shouldNotSkipNullDataMatrix?: boolean;
 }): DisaggregationData | null => {
   const disaggregations = getDisaggregations({
     metricsValue,
@@ -587,7 +589,13 @@ export const getDisaggregationObjects = ({
       /**
        * Skip values of `null`, empty string and number zero
        */
-      .filter((dm) => dm.value)
+      // .filter((dm) => dm.value)
+      .filter((dm) => {
+        if (shouldNotSkipNullDataMatrix && dm.value === null) {
+          return true;
+        }
+        return dm.value;
+      })
       .map((dm) => ({
         metricType: dm.metricType,
         value: dm.value,
