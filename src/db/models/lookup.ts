@@ -30,6 +30,7 @@ export const INPUT_FIELD = t.keyof({
   IMIS_CODE: null,
   GRAND_BARGAIN_EARMARKING: null,
   ONEGMS_GLOBAL_CLUSTER: null,
+  ONEGMS_FIELD_SECTOR: null
 });
 
 export default defineIDModel({
