@@ -80,6 +80,7 @@ export type UpdateFn<F extends FieldDefinition> = (args: {
 export type DestroyFn<F extends FieldDefinition> = (args: {
   where: WhereCond<F>;
   trx?: Knex.Transaction<any, any>;
+  hardDelete?: boolean;
 }) => Promise<number>;
 
 export type TruncateFn = (trx?: Knex.Transaction<any, any>) => Promise<void>;

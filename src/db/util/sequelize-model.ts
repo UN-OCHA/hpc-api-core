@@ -11,6 +11,7 @@ import {
   defineRawModel,
   type CreateFn,
   type CreateManyFn,
+  type DestroyFn,
   type FindFn,
   type FindOneFn,
   type ModelInitializer,
@@ -182,6 +183,20 @@ export const defineSequelizeModel =
       });
     };
 
+    const destroy: DestroyFn<Fields> = async (args) => {
+      if (!opts.softDeletionEnabled || args.hardDelete) {
+        return model.destroy(args);
+      }
+      return (
+        await model.update({
+          ...args,
+          values: {
+            deletedAt: masterConn.fn.now(3),
+          } as any,
+        })
+      ).length;
+    };
+
     return {
       ...model,
       find,
@@ -189,5 +204,6 @@ export const defineSequelizeModel =
       create,
       createMany,
       update,
+      destroy,
     };
   };
