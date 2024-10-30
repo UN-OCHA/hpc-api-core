@@ -99,6 +99,7 @@ export const AUTH_PERMISSIONS = {
      * Can add comments to any project
      */
     ADD_COMMENT_TO_ANY_PROJECT: 'canAddCommentToAnyProject',
+    DELETE_UPLOADED_FILE: 'canDeleteUploadedFile',
   },
   operation: {
     /**
