@@ -4,6 +4,7 @@ import { brandedType } from '../../util/io-ts';
 import type { Brand } from '../../util/types';
 import { DATE } from '../util/datatypes';
 import { defineLegacyVersionedModel } from '../util/legacy-versioned-model';
+import { LOCATION_ID } from './location';
 import { PLAN_ID } from './plan';
 import { PLAN_REPORTING_PERIOD_ID } from './planReportingPeriod';
 
@@ -59,6 +60,7 @@ export default defineLegacyVersionedModel({
         type: PLAN_VERSION_CLUSTER_SELECTION_TYPE,
       },
       pdfPublishDate: { kind: 'checked', type: DATE },
+      focusLocationId: { kind: 'branded-integer', brand: LOCATION_ID },
     },
     accidentallyOptional: {
       shortName: { kind: 'checked', type: t.string },
