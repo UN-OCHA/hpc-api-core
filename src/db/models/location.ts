@@ -28,6 +28,7 @@ export default defineIDModel({
     },
     nonNullWithDefault: {
       itosSync: { kind: 'checked', type: t.boolean },
+      isRegion: { kind: 'checked', type: t.boolean },
     },
     optional: {
       externalId: { kind: 'checked', type: t.string },
