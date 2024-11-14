@@ -1,3 +1,5 @@
+import type { FieldDefinition } from '../db/util/model-definition';
+
 /**
  * This type allows us to restrict assignments of other types.
  *
@@ -21,3 +23,30 @@ export type Brand<T, S extends { s: symbol }, Label extends string = ''> = T & {
 
 export const createBrandedValue = <T, B extends Brand<T, any, any>>(v: T): B =>
   v as unknown as B;
+
+export const getTableColumns = <
+  T extends { _internals: { fields: FieldDefinition } },
+>(
+  table: T
+): string[] => {
+  const {
+    generated,
+    generatedCompositeKey,
+    nonNullWithDefault,
+    required,
+    optional,
+    accidentallyOptional,
+  } = table._internals.fields;
+
+  // Collect columns from all subsets
+  const columns = [
+    ...Object.keys(generated ?? {}),
+    ...Object.keys(generatedCompositeKey ?? {}),
+    ...Object.keys(nonNullWithDefault ?? {}),
+    ...Object.keys(required ?? {}),
+    ...Object.keys(optional ?? {}),
+    ...Object.keys(accidentallyOptional ?? {}),
+  ];
+
+  return columns;
+};
