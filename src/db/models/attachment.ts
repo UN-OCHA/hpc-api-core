@@ -37,10 +37,6 @@ export default defineLegacyVersionedModel({
         kind: 'branded-integer',
         brand: ATTACHMENT_PROTOTYPE_ID,
       },
-      planId: {
-        kind: 'branded-integer',
-        brand: PLAN_ID,
-      },
     },
     required: {
       objectId: {
@@ -50,6 +46,10 @@ export default defineLegacyVersionedModel({
       objectType: {
         kind: 'checked',
         type: ATTACHMENT_OBJECT_TYPE,
+      },
+      planId: {
+        kind: 'branded-integer',
+        brand: PLAN_ID,
       },
       type: {
         kind: 'checked',
