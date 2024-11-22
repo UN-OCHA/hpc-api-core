@@ -33,8 +33,6 @@ export default defineIDModel({
     },
     required: {
       name: { kind: 'checked', type: t.string },
-    },
-    accidentallyOptional: {
       abbreviation: { kind: 'checked', type: t.string },
     },
   },
