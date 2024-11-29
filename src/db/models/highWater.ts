@@ -11,6 +11,7 @@ export const HIGHWATER_JOB_NAME = t.keyof({
   ftsOctCerfIngestion: null,
   ftsOctCbpfIngestion: null,
   ftsOctOchaIngestion: null,
+  ftsOneGmsIngestion: null,
 });
 
 export default defineSequelizeModel({
