@@ -182,16 +182,19 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.EDIT_ANY_MEASUREMENT);
         global.add(P.global.CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS);
         global.add(P.global.DELETE_ANY_PLAN);
+        global.add(P.global.DELETE_UPLOADED_FILE);
       } else if (role === 'ftsAdmin') {
         // New Permissions
         global.add(P.global.VIEW_ANY_FLOW);
         global.add(P.global.EDIT_ANY_FLOW);
         global.add(P.global.EDIT_CATEGORIES);
         global.add(P.global.VIEW_CATEGORIES);
+        global.add(P.global.DELETE_UPLOADED_FILE);
       } else if (role === 'projectsAdmin') {
         // New Permissions
         global.add(P.global.PROJECT_WORKFLOW_MOVE_TO_ANY_STEP);
         global.add(P.global.ADD_COMMENT_TO_ANY_PROJECT);
+        global.add(P.global.DELETE_UPLOADED_FILE);
       } else if (role === 'swaps') {
         global.add(P.global.MODIFY_OPERATION_ACCESS_AND_PERMISSIONS);
         global.add(P.global.ADD_OPERATION);
