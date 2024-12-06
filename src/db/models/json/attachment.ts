@@ -4,6 +4,15 @@ import {
   INDICATOR_VALUE as INDICATOR_ATTACHMENT_VALUE,
 } from './indicatorsAndCaseloads';
 
+const COST_BREAKDOWN = t.array(
+  t.exact(
+    t.type({
+      objectId: t.number,
+      cost: t.number,
+    })
+  )
+);
+
 const COST_ATTACHMENT_VALUE = t.intersection([
   t.exact(
     t.type({
@@ -22,14 +31,12 @@ const COST_ATTACHMENT_VALUE = t.intersection([
        * and the total sum of the breakdown must match the overall cost when
        * non-empty.
        */
-      breakdown: t.array(
-        t.exact(
-          t.type({
-            objectId: t.number,
-            cost: t.number,
-          })
-        )
-      ),
+      breakdown: COST_BREAKDOWN,
+      /**
+       * Unlike global cluster breakdown, service modality breakdown
+       * doesn't need to add up to the total cost
+       */
+      breakdownByServiceModality: COST_BREAKDOWN,
       // TODO: delete these properties once we've confirmed that they're not
       // needed for any code that reads cost attachments
       // (they seem to be produced by RPM frontend code related to other types)
