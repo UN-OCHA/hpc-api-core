@@ -40,30 +40,11 @@ export const ENTITY_PROTOTYPE_TYPE = t.keyof({
 });
 
 const ENTITY_REFS = t.array(
-  t.intersection([
-    t.type({
-      /**
-       * Like in many other areas where IDs are stored in JSON in DB,
-       * there is a mixup of values with strings
-       *
-       * TODO: Make sure no more string values are stored instead of numerical IDs
-       */
-      id: t.union([ENTITY_PROTOTYPE_ID, t.string]),
-      refCode: t.string,
-    }),
-    t.partial({
-      cardinality: t.union([t.literal('1-1'), t.literal('0-N')]),
-      /**
-       * @deprecated
-       * There are records in database that have
-       * this typo "cadinality", instead of "cardinality"
-       *
-       * TODO: Rename this property to "cardinality" in DB, then,
-       * drop this definition and make "cardinality" required
-       */
-      cadinality: t.union([t.literal('1-1'), t.literal('0-N')]),
-    }),
-  ])
+  t.type({
+    id: ENTITY_PROTOTYPE_ID,
+    refCode: t.string,
+    cardinality: t.union([t.literal('1-1'), t.literal('0-N')]),
+  })
 );
 
 export const ENTITY_PROTOTYPE_VALUE = t.intersection([
