@@ -33,17 +33,7 @@ export const PLAN_ENTITY_VERSION_VALUE = t.type({
   categories: t.array(CATEGORY_ID),
   description: t.string,
   type: LOCALIZED_PLURAL_STRING,
-  support: t.array(
-    t.union([
-      /**
-       * TODO: Some records in the database have `null` inside `support` array,
-       * which is problematic. Stricter validation of data being stored should
-       * be done, existing values removed and then `null` removed from this type.
-       */
-      t.null,
-      PLAN_ENTITY_VERSION_REF,
-    ])
-  ),
+  support: t.array(PLAN_ENTITY_VERSION_REF),
 });
 export type PlanEntityVersionValue = t.TypeOf<typeof PLAN_ENTITY_VERSION_VALUE>;
 
