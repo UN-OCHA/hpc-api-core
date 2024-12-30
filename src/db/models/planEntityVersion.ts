@@ -19,13 +19,7 @@ export const PLAN_ENTITY_VERSION_ID = brandedType<number, PlanEntityVersionId>(
 );
 
 const PLAN_ENTITY_VERSION_REF = t.partial({
-  /**
-   * TODO: Some values in the database seem to have null values in this
-   * array, which is problematic. We need to have stricter validation of
-   * data being stored here, repair existing values, and then remove null
-   * from this type
-   */
-  planEntityIds: t.array(t.union([t.null, PLAN_ENTITY_ID])),
+  planEntityIds: t.array(PLAN_ENTITY_ID),
   entityPrototypeId: ENTITY_PROTOTYPE_ID,
 });
 
