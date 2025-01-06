@@ -100,6 +100,8 @@ export const AUTH_PERMISSIONS = {
      */
     ADD_COMMENT_TO_ANY_PROJECT: 'canAddCommentToAnyProject',
     DELETE_UPLOADED_FILE: 'canDeleteUploadedFile',
+    CHANGE_ANY_PLAN_STATE_FORWARD: 'canChangeAnyPlanStateForward',
+    CHANGE_ANY_PLAN_STATE_BACKWARD: 'canChangeAnyPlanStateBackward',
   },
   operation: {
     /**
@@ -193,6 +195,8 @@ export const AUTH_PERMISSIONS = {
      * Can add comment to any project under this plan
      */
     ADD_COMMENT_TO_PROJECTS: 'canAddCommentToProjects',
+    CHANGE_PLAN_STATE_FORWARD: 'canChangePlanStateForward',
+    CHANGE_PLAN_STATE_BACKWARD: 'canChangePlanStateBackward',
   },
   project: {
     MODIFY_ACCESS_AND_PERMISSIONS: 'canModifyAccessAndPermissions',
