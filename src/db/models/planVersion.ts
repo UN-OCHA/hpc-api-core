@@ -24,6 +24,7 @@ const PLAN_VERSION_CLUSTER_SELECTION_TYPE = t.keyof({
 const PLAN_VISIBILITY_PREFERENCES = t.type({
   isDisaggregationForCaseloads: t.boolean,
   isDisaggregationForIndicators: t.boolean,
+  isForNewHPCProjects: t.boolean,
 });
 
 export default defineLegacyVersionedModel({
