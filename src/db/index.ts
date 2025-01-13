@@ -93,6 +93,7 @@ import reportDetail from './models/reportDetail';
 import reportFile from './models/reportFile';
 import reportingWindow from './models/reportingWindow';
 import reportingWindowAssignment from './models/reportingWindowAssignment';
+import role from './models/role';
 import serviceModality from './models/serviceModality';
 import serviceModalityAssociation from './models/serviceModalityAssociation';
 import tag from './models/tag';
@@ -220,6 +221,7 @@ const initializeTables = (masterConn: Knex, replicaConn?: Knex) => ({
   reportFile: reportFile(masterConn, replicaConn),
   reportingWindow: reportingWindow(masterConn, replicaConn),
   reportingWindowAssignment: reportingWindowAssignment(masterConn, replicaConn),
+  role: role(masterConn, replicaConn),
   serviceModality: serviceModality(masterConn, replicaConn),
   serviceModalityAssociation: serviceModalityAssociation(
     masterConn,
