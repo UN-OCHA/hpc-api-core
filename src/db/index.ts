@@ -101,6 +101,7 @@ import task from './models/task';
 import unit from './models/unit';
 import unitType from './models/unitType';
 import usageYear from './models/usageYear';
+import workflowRole from './models/workflowRole';
 import workflowStatusOption from './models/workflowStatusOption';
 import workflowStatusOptionStep from './models/workflowStatusOptionStep';
 import { Cond, Op } from './util/conditions';
@@ -232,6 +233,7 @@ const initializeTables = (masterConn: Knex, replicaConn?: Knex) => ({
   unit: unit(masterConn, replicaConn),
   unitType: unitType(masterConn, replicaConn),
   usageYear: usageYear(masterConn, replicaConn),
+  workflowRole: workflowRole(masterConn, replicaConn),
   workflowStatusOption: workflowStatusOption(masterConn, replicaConn),
   workflowStatusOptionStep: workflowStatusOptionStep(masterConn, replicaConn),
 });
