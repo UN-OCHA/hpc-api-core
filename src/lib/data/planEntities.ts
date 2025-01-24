@@ -10,7 +10,6 @@ import {
   annotatedMap,
   getRequiredData,
   getRequiredDataByValue,
-  isDefined,
   type AnnotatedMap,
 } from '../../util';
 import type { MapOfGoverningEntities } from './governingEntities';
@@ -135,29 +134,24 @@ export const getAndValidateAllPlanEntities = async ({
       // Able to inspect entity details
       entityDetails.description = planEntityVersion.value.description;
 
-      if (
-        planEntityVersion.value.support &&
-        Array.isArray(planEntityVersion.value.support)
-      ) {
-        const supportingPlanEntityIds = planEntityVersion.value.support
-          .flatMap((s) => s?.planEntityIds)
-          .filter(isDefined);
-        // Check that the list of planEntityIds is valid
-        const missing = supportingPlanEntityIds.filter(
-          (id) => !planEntityIDs.has(id)
-        );
-        if (!allowMissingPlanEntities && missing.length > 0) {
-          throw new Error(
-            `Missing supporting planEntityIds: ${missing.join(', ')}`
-          );
-        }
-
-        // TODO: Check that the plan entities pass the canSupport requirements
-        // specified in the prototype, including matching the cardinality
-        entityDetails.supports = supportingPlanEntityIds.filter((id) =>
-          planEntityIDs.has(id)
+      const supportingPlanEntityIds = planEntityVersion.value.support.flatMap(
+        (s) => s.planEntityIds ?? []
+      );
+      // Check that the list of planEntityIds is valid
+      const missing = supportingPlanEntityIds.filter(
+        (id) => !planEntityIDs.has(id)
+      );
+      if (!allowMissingPlanEntities && missing.length > 0) {
+        throw new Error(
+          `Missing supporting planEntityIds: ${missing.join(', ')}`
         );
       }
+
+      // TODO: Check that the plan entities pass the canSupport requirements
+      // specified in the prototype, including matching the cardinality
+      entityDetails.supports = supportingPlanEntityIds.filter((id) =>
+        planEntityIDs.has(id)
+      );
     }
 
     result.set(entityDetails.id, entityDetails);
