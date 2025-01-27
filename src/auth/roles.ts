@@ -183,6 +183,8 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.CHANGE_ANY_PLAN_VISIBILITY_IN_PROJECTS);
         global.add(P.global.DELETE_ANY_PLAN);
         global.add(P.global.DELETE_UPLOADED_FILE);
+        global.add(P.global.CHANGE_ANY_PLAN_STATE_FORWARD);
+        global.add(P.global.CHANGE_ANY_PLAN_STATE_BACKWARD);
       } else if (role === 'ftsAdmin') {
         // New Permissions
         global.add(P.global.VIEW_ANY_FLOW);
@@ -291,6 +293,8 @@ export const calculatePermissionsFromRolesGrant = async <
         planSet.add(P.plan.CLONE_PROJECTS);
         planSet.add(P.plan.MAKE_VISIBLE_IN_PROJECTS);
         planSet.add(P.plan.ADD_COMMENT_TO_PROJECTS);
+        planSet.add(P.plan.CHANGE_PLAN_STATE_FORWARD);
+        planSet.add(P.plan.CHANGE_PLAN_STATE_BACKWARD);
       }
     }
   } else if (grant.type === 'project') {
