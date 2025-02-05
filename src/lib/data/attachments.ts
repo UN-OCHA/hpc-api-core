@@ -445,6 +445,7 @@ const getDisaggregations = ({
 
   const disaggregatedCategories = disaggregated.categories;
   const disaggregatedLocations = disaggregated.locations;
+  const camelCaseMap = new Map<string, string>();
 
   const disaggregationData: ExtendedDisaggregationData = [];
 
@@ -519,10 +520,16 @@ const getDisaggregations = ({
 
         const value = cleanNumberVal(dmCell);
 
+        let metricName = metric.name;
+        if (specificMetricTypes?.length) {
+          if (!camelCaseMap.has(metric.name)) {
+            camelCaseMap.set(metric.name, toCamelCase(metric.name));
+          }
+          metricName = camelCaseMap.get(metric.name) ?? 'N/A';
+        }
+
         dataMatrix.push({
-          metricType: !specificMetricTypes?.length
-            ? metric.type
-            : toCamelCase(metric.name),
+          metricType: !specificMetricTypes?.length ? metric.type : metricName,
           lIndex,
           cIndex,
           value: value !== null && !Number.isNaN(value) ? value : null,
