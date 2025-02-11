@@ -84,6 +84,7 @@ if [ $KEEP -eq 0 ]; then
 fi
 
 yarn jest "$COMMAND_ARGS" $FORCE_STOP_JEST
+TEST_EXIT_CODE=$?
 
 if [ $KEEP -eq 0 ]; then
   # Stop Docker containers
@@ -91,3 +92,6 @@ if [ $KEEP -eq 0 ]; then
   moveToTestDir
   docker compose down
 fi
+
+# Pass through the exit code of the unit tests
+exit $TEST_EXIT_CODE
