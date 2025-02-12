@@ -278,21 +278,13 @@ export const cleanNumberVal = (value: number | string | null): number | null =>
       ? parseFloat(value.trim().replaceAll(',', ''))
       : null;
 
-export const toCamelCase = (originalString: string) => {
-  let isNextLetterUppercase = false;
-  let convertedString = '';
-
-  for (const char of originalString) {
-    if (char === ' ') {
-      isNextLetterUppercase = true;
-      continue;
-    }
-
-    convertedString += isNextLetterUppercase
-      ? char.toUpperCase()
-      : char.toLowerCase();
-    isNextLetterUppercase = false;
-  }
-
-  return convertedString;
-};
+export const toCamelCase = (originalString: string) =>
+  originalString
+    .trim()
+    .split(' ')
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join('');
