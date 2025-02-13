@@ -17,6 +17,7 @@ import isEqual = require('lodash/isEqual');
  * organization and cluster
  */
 const BUDGET_SEGMENTATION_BY_ORG = 'segmentation by organization';
+const BUDGET_SEGMENTATION_GENERAL = 'general';
 
 export interface ProjectData {
   project: InstanceOfModel<Database['project']>;
@@ -289,7 +290,9 @@ export const getProjectBudgetsByOrgAndCluster = async <
       projectVersionId: {
         [Op.IN]: projectVersionIds,
       },
-      name: BUDGET_SEGMENTATION_BY_ORG,
+      name: {
+        [Op.IN]: [BUDGET_SEGMENTATION_BY_ORG, BUDGET_SEGMENTATION_GENERAL],
+      },
     },
   });
 
@@ -351,7 +354,54 @@ export const getProjectBudgetsByOrgAndCluster = async <
       continue;
     }
 
-    const segment = segments?.size === 1 ? [...segments][0] : null;
+    const segmentsArray = [...(segments ?? [])];
+
+    const segmentsByOrganization = segmentsArray.filter(
+      (s) => s.name === BUDGET_SEGMENTATION_BY_ORG
+    );
+
+    let segment: InstanceOfModel<Database['budgetSegment']> | undefined;
+
+    if (segmentsByOrganization.length === 1) {
+      segment = segmentsByOrganization.at(0);
+    } else {
+      const requiredEntityObjectTypes = [
+        'globalCluster',
+        'governingEntity',
+        'organization',
+      ] as const;
+
+      const generalSegments = segmentsArray.filter(
+        (s) => s.name === BUDGET_SEGMENTATION_GENERAL
+      );
+      segment = generalSegments.find((generalSegment) => {
+        const breakdowns = breakdownsBySegment.get(generalSegment.id);
+        if (!breakdowns) {
+          return false;
+        }
+
+        return [...breakdowns].find((breakdown) => {
+          const entities = entitiesByBreakdown.get(breakdown.id);
+
+          if (!entities) {
+            return false;
+          }
+
+          const entitiesArray = [...entities];
+
+          const entityObjectTypes = entitiesArray.map((e) => e.objectType);
+
+          // Check that arrays have same length and same elements (order independent)
+          return (
+            entityObjectTypes.length === requiredEntityObjectTypes.length &&
+            requiredEntityObjectTypes.every((type) =>
+              entityObjectTypes.includes(type)
+            )
+          );
+        });
+      });
+    }
+
     if (!segment) {
       continue;
     }
