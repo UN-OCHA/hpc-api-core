@@ -192,6 +192,7 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.EDIT_CATEGORIES);
         global.add(P.global.VIEW_CATEGORIES);
         global.add(P.global.DELETE_UPLOADED_FILE);
+        global.add(P.global.DELETE_ANY_ORGANIZATION);
       } else if (role === 'projectsAdmin') {
         // New Permissions
         global.add(P.global.PROJECT_WORKFLOW_MOVE_TO_ANY_STEP);
