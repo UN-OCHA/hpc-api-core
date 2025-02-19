@@ -288,3 +288,6 @@ export const toCamelCase = (originalString: string) =>
         : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     )
     .join('');
+
+export const range = (size: number, startAt: number = 0): readonly number[] =>
+  [...Array(size).keys()].map((i) => i + startAt);
