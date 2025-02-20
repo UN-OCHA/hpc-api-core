@@ -15,6 +15,11 @@ export type ReportDetailId = Brand<
 
 export const REPORT_DETAIL_ID = brandedType<number, ReportDetailId>(t.number);
 
+const SOURCE = t.keyof({
+  Primary: null,
+  Secondary: null,
+});
+
 export default defineSequelizeModel({
   tableName: 'reportDetail',
   fields: {
@@ -23,7 +28,7 @@ export default defineSequelizeModel({
     },
     required: {
       flowID: { kind: 'branded-integer', brand: FLOW_ID },
-      source: { kind: 'checked', type: t.string },
+      source: { kind: 'checked', type: SOURCE },
     },
     nonNullWithDefault: {
       versionID: { kind: 'checked', type: t.number },

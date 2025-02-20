@@ -14,6 +14,13 @@ export const FILE_ASSET_ENTITY_ID = brandedType<number, FileAssetEntityId>(
   t.number
 );
 
+const COLLECTION = t.keyof({
+  fts: null,
+  projects: null,
+  reports: null,
+  rpm: null,
+});
+
 export const FILE_ASSET_ENTITY_MIME_TYPE = t.keyof({
   'application/zip': null,
   'application/pdf': null,
@@ -46,7 +53,7 @@ export default defineIDModel({
        */
       mimetype: { kind: 'checked', type: t.string },
       path: { kind: 'checked', type: t.string },
-      collection: { kind: 'checked', type: t.string },
+      collection: { kind: 'checked', type: COLLECTION },
     },
     optional: {
       size: { kind: 'checked', type: t.number },
