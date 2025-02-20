@@ -6,11 +6,12 @@ import merge = require('lodash/merge');
 
 import { Cond, Op } from './conditions';
 import { DATE } from './datatypes';
-import { type FieldDefinition } from './model-definition';
+import { type FieldDefinition, type UserDataOf } from './model-definition';
 import {
   defineRawModel,
   type CreateFn,
   type CreateManyFn,
+  type DestroyFn,
   type FindFn,
   type FindOneFn,
   type ModelInitializer,
@@ -182,6 +183,31 @@ export const defineSequelizeModel =
       });
     };
 
+    const isSoftDeletionValues = <F extends FieldDefinition>(
+      values: unknown
+    ): values is Partial<UserDataOf<F>> => {
+      return (
+        typeof values === 'object' &&
+        values !== null &&
+        Object.keys(values).length === 1 &&
+        'deletedAt' in values
+      );
+    };
+
+    const destroy: DestroyFn<Fields> = async (args) => {
+      const values = {
+        deletedAt: masterConn.fn.now(3),
+      };
+      if (opts.softDeletionEnabled && isSoftDeletionValues<Fields>(values)) {
+        const res = await model.update({
+          ...args,
+          values,
+        });
+        return res.length;
+      }
+      return await model.destroy(args);
+    };
+
     return {
       ...model,
       find,
@@ -189,5 +215,6 @@ export const defineSequelizeModel =
       create,
       createMany,
       update,
+      destroy,
     };
   };
