@@ -55,6 +55,7 @@ export default defineIDModel({
     },
     optional: {
       versionID: { kind: 'checked', type: t.number },
+      externalRecordRevisionDate: { kind: 'checked', type: DATE },
       importInformation: {
         kind: 'checked',
         type: EXTERNAL_REFERENCE_IMPORT_INFORMATION,
