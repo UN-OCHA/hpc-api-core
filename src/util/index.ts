@@ -290,4 +290,4 @@ export const toCamelCase = (originalString: string) =>
     .join('');
 
 export const range = (size: number, startAt: number = 0): readonly number[] =>
-  [...Array(size).keys()].map((i) => i + startAt);
+  Array.from({ length: size }, (_, i) => i + startAt);
