@@ -73,6 +73,19 @@ export type AdditionalFindArgsForSequelizeTables = {
   includeDeleted?: true;
 };
 
+export type AdditionalDestroyArgsForSequelizeTables = {
+  /**
+   * **THINK TWICE WHETHER YOU WANT THIS**
+   *
+   * If `true`, performs a hard deletion even when `softDeletionEnabled` is `true`,
+   * i.e. will hard delete records in tables which are otherwise soft deleted.
+   *
+   * This permanently removes the record from the database and only affects
+   * tables with `softDeletionEnabled` set to `true`.
+   */
+  forceHardDeletion?: boolean;
+};
+
 /**
  * A model that has been defined by sequelize
  *
@@ -93,7 +106,8 @@ export const defineSequelizeModel =
     softDeletionEnabled: SoftDeletionEnabled;
   }): ModelInitializer<
     FieldsWithSequelize<F, SoftDeletionEnabled>,
-    AdditionalFindArgsForSequelizeTables
+    AdditionalFindArgsForSequelizeTables,
+    AdditionalDestroyArgsForSequelizeTables
   > =>
   (masterConn, replicaConn) => {
     type Fields = FieldsWithSequelize<F, SoftDeletionEnabled>;
@@ -194,18 +208,27 @@ export const defineSequelizeModel =
       );
     };
 
-    const destroy: DestroyFn<Fields> = async (args) => {
+    const destroy: DestroyFn<
+      Fields,
+      AdditionalDestroyArgsForSequelizeTables
+    > = async (args) => {
+      const { forceHardDeletion: shouldForceHardDeletion, ...destroyArgs } =
+        args;
       const values = {
         deletedAt: masterConn.fn.now(3),
       };
-      if (opts.softDeletionEnabled && isSoftDeletionValues<Fields>(values)) {
+      if (
+        opts.softDeletionEnabled &&
+        !shouldForceHardDeletion &&
+        isSoftDeletionValues<Fields>(values)
+      ) {
         const res = await model.update({
-          ...args,
+          ...destroyArgs,
           values,
         });
         return res.length;
       }
-      return await model.destroy(args);
+      return await model.destroy(destroyArgs);
     };
 
     return {

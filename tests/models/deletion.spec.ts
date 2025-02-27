@@ -49,4 +49,28 @@ describe('Deletion', () => {
       })
     ).not.toBeNull();
   });
+
+  it('should hard delete a record with forceHardDeletion', async () => {
+    const { id } = await context.models.lookup.create({
+      input: 'input',
+      inputField: 'DONOR',
+      output: 'output',
+      outputField: 'LOCATION',
+    });
+
+    expect(await context.models.lookup.get(id)).not.toBeNull();
+    expect(
+      await context.models.lookup.destroy({
+        where: { id },
+        forceHardDeletion: true,
+      })
+    ).toBe(1);
+    expect(await context.models.lookup.get(id)).toBeNull();
+    expect(
+      await context.models.lookup.findOne({
+        where: { id },
+        includeDeleted: true,
+      })
+    ).toBeNull();
+  });
 });
