@@ -77,10 +77,12 @@ export type UpdateFn<F extends FieldDefinition> = (args: {
   trx?: Knex.Transaction<any, any>;
 }) => Promise<Array<InstanceDataOf<F>>>;
 
-export type DestroyFn<F extends FieldDefinition> = (args: {
-  where: WhereCond<F>;
-  trx?: Knex.Transaction<any, any>;
-}) => Promise<number>;
+export type DestroyFn<F extends FieldDefinition, AdditionalArgs = {}> = (
+  args: {
+    where: WhereCond<F>;
+    trx?: Knex.Transaction<any, any>;
+  } & AdditionalArgs
+) => Promise<number>;
 
 export type TruncateFn = (trx?: Knex.Transaction<any, any>) => Promise<void>;
 
@@ -108,14 +110,18 @@ export type ModelInternals<F extends FieldDefinition> = {
 /**
  * The definition of a model
  */
-export type Model<F extends FieldDefinition, AdditionalFindArgs = {}> = {
+export type Model<
+  F extends FieldDefinition,
+  AdditionalFindArgs = {},
+  AdditionalDestroyArgs = {},
+> = {
   readonly _internals: ModelInternals<F>;
   readonly create: CreateFn<F>;
   readonly createMany: CreateManyFn<F>;
   readonly find: FindFn<F, AdditionalFindArgs>;
   readonly findOne: FindOneFn<F, AdditionalFindArgs>;
   readonly update: UpdateFn<F>;
-  readonly destroy: DestroyFn<F>;
+  readonly destroy: DestroyFn<F, AdditionalDestroyArgs>;
   readonly truncate: TruncateFn;
   readonly count: CountFn<F, AdditionalFindArgs>;
 };
@@ -129,7 +135,11 @@ export type InstanceDataOfModel<M extends Model<any>> =
 export type ModelInitializer<
   F extends FieldDefinition,
   AdditionalFindArgs = {},
-> = (masterConn: Knex, replicaConn?: Knex) => Model<F, AdditionalFindArgs>;
+  AdditionalDestroyArgs = {},
+> = (
+  masterConn: Knex,
+  replicaConn?: Knex
+) => Model<F, AdditionalFindArgs, AdditionalDestroyArgs>;
 
 export const defineRawModel =
   <F extends FieldDefinition>(opts: {

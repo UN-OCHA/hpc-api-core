@@ -10,6 +10,7 @@ import type {
 import type { Model } from './raw-model';
 import {
   defineSequelizeModel,
+  type AdditionalDestroyArgsForSequelizeTables,
   type AdditionalFindArgsForSequelizeTables,
   type FieldsWithSequelize,
 } from './sequelize-model';
@@ -43,7 +44,11 @@ export interface ModelWithId<
     | null
     | keyof F['generated']
     | keyof F['generatedCompositeKey'],
-> extends Model<F, AdditionalFindArgsForSequelizeTables> {
+> extends Model<
+    F,
+    AdditionalFindArgsForSequelizeTables,
+    AdditionalDestroyArgsForSequelizeTables
+  > {
   readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
   readonly getAll: (
     id: Iterable<IdOf<F, IDField>>
