@@ -21,9 +21,9 @@ describe("Test 'getTableColumns' function", () => {
       'glideId',
       'levelThree',
     ];
-    expectedColumns.forEach((column) => {
+    for (const column of expectedColumns) {
       expect(columns).toContain(column);
-    });
+    }
   });
   it('should return an empty array if the table has no columns', () => {
     const columns = getTableColumns({ _internals: { fields: {} } });
