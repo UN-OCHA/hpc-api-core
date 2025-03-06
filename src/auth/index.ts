@@ -498,7 +498,7 @@ export const deleteAuthTarget = async (
   database: Database,
   where: UserDataOfModel<Database['authTarget']>,
   actor: ParticipantId,
-  trx: Knex.Transaction<any, any>
+  trx: Knex.Transaction
 ): Promise<void> => {
   const authTargets = await database.authTarget.find({ where, trx });
   const authGrants = await database.authGrant.find({

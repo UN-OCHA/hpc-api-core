@@ -9,7 +9,7 @@ export const deleteProjectById = async (
   database: Database,
   projectToDelete: ProjectId,
   authGrantRevoker: ParticipantId,
-  trx: Knex.Transaction<any, any>
+  trx: Knex.Transaction
 ) => {
   const project = await database.project.findOne({
     where: { id: projectToDelete },
