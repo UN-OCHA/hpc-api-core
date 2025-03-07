@@ -215,10 +215,8 @@ export const getOrCreate = <K, V>(map: Map<K, V>, k: K, val: () => V): V => {
  * JSON type definition
  */
 export type JSONPrimitive = string | number | boolean | null;
-export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
+export type JSONValue = JSONPrimitive | JSONObject | JSONValue[];
 export type JSONObject = { [member: string]: JSONValue };
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface JSONArray extends Array<JSONValue> {}
 
 /**
  * Retrieve a value from an annotated map that we expect to be present,
