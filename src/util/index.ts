@@ -69,7 +69,7 @@ export const sortBy =
 /**
  * Obtain the type parameter of a promise type
  */
-export type PromiseType<P extends Promise<any>> =
+export type PromiseType<P extends Promise<unknown>> =
   P extends Promise<infer V> ? V : never;
 
 /**
@@ -197,8 +197,8 @@ export const mapObjectEntries = <K extends string | symbol, V1, V2>(
   ) as { [key in K]: V2 };
 };
 
-export type MapValue<M extends Map<any, any>> =
-  M extends Map<any, infer V> ? V : unknown;
+export type MapValue<M extends Map<unknown, unknown>> =
+  M extends Map<unknown, infer V> ? V : unknown;
 
 export const getOrCreate = <K, V>(map: Map<K, V>, k: K, val: () => V): V => {
   let v = map.get(k);
