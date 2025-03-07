@@ -15,14 +15,14 @@ import { dataValidator } from './validation';
 export type CreateFn<F extends FieldDefinition> = (
   data: UserDataOf<F>,
   opts?: {
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
   }
 ) => Promise<InstanceDataOf<F>>;
 
 export type CreateManyFn<F extends FieldDefinition> = (
   data: Array<UserDataOf<F>>,
   opts?: {
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
   }
 ) => Promise<Array<InstanceDataOf<F>>>;
 
@@ -45,7 +45,7 @@ export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
      * from disabling validation are worth the risk!
      */
     skipValidation?: boolean;
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
     /**
      * Uses `DISTINCT ON`, which is a feature unique to PostgreSQL.
      *
@@ -62,7 +62,7 @@ export type FindFn<F extends FieldDefinition, AdditionalArgs = {}> = (
 export type FindOneFn<F extends FieldDefinition, AdditionalArgs = {}> = (
   args: {
     where: WhereCond<F>;
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
   } & AdditionalArgs
 ) => Promise<InstanceDataOf<F> | null>;
 
@@ -74,22 +74,22 @@ export type UpdateFn<F extends FieldDefinition> = (args: {
    * from disabling validation are worth the risk!
    */
   skipValidation?: boolean;
-  trx?: Knex.Transaction<any, any>;
+  trx?: Knex.Transaction;
 }) => Promise<Array<InstanceDataOf<F>>>;
 
 export type DestroyFn<F extends FieldDefinition, AdditionalArgs = {}> = (
   args: {
     where: WhereCond<F>;
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
   } & AdditionalArgs
 ) => Promise<number>;
 
-export type TruncateFn = (trx?: Knex.Transaction<any, any>) => Promise<void>;
+export type TruncateFn = (trx?: Knex.Transaction) => Promise<void>;
 
 export type CountFn<F extends FieldDefinition, AdditionalArgs = {}> = (
   args?: {
     where?: WhereCond<F>;
-    trx?: Knex.Transaction<any, any>;
+    trx?: Knex.Transaction;
     /**
      * Will produce `SELECT COUNT(DISTINCT "columnName")` and if there
      * is an expression in `COUNT`, it will compute the number of input

@@ -33,7 +33,7 @@ export const validateModelAgainstTable = async (
    */
   const getDbCols = (await modelInternals
     .query()
-    .columnInfo()) as any as KnexColumns;
+    .columnInfo()) as unknown as KnexColumns;
   const dbCols = new Map(
     Object.entries(getDbCols).map(([name, col]) => [name, col])
   );
