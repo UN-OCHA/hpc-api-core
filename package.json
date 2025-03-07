@@ -45,6 +45,6 @@
       "prettier --check",
       "eslint"
     ],
-    "*.{js,ts,md,json}": "prettier --check"
+    "*.{js,ts,md,json,yml,yaml}": "prettier --check"
   }
 }
