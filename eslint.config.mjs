@@ -16,6 +16,6 @@ export default [
     },
   },
   {
-    ignores: ['.github', '.prettierrc.js', 'eslint.config.js'],
+    ignores: ['.github', 'prettier.config.mjs', 'eslint.config.mjs'],
   },
 ];
