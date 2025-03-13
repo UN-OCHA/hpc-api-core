@@ -27,7 +27,6 @@ export default defineIDModel({
       description: { kind: 'checked', type: t.string },
       parentID: { kind: 'branded-integer', brand: CATEGORY_ID },
       code: { kind: 'checked', type: t.string },
-      includeTotals: { kind: 'checked', type: t.boolean },
     },
   },
   idField: 'id',
