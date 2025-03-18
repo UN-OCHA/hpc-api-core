@@ -33,7 +33,6 @@ export default defineIDModel({
       hrinfoId: { kind: 'checked', type: t.number },
       homepage: { kind: 'checked', type: t.string },
       parentId: { kind: 'branded-integer', brand: GLOBAL_CLUSTER_ID },
-      defaultIconId: { kind: 'checked', type: t.string },
       displayFTSSummariesFromYear: { kind: 'checked', type: t.number },
     },
   },
