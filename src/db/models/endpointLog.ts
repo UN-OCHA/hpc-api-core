@@ -34,6 +34,7 @@ export const ENDPOINT_LOG_ENTITY_TYPE = t.keyof({
   procedureSection: null,
   project: null,
   'project comments': null,
+  'project segments': null,
 });
 
 export const ENDPOINT_LOG_EDIT_TYPE = t.keyof({
