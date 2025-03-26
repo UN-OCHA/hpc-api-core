@@ -25,6 +25,7 @@ export const EXTERNAL_DATA_SYSTEM_ID = t.keyof({
   'OCT-OCHA': null,
   'OneGMS-CBPF': null,
   'OneGMS-CERF': null,
+  Excel: null,
 });
 
 export const EXTERNAL_DATA_OBJECT_TYPE = t.keyof({
