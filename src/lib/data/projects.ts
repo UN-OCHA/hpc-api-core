@@ -7,10 +7,13 @@ import type { ProjectId } from '../../db/models/project';
 import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
 import type { InstanceOfModel } from '../../db/util/types';
-import { getRequiredData, groupObjectsByProperty } from '../../util';
+import {
+  areSetsEqual,
+  getRequiredData,
+  groupObjectsByProperty,
+} from '../../util';
 import { createBrandedValue } from '../../util/types';
 import type { SharedLogContext } from '../logging';
-import isEqual = require('lodash/isEqual');
 
 /**
  * The `name` value used across all budget segments that are segmented by
@@ -442,7 +445,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       )
     );
 
-    if (!isEqual(budgetOrgIDs, prvOrgIDs)) {
+    if (!areSetsEqual(budgetOrgIDs, prvOrgIDs)) {
       /*
        * A project's organizations have been updated (likely due to merging)
        * but the project budget segments have not been correctly updated.
