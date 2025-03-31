@@ -293,3 +293,11 @@ export const range = <N extends number>(
   size: NonNegativeInteger<N>,
   startAt: number = 0
 ): readonly number[] => Array.from({ length: size }, (_, i) => i + startAt);
+
+export const splitIntoChunks = <T, N extends number>(
+  arr: readonly T[],
+  size: NonNegativeInteger<N>
+): T[][] =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size)
+  );
