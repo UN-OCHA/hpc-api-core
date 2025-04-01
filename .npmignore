@@ -1,7 +1,7 @@
 .husky/
 .github/
-.prettierrc.js
-.eslintrc.json 
+prettier.config.mjs
+eslint.config.mjs
 tsconfig.json
 yarn-error.log
 CONTRIBUTING.md
