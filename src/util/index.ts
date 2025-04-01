@@ -1,3 +1,5 @@
+import type { NonNegativeInteger } from './types';
+
 export const isDefined = <T>(v: T | null | undefined): v is T =>
   v !== null && v !== undefined;
 
@@ -287,5 +289,7 @@ export const toCamelCase = (originalString: string) =>
     )
     .join('');
 
-export const range = (size: number, startAt: number = 0): readonly number[] =>
-  Array.from({ length: size }, (_, i) => i + startAt);
+export const range = <N extends number>(
+  size: NonNegativeInteger<N>,
+  startAt: number = 0
+): readonly number[] => Array.from({ length: size }, (_, i) => i + startAt);
