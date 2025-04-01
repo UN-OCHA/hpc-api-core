@@ -24,6 +24,12 @@ export type Brand<T, S extends { s: symbol }, Label extends string = ''> = T & {
 export const createBrandedValue = <T, B extends Brand<T, any, any>>(v: T): B =>
   v as unknown as B;
 
+export type NonNegativeInteger<T extends number> = `${T}` extends
+  | `-${string}`
+  | `${string}.${string}`
+  ? never
+  : T;
+
 export const getTableColumns = <
   T extends { _internals: { fields: FieldDefinition } },
 >(
