@@ -1,4 +1,4 @@
-import { range, toCamelCase } from '../../src/util';
+import { range, splitIntoChunks, toCamelCase } from '../../src/util';
 
 describe('Test utility functions', () => {
   it('should convert string to camel case', () => {
@@ -36,6 +36,49 @@ describe('Test utility functions', () => {
 
     it('should handle negative start values', () => {
       expect(range(5, -3)).toEqual([-3, -2, -1, 0, 1]);
+    });
+  });
+
+  describe('splitIntoChunks', () => {
+    it('should split an array into equal-sized chunks', () => {
+      expect(splitIntoChunks(range(6, 1), 2)).toEqual([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+
+    it('should handle arrays where the last chunk is smaller', () => {
+      expect(splitIntoChunks(range(5, 1), 2)).toEqual([[1, 2], [3, 4], [5]]);
+      expect(splitIntoChunks(range(17, 1), 5)).toEqual([
+        [1, 2, 3, 4, 5],
+        [6, 7, 8, 9, 10],
+        [11, 12, 13, 14, 15],
+        [16, 17],
+      ]);
+    });
+
+    it('should return an empty array when input is empty', () => {
+      expect(splitIntoChunks([], 3)).toEqual([]);
+    });
+
+    it('should handle chunk size larger than the array length', () => {
+      expect(splitIntoChunks(range(3, 1), 10)).toEqual([[1, 2, 3]]);
+    });
+
+    it('should handle chunk size of 1', () => {
+      expect(splitIntoChunks(range(3, 1), 1)).toEqual([[1], [2], [3]]);
+    });
+
+    it('should handle chunk size equal to array length', () => {
+      expect(splitIntoChunks(range(4, 1), 4)).toEqual([[1, 2, 3, 4]]);
+    });
+
+    it('should work with an array of strings', () => {
+      expect(splitIntoChunks(['a', 'b', 'c', 'd'], 2)).toEqual([
+        ['a', 'b'],
+        ['c', 'd'],
+      ]);
     });
   });
 });
