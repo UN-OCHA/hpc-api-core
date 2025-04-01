@@ -1,5 +1,4 @@
 import * as t from 'io-ts';
-import * as fetch from 'node-fetch';
 import { URL } from 'node:url';
 
 import { type Context } from '../lib/context';
@@ -11,9 +10,6 @@ const HID_ACCOUNT_INFO = t.type({
   name: t.string,
   email: t.string,
 });
-
-// Exported for mocking purposes in tests
-export { fetch };
 
 export type HIDInfo = t.TypeOf<typeof HID_ACCOUNT_INFO>;
 
@@ -54,8 +50,7 @@ export const getHidInfo = async (
     throw new ForbiddenError(existing.message);
   } else {
     const accountUrl = new URL('/account.json', config.authBaseUrl);
-    // Reference fetch.default to allow for mocking
-    const res = await fetch.default(accountUrl, {
+    const res = await fetch(accountUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

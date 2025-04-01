@@ -19,8 +19,6 @@ updates:
         patterns:
           - '*jest'
     ignore:
-      - dependency-name: 'node-fetch'
-        update-types: [version-update:semver-major]
       - dependency-name: 'fp-ts'
       - dependency-name: 'io-ts'
   - package-ecosystem: 'github-actions'
