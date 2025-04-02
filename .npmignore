@@ -1,7 +1,12 @@
 .husky/
 .github/
-.prettierrc.js
-.eslintrc.json 
+.vscode/
+/bin/
+/tests/
+.git-blame-ignore-revs
+prettier.config.mjs
+eslint.config.mjs
 tsconfig.json
 yarn-error.log
 CONTRIBUTING.md
+jest.config.ts
