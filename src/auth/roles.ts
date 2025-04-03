@@ -212,9 +212,7 @@ export const calculatePermissionsFromRolesGrant = async <
   } else if (grant.type === 'operation') {
     granted.global ??= new Set();
     const global = granted.global;
-    if (!granted.operation) {
-      granted.operation = new Map();
-    }
+    granted.operation ??= new Map();
     let operationSet = granted.operation.get(grant.id);
     if (!operationSet) {
       granted.operation.set(grant.id, (operationSet = new Set()));
@@ -245,9 +243,7 @@ export const calculatePermissionsFromRolesGrant = async <
     if (cluster) {
       granted.global ??= new Set();
       const global = granted.global;
-      if (!granted.operation) {
-        granted.operation = new Map();
-      }
+      granted.operation ??= new Map();
       let operationSet = granted.operation.get(cluster.data.operation);
       if (!operationSet) {
         granted.operation.set(
@@ -255,9 +251,7 @@ export const calculatePermissionsFromRolesGrant = async <
           (operationSet = new Set())
         );
       }
-      if (!granted.operationCluster) {
-        granted.operationCluster = new Map();
-      }
+      granted.operationCluster ??= new Map();
       let clusterSet = granted.operationCluster.get(cluster.id);
       if (!clusterSet) {
         granted.operationCluster.set(cluster.id, (clusterSet = new Set()));
@@ -275,9 +269,7 @@ export const calculatePermissionsFromRolesGrant = async <
       }
     }
   } else if (grant.type === 'plan') {
-    if (!granted.plan) {
-      granted.plan = new Map();
-    }
+    granted.plan ??= new Map();
     let planSet = granted.plan.get(grant.id);
     if (!planSet) {
       granted.plan.set(grant.id, (planSet = new Set()));
@@ -299,9 +291,8 @@ export const calculatePermissionsFromRolesGrant = async <
       }
     }
   } else if (grant.type === 'project') {
-    if (!granted.project) {
-      granted.project = new Map();
-    }
+    granted.project ??= new Map();
+
     let projectSet = granted.project.get(grant.id);
     if (!projectSet) {
       granted.project.set(grant.id, (projectSet = new Set()));
@@ -317,9 +308,8 @@ export const calculatePermissionsFromRolesGrant = async <
       }
     }
   } else if (grant.type === 'governingEntity') {
-    if (!granted.governingEntity) {
-      granted.governingEntity = new Map();
-    }
+    granted.governingEntity ??= new Map();
+
     let geSet = granted.governingEntity.get(grant.id);
     if (!geSet) {
       granted.governingEntity.set(grant.id, (geSet = new Set()));
@@ -333,9 +323,7 @@ export const calculatePermissionsFromRolesGrant = async <
       throw new Error(`Cannot find governing entity with ID ${grant.id}`);
     }
 
-    if (!granted.plan) {
-      granted.plan = new Map();
-    }
+    granted.plan ??= new Map();
 
     const planSet = getOrCreate(
       granted.plan,

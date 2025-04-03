@@ -52,9 +52,7 @@ export const createGroupableAsyncFunction = <
   };
 
   return (...args: Args): Promise<Result> => {
-    if (!nextRun) {
-      nextRun = setImmediate(doNextRun);
-    }
+    nextRun ??= setImmediate(doNextRun);
 
     return new Promise<Result>((resolve, reject) => {
       calls.add({
