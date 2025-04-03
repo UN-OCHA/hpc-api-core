@@ -49,9 +49,13 @@ export interface ModelWithId<
     AdditionalFindArgsForSequelizeTables,
     AdditionalDestroyArgsForSequelizeTables
   > {
-  readonly get: (id: IdOf<F, IDField>) => Promise<null | InstanceDataOf<F>>;
+  readonly get: (
+    id: IdOf<F, IDField>,
+    trx?: Knex.Transaction
+  ) => Promise<null | InstanceDataOf<F>>;
   readonly getAll: (
-    id: Iterable<IdOf<F, IDField>>
+    id: Iterable<IdOf<F, IDField>>,
+    trx?: Knex.Transaction
   ) => Promise<Map<IdOf<F, IDField>, InstanceDataOf<F>>>;
 }
 
@@ -109,20 +113,25 @@ export const defineIDModel =
           : `Unknown ${tableName}`,
     })(masterConn, replicaConn);
 
-    const get = (id: ID): Promise<Instance | null> =>
+    const get = (id: ID, trx?: Knex.Transaction): Promise<Instance | null> =>
       model.findOne({
         where: {
           [idField]: id,
         } as Partial<Instance>,
+        trx,
       });
 
-    const getAll = async (ids: Iterable<ID>): Promise<Map<ID, Instance>> => {
+    const getAll = async (
+      ids: Iterable<ID>,
+      trx?: Knex.Transaction
+    ): Promise<Map<ID, Instance>> => {
       const items = await model.find({
         where: {
           id: {
             [Op.IN]: ids,
           },
         },
+        trx,
       });
       const grouped = new Map<ID, Instance>();
       for (const item of items) {
