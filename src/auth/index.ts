@@ -393,9 +393,7 @@ export const mergePermissionsFromGrants = <
     let existingMap = allowed[type] as
       | Map<number, Set<PermissionStrings<Type>>>
       | undefined;
-    if (!existingMap) {
-      existingMap = allowed[type] = new Map();
-    }
+    existingMap ??= allowed[type] = new Map();
     for (const [key, permissions] of additions.entries()) {
       let set = existingMap.get(key);
       if (!set) {

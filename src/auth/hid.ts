@@ -58,7 +58,7 @@ export const getHidInfo = async (
     if (!res.ok) {
       if (res.status === 401) {
         const r = await res.json();
-        const message = r.message || 'Invalid Token';
+        const message = (r.message as string) || 'Invalid Token';
         HID_CACHE.store(token, { type: 'forbidden', message });
         throw new ForbiddenError(message);
       } else {
