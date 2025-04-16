@@ -454,13 +454,16 @@ export const getProjectBudgetsByOrgAndCluster = async <
        * but in some cases (e.g. multi-org projects where both have been merged)
        * it may not be possible to automatically determine what the fix is
        */
-      const missingOrgs = [...budgetOrgIDs].filter((id) => !prvOrgIDs.has(id));
-      const unusedOrgs = [...prvOrgIDs].filter((id) => !budgetOrgIDs.has(id));
+      const missingOrgs = budgetOrgIDs.difference(prvOrgIDs);
+      const unusedOrgs = prvOrgIDs.difference(budgetOrgIDs);
 
-      if (missingOrgs.length === 1 && unusedOrgs.length === 1) {
+      if (missingOrgs.size === 1 && unusedOrgs.size === 1) {
+        const [missingOrg] = missingOrgs;
+        const [unusedOrg] = unusedOrgs;
+
         for (const i of projectResult) {
-          if (i.organization === missingOrgs[0]) {
-            i.organization = unusedOrgs[0];
+          if (i.organization === missingOrg) {
+            i.organization = unusedOrg;
           }
         }
       } else {
