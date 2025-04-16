@@ -13,7 +13,7 @@
     "lint": "yarn lint-prettier && yarn lint-eslint"
   },
   "engines": {
-    "node": ">=20.19.0",
+    "node": ">=20.19.0 || >=22.14.0",
     "yarn": ">=1.22.22"
   },
   "dependencies": {
