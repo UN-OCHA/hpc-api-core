@@ -40,6 +40,6 @@
   },
   "lint-staged": {
     "*.{ts,js,cjs,mjs}": "eslint --cache",
-    "*.{js,cjs,mjs,ts,md,json,yml,yaml}": "prettier --check"
+    "*.{js,cjs,mjs,ts,md,json,yml,yaml,sh}": "prettier --check"
   }
 }
