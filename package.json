@@ -39,10 +39,7 @@
     "typescript": "^5.8.2"
   },
   "lint-staged": {
-    "*.{ts,js,cjs,mjs}": [
-      "prettier --check",
-      "eslint"
-    ],
+    "*.{ts,js,cjs,mjs}": "eslint --cache",
     "*.{js,cjs,mjs,ts,md,json,yml,yaml}": "prettier --check"
   }
 }
