@@ -13,7 +13,7 @@ const COST_BREAKDOWN = t.array(
   )
 );
 
-const COST_ATTACHMENT_VALUE = t.intersection([
+export const COST_ATTACHMENT_VALUE = t.intersection([
   t.exact(
     t.type({
       cost: t.number,
