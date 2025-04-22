@@ -59,6 +59,7 @@ export default defineIDModel({
         kind: 'checked',
         type: EXTERNAL_REFERENCE_IMPORT_INFORMATION,
       },
+      hash: { kind: 'checked', type: t.string },
     },
   },
   idField: 'id',
