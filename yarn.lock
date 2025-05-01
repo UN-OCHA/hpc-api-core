@@ -929,10 +929,10 @@
     "@typescript-eslint/types" "8.29.0"
     eslint-visitor-keys "^4.2.0"
 
-"@unocha/hpc-repo-tools@^6.3.0":
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/@unocha/hpc-repo-tools/-/hpc-repo-tools-6.3.0.tgz#39864a2a2570a84c17dd35c770024633c27fc4e1"
-  integrity sha512-LyWMOdsjbNT0vZsTbP0aSLULCdxQ0wZ212PbSZFOYM/iYmRvWG75X6VLurGMXBM4yCgiGDf58Ayji0qyRnVcxA==
+"@unocha/hpc-repo-tools@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@unocha/hpc-repo-tools/-/hpc-repo-tools-6.4.0.tgz#ff6b60b8b869a84e24397905d41720913a1b43a9"
+  integrity sha512-cUT+lsqV70jYBtf8FkUjm9TOKxQCoNQ4cVse47oKZLLtEbvJxbRTXupMlvndINBFgYhakHQCgUfkQuyVstvqhA==
   dependencies:
     eslint-config-prettier "10.1.1"
     eslint-plugin-unicorn "58.0.0"

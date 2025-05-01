@@ -437,7 +437,7 @@ export const defineVersionedModel =
                 version: prev.version + 1,
                 modifiedBy: modifiedBy ?? undefined,
                 isLatest: true,
-                data: data,
+                data,
               },
               {
                 trx,

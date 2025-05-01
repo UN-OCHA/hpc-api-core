@@ -15,9 +15,9 @@ export namespace ConditionSymbols {
    * Symbols to use for where condition construction
    */
   export const Cond = {
-    BUILDER: BUILDER,
-    AND: AND,
-    OR: OR,
+    BUILDER,
+    AND,
+    OR,
   } as const;
 }
 
@@ -42,16 +42,16 @@ export namespace PropertySymbols {
    * Symbols to use when constructing conditions for a single property
    */
   export const Op = {
-    IN: IN,
-    NOT_IN: NOT_IN,
-    IS_NULL: IS_NULL,
-    BETWEEN: BETWEEN,
-    LIKE: LIKE,
-    ILIKE: ILIKE,
-    LT: LT,
-    LTE: LTE,
-    GT: GT,
-    GTE: GTE,
+    IN,
+    NOT_IN,
+    IS_NULL,
+    BETWEEN,
+    LIKE,
+    ILIKE,
+    LT,
+    LTE,
+    GT,
+    GTE,
   } as const;
 }
 
