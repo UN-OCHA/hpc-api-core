@@ -301,3 +301,6 @@ export const splitIntoChunks = <T, N extends number>(
   Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
     arr.slice(i * size, i * size + size)
   );
+
+export const areSetsEqual = <T>(a: Set<T>, b: Set<T>): boolean =>
+  a.symmetricDifference(b).size === 0;

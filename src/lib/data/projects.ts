@@ -7,10 +7,13 @@ import type { ProjectId } from '../../db/models/project';
 import type { Database } from '../../db/type';
 import { Op } from '../../db/util/conditions';
 import type { InstanceOfModel } from '../../db/util/types';
-import { getRequiredData, groupObjectsByProperty } from '../../util';
+import {
+  areSetsEqual,
+  getRequiredData,
+  groupObjectsByProperty,
+} from '../../util';
 import { createBrandedValue } from '../../util/types';
 import type { SharedLogContext } from '../logging';
-import isEqual = require('lodash/isEqual');
 
 /**
  * The `name` value used across all budget segments that are segmented by
@@ -442,7 +445,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       )
     );
 
-    if (!isEqual(budgetOrgIDs, prvOrgIDs)) {
+    if (!areSetsEqual(budgetOrgIDs, prvOrgIDs)) {
       /*
        * A project's organizations have been updated (likely due to merging)
        * but the project budget segments have not been correctly updated.
@@ -451,13 +454,16 @@ export const getProjectBudgetsByOrgAndCluster = async <
        * but in some cases (e.g. multi-org projects where both have been merged)
        * it may not be possible to automatically determine what the fix is
        */
-      const missingOrgs = [...budgetOrgIDs].filter((id) => !prvOrgIDs.has(id));
-      const unusedOrgs = [...prvOrgIDs].filter((id) => !budgetOrgIDs.has(id));
+      const missingOrgs = budgetOrgIDs.difference(prvOrgIDs);
+      const unusedOrgs = prvOrgIDs.difference(budgetOrgIDs);
 
-      if (missingOrgs.length === 1 && unusedOrgs.length === 1) {
+      if (missingOrgs.size === 1 && unusedOrgs.size === 1) {
+        const [missingOrg] = missingOrgs;
+        const [unusedOrg] = unusedOrgs;
+
         for (const i of projectResult) {
-          if (i.organization === missingOrgs[0]) {
-            i.organization = unusedOrgs[0];
+          if (i.organization === missingOrg) {
+            i.organization = unusedOrg;
           }
         }
       } else {

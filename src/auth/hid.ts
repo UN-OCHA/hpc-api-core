@@ -10,6 +10,9 @@ const HID_ACCOUNT_INFO = t.type({
   name: t.string,
   email: t.string,
 });
+const HID_MESSAGE = t.type({
+  message: t.string,
+});
 
 export type HIDInfo = t.TypeOf<typeof HID_ACCOUNT_INFO>;
 
@@ -58,7 +61,10 @@ export const getHidInfo = async (
     if (!res.ok) {
       if (res.status === 401) {
         const r = await res.json();
-        const message = (r.message as string) || 'Invalid Token';
+        if (!HID_MESSAGE.is(r)) {
+          throw new ForbiddenError('Invalid Token');
+        }
+        const message = r.message;
         HID_CACHE.store(token, { type: 'forbidden', message });
         throw new ForbiddenError(message);
       } else {
