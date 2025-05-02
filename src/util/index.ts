@@ -100,8 +100,8 @@ export const annotatedMap = <K, V>(objectType: string): AnnotatedMap<K, V> => {
 export const groupObjectsByProperty = <I, P extends keyof I>(
   objects: Iterable<I>,
   property: P
-): Map<I[P], Set<I>> => {
-  return groupObjectsByValue(objects, (o) => o[property]);
+): Map<I[P], I[]> => {
+  return Map.groupBy(objects, (o) => o[property]);
 };
 
 /**
