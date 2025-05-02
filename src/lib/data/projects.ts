@@ -47,24 +47,24 @@ export async function getAllProjectsForPlan({
       }),
     'projectVersionId'
   );
-  const pvps = [...pvpsByProjectVersionId.values()];
   const pvsById = await findAndOrganizeObjectsByUniqueProperty(
     database.projectVersion,
     (t) =>
       t.find({
         where: {
           id: {
-            [Op.IN]: new Set(pvps.map((pvp) => pvp.projectVersionId)),
+            [Op.IN]: new Set(
+              pvpsByProjectVersionId.values().map((pvp) => pvp.projectVersionId)
+            ),
           },
         },
       }),
     'id'
   );
-  const projectVersions = [...pvsById.values()];
   const projects = await database.project.find({
     where: {
       id: {
-        [Op.IN]: new Set(projectVersions.map((pv) => pv.projectId)),
+        [Op.IN]: new Set(pvsById.values().map((pv) => pv.projectId)),
       },
     },
   });
@@ -74,9 +74,11 @@ export async function getAllProjectsForPlan({
       t.find({
         where: {
           id: {
-            [Op.IN]: [
-              ...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId)),
-            ],
+            [Op.IN]: new Set(
+              pvpsByProjectVersionId
+                .values()
+                .map((pvp) => pvp.workflowStatusOptionId)
+            ),
           },
         },
       }),
@@ -133,15 +135,11 @@ export async function getOrganizationIDsForProjects<
   database: Database;
   projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<OrganizationId>>> {
-  const projectVersionIds = [...projects.values()].map(
-    (p) => p.projectVersion.id
-  );
-
   const groupedPVOs = groupObjectsByProperty(
     await database.projectVersionOrganization.find({
       where: {
         projectVersionId: {
-          [Op.IN]: projectVersionIds,
+          [Op.IN]: projects.values().map((p) => p.projectVersion.id),
         },
       },
     }),
@@ -171,15 +169,11 @@ export async function getGoverningEntityIDsForProjects<
   database: Database;
   projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<GoverningEntityId>>> {
-  const projectVersionIds = [...projects.values()].map(
-    (p) => p.projectVersion.id
-  );
-
   const groupedPVGEs = groupObjectsByProperty(
     await database.projectVersionGoverningEntity.find({
       where: {
         projectVersionId: {
-          [Op.IN]: projectVersionIds,
+          [Op.IN]: projects.values().map((p) => p.projectVersion.id),
         },
       },
     }),
@@ -213,15 +207,11 @@ export const getConditionFieldsForProjects = async <
 }): Promise<
   Map<ProjectId, Array<InstanceOfModel<Database['projectVersionField']>>>
 > => {
-  const projectVersionPlanIds = [...projects.values()].map(
-    (v) => v.projectVersionPlan.id
-  );
-
   const groupedConditionFields = groupObjectsByProperty(
     await database.projectVersionField.find({
       where: {
         projectVersionPlanId: {
-          [Op.IN]: projectVersionPlanIds,
+          [Op.IN]: projects.values().map((v) => v.projectVersionPlan.id),
         },
       },
     }),
