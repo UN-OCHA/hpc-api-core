@@ -106,26 +106,6 @@ export const groupObjectsByProperty = <I, P extends keyof I>(
 
 /**
  * Take a collection of objects,
- * and group them by values produced by the given function for each object
- */
-export const groupObjectsByValue = <I, V>(
-  objects: Iterable<I>,
-  getValue: (i: I) => V
-): Map<V, Set<I>> => {
-  const result = new Map<V, Set<I>>();
-  for (const obj of objects) {
-    const value = getValue(obj);
-    let group = result.get(value);
-    if (!group) {
-      result.set(value, (group = new Set()));
-    }
-    group.add(obj);
-  }
-  return result;
-};
-
-/**
- * Take a collection of objects,
  * and create a map of them, using a particular property as the key
  */
 export const organizeObjectsByUniqueProperty = <I, P extends keyof I>(
