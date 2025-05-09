@@ -1,3 +1,4 @@
+import * as t from 'io-ts';
 import type { NonNegativeInteger } from './types';
 
 export const isDefined = <T>(v: T | null | undefined): v is T =>
@@ -345,3 +346,74 @@ export const splitIntoChunks = <T, N extends number>(
 
 export const areSetsEqual = <T>(a: Set<T>, b: Set<T>): boolean =>
   a.symmetricDifference(b).size === 0;
+
+const SERIALIZABLE = t.union([
+  t.type({
+    __serialized_type__: t.literal('Map'),
+    value: t.array(t.tuple([t.unknown, t.unknown])),
+  }),
+  t.type({
+    __serialized_type__: t.literal('Set'),
+    value: t.array(t.unknown),
+  }),
+]);
+type Serializable = t.TypeOf<typeof SERIALIZABLE>;
+
+const isSerializable = (value: unknown): value is Serializable =>
+  SERIALIZABLE.is(value);
+
+/**
+ * BEWARE: This method should be used in conjunction with `extendedJsonParse()`!
+ *
+ * Stringify a value, extending the standard `JSON.stringify()` behavior to
+ * serialize `Map`s and `Set`s.
+ *
+ * When serializing a `Map`, the value will be replaced with an object that
+ * contains a `'__serialized_type__'` property with value `'Map'`, and a `'value'`
+ * property with an array of tuples of the key-value pairs in the `Map`.
+ *
+ * When serializing a `Set`, the value will be replaced with an object that
+ * contains a `'__serialized_type__'` property with value `'Set'`, and a `'value'`
+ * property with an array of values in the `Set`.
+ */
+export const extendedJsonStringify = (value: unknown): string => {
+  const replacer = (_key: string, val: unknown): unknown => {
+    if (val instanceof Map) {
+      return {
+        __serialized_type__: 'Map',
+        value: [...val],
+      };
+    } else if (val instanceof Set) {
+      return {
+        __serialized_type__: 'Set',
+        value: [...val],
+      };
+    }
+
+    return val;
+  };
+
+  return JSON.stringify(value, replacer);
+};
+
+/**
+ * BEWARE: This method should be used in conjunction with `extendedJsonStringify()`!
+ *
+ * Parse a string, extending the standard `JSON.parse()`
+ * behavior to deserialize `Map`s and `Set`s.
+ */
+export const extendedJsonParse = (text: string): unknown => {
+  const reviver = (_key: string, val: unknown): unknown => {
+    if (isSerializable(val)) {
+      if (val.__serialized_type__ === 'Map') {
+        return new Map(val.value);
+      } else if (val.__serialized_type__ === 'Set') {
+        return new Set(val.value);
+      }
+    }
+
+    return val;
+  };
+
+  return JSON.parse(text, reviver);
+};
