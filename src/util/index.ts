@@ -219,6 +219,27 @@ export const mapObjectEntries = <K extends string | symbol, V1, V2>(
   ) as { [key in K]: V2 };
 };
 
+/**
+ * Typesafe method to convert `Map` to object, because converting
+ * using `Object.fromEntries()` uses generic `string` for keys
+ *
+ * @example
+ * type TableName = 'planLocation' | 'planYear';
+ * type TableRecord = { id: number; planId: number };
+ * const map = new Map<TableName, TableRecord[]>();
+ * const withObjectFromEntries = Object.fromEntries(map); // Typed as `{ [k: string]: TableRecord[]; }`
+ * const objectFromMap = mapToObject(map); // Typed as `{ planLocation: TableRecord[]; planYear: TableRecord[]; }`
+ */
+export const mapToObject = <K extends PropertyKey, V>(
+  map: Map<K, V>
+): { [P in K]: V } => {
+  const obj = {} as { [P in K]: V };
+  for (const [key, value] of map.entries()) {
+    obj[key] = value;
+  }
+  return obj;
+};
+
 export type MapValue<M extends Map<unknown, unknown>> =
   M extends Map<unknown, infer V> ? V : unknown;
 
