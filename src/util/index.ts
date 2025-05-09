@@ -100,28 +100,8 @@ export const annotatedMap = <K, V>(objectType: string): AnnotatedMap<K, V> => {
 export const groupObjectsByProperty = <I, P extends keyof I>(
   objects: Iterable<I>,
   property: P
-): Map<I[P], Set<I>> => {
-  return groupObjectsByValue(objects, (o) => o[property]);
-};
-
-/**
- * Take a collection of objects,
- * and group them by values produced by the given function for each object
- */
-export const groupObjectsByValue = <I, V>(
-  objects: Iterable<I>,
-  getValue: (i: I) => V
-): Map<V, Set<I>> => {
-  const result = new Map<V, Set<I>>();
-  for (const obj of objects) {
-    const value = getValue(obj);
-    let group = result.get(value);
-    if (!group) {
-      result.set(value, (group = new Set()));
-    }
-    group.add(obj);
-  }
-  return result;
+): Map<I[P], I[]> => {
+  return Map.groupBy(objects, (o) => o[property]);
 };
 
 /**

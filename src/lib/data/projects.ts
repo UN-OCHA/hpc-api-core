@@ -47,24 +47,24 @@ export async function getAllProjectsForPlan({
       }),
     'projectVersionId'
   );
-  const pvps = [...pvpsByProjectVersionId.values()];
   const pvsById = await findAndOrganizeObjectsByUniqueProperty(
     database.projectVersion,
     (t) =>
       t.find({
         where: {
           id: {
-            [Op.IN]: new Set(pvps.map((pvp) => pvp.projectVersionId)),
+            [Op.IN]: new Set(
+              pvpsByProjectVersionId.values().map((pvp) => pvp.projectVersionId)
+            ),
           },
         },
       }),
     'id'
   );
-  const projectVersions = [...pvsById.values()];
   const projects = await database.project.find({
     where: {
       id: {
-        [Op.IN]: new Set(projectVersions.map((pv) => pv.projectId)),
+        [Op.IN]: new Set(pvsById.values().map((pv) => pv.projectId)),
       },
     },
   });
@@ -74,9 +74,11 @@ export async function getAllProjectsForPlan({
       t.find({
         where: {
           id: {
-            [Op.IN]: [
-              ...new Set(pvps.map((pvp) => pvp.workflowStatusOptionId)),
-            ],
+            [Op.IN]: new Set(
+              pvpsByProjectVersionId
+                .values()
+                .map((pvp) => pvp.workflowStatusOptionId)
+            ),
           },
         },
       }),
@@ -133,15 +135,11 @@ export async function getOrganizationIDsForProjects<
   database: Database;
   projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<OrganizationId>>> {
-  const projectVersionIds = [...projects.values()].map(
-    (p) => p.projectVersion.id
-  );
-
   const groupedPVOs = groupObjectsByProperty(
     await database.projectVersionOrganization.find({
       where: {
         projectVersionId: {
-          [Op.IN]: projectVersionIds,
+          [Op.IN]: projects.values().map((p) => p.projectVersion.id),
         },
       },
     }),
@@ -153,7 +151,7 @@ export async function getOrganizationIDsForProjects<
   for (const [projectId, projectData] of projects) {
     const projectVersionId = projectData.projectVersion.id;
     const pvos = groupedPVOs.get(projectVersionId) ?? [];
-    const organizationIds = new Set([...pvos].map((o) => o.organizationId));
+    const organizationIds = new Set(pvos.map((o) => o.organizationId));
     result.set(projectId, organizationIds);
   }
 
@@ -171,15 +169,11 @@ export async function getGoverningEntityIDsForProjects<
   database: Database;
   projects: Map<ProjectId, Data>;
 }): Promise<Map<ProjectId, Set<GoverningEntityId>>> {
-  const projectVersionIds = [...projects.values()].map(
-    (p) => p.projectVersion.id
-  );
-
   const groupedPVGEs = groupObjectsByProperty(
     await database.projectVersionGoverningEntity.find({
       where: {
         projectVersionId: {
-          [Op.IN]: projectVersionIds,
+          [Op.IN]: projects.values().map((p) => p.projectVersion.id),
         },
       },
     }),
@@ -192,7 +186,7 @@ export async function getGoverningEntityIDsForProjects<
     const projectVersionId = projectData.projectVersion.id;
     const pvges = groupedPVGEs.get(projectVersionId) ?? [];
     const governingEntityIds = new Set(
-      [...pvges].map((pvge) => pvge.governingEntityId)
+      pvges.map((pvge) => pvge.governingEntityId)
     );
     result.set(projectId, governingEntityIds);
   }
@@ -211,17 +205,13 @@ export const getConditionFieldsForProjects = async <
   database: Database;
   projects: Map<ProjectId, Data>;
 }): Promise<
-  Map<ProjectId, Set<InstanceOfModel<Database['projectVersionField']>>>
+  Map<ProjectId, Array<InstanceOfModel<Database['projectVersionField']>>>
 > => {
-  const projectVersionPlanIds = [...projects.values()].map(
-    (v) => v.projectVersionPlan.id
-  );
-
   const groupedConditionFields = groupObjectsByProperty(
     await database.projectVersionField.find({
       where: {
         projectVersionPlanId: {
-          [Op.IN]: projectVersionPlanIds,
+          [Op.IN]: projects.values().map((v) => v.projectVersionPlan.id),
         },
       },
     }),
@@ -230,13 +220,13 @@ export const getConditionFieldsForProjects = async <
 
   const result = new Map<
     ProjectId,
-    Set<InstanceOfModel<Database['projectVersionField']>>
+    Array<InstanceOfModel<Database['projectVersionField']>>
   >();
 
   for (const [projectId, projectData] of projects) {
     const projectVersionPlanId = projectData.projectVersionPlan.id;
     const conditionFields = groupedConditionFields.get(projectVersionPlanId);
-    result.set(projectId, conditionFields ?? new Set());
+    result.set(projectId, conditionFields ?? []);
   }
 
   return result;
@@ -354,12 +344,12 @@ export const getProjectBudgetsByOrgAndCluster = async <
       continue;
     }
 
-    const segment = segments?.size === 1 ? [...segments][0] : null;
+    const segment = segments?.length === 1 ? segments[0] : null;
     if (!segment) {
       continue;
     }
 
-    const breakdowns = breakdownsBySegment.get(segment.id) ?? new Set();
+    const breakdowns = breakdownsBySegment.get(segment.id) ?? [];
 
     const projectResult: ProjectBudgetSegmentBreakdown[] = [];
 
@@ -377,7 +367,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
       let governingEntity: GoverningEntityId | null = null;
       let organization: OrganizationId | null = null;
 
-      const entities = entitiesByBreakdown.get(b.id) ?? new Set();
+      const entities = entitiesByBreakdown.get(b.id) ?? [];
       for (const e of entities) {
         if (e.objectType === 'globalCluster') {
           globalCluster = createBrandedValue(e.objectId);
@@ -440,7 +430,7 @@ export const getProjectBudgetsByOrgAndCluster = async <
     // Ensure that the organization IDs match the projectVersionOrganization
     const budgetOrgIDs = new Set(projectResult.map((i) => i.organization));
     const prvOrgIDs = new Set(
-      [...(orgsByProjectVersion.get(p.projectVersion.id) ?? [])].map(
+      (orgsByProjectVersion.get(p.projectVersion.id) ?? []).map(
         (pvo) => pvo.organizationId
       )
     );

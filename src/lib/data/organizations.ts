@@ -41,9 +41,9 @@ export const getOrganizationsInfo = async (
     await database.category.find({
       where: {
         id: {
-          [database.Op.IN]: [...categoriesByOrganizationId.values()]
-            .flatMap((crSet) => [...crSet])
-            .map((cr) => cr.categoryID),
+          [database.Op.IN]: categoriesByOrganizationId
+            .values()
+            .flatMap((categories) => categories.map((cr) => cr.categoryID)),
         },
         group: { [database.Op.IN]: ['organizationType', 'organizationLevel'] },
       },
