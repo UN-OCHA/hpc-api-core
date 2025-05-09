@@ -12,6 +12,46 @@ export const definedEntries = <K extends string, V>(o: {
 }): Array<[K, V]> =>
   [...(Object.entries(o) as Array<[K, V]>)].filter(([_k, v]) => isDefined(v));
 
+/**
+ * Strict version of `Object.entries()` that has a more useful key type,
+ * but doesn't do filtering like `definedEntries()`.
+ *
+ * If we have object like this:
+ *
+ * ```ts
+ * const object = {
+ *   planLocation: [{ id: 1, planId: 100 }],
+ *   planYear: [{ id: 1, planId: 200 }],
+ * };
+ * ```
+ *
+ * looping over it using built-in `Object.entries()` with
+ *
+ * ```ts
+ * for (const [key, value] of Object.entries(object)) { ... }
+ * ```
+ *
+ * will produce the type of `key` as generic `string` and type of `value` is
+ *
+ * ```ts
+ * {
+ *   id: number;
+ *   planId: number;
+ * }[] | {
+ *   id: number;
+ *   planId: number;
+ * }[]
+ * ```
+ *
+ * If we were to use loop over `objectEntries(object)`, with this
+ * method instead of built-in `Object.entries()`, we would get
+ * the type of `key` as `"planLocation" | "planYear"` and type of `value`
+ * stays the same, as it was already properly typed.
+ */
+export const objectEntries = <K extends PropertyKey, V>(obj: {
+  [P in K]: V;
+}): Array<[K, V]> => Object.entries(obj) as Array<[K, V]>;
+
 export const delay = (ms: number): Promise<unknown> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 export type RecursivePartial<T> = T extends number
