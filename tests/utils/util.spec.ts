@@ -144,6 +144,46 @@ describe('Test utility functions', () => {
     });
   });
 
+  describe('areSetsEqual', () => {
+    it('should return true for two empty sets', () => {
+      expect(areSetsEqual(new Set(), new Set())).toBe(true);
+    });
+
+    it('should return true for sets with same elements in different order', () => {
+      expect(areSetsEqual(new Set([1, 2, 3]), new Set([3, 2, 1]))).toBe(true);
+    });
+
+    it('should return false for sets with different elements', () => {
+      expect(areSetsEqual(new Set([1, 2]), new Set([2, 3]))).toBe(false);
+    });
+
+    it('should return false if sets have different sizes', () => {
+      expect(areSetsEqual(new Set([1]), new Set([1, 2]))).toBe(false);
+    });
+
+    it('should return false if only one set is empty', () => {
+      expect(areSetsEqual(new Set(), new Set([1]))).toBe(false);
+    });
+
+    it('should return true for sets with same string elements', () => {
+      expect(areSetsEqual(new Set(['a', 'b']), new Set(['b', 'a']))).toBe(true);
+    });
+
+    it('should return true for sets with same object references', () => {
+      const obj1 = { x: 1 };
+      const obj2 = { y: 2 };
+      const setA = new Set([obj1, obj2]);
+      const setB = new Set([obj2, obj1]);
+      expect(areSetsEqual(setA, setB)).toBe(true);
+    });
+
+    it('should return false for sets with different object references', () => {
+      const setA = new Set([{ x: 1 }]);
+      const setB = new Set([{ x: 1 }]);
+      expect(areSetsEqual(setA, setB)).toBe(false); // Different object identities
+    });
+  });
+
   describe('extendedJsonStringify', () => {
     it('should serialize a Map', () => {
       const input = new Map([
