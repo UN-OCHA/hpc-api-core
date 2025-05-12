@@ -1,19 +1,78 @@
-import { range, splitIntoChunks, toCamelCase } from '../../src/util';
+import {
+  mapToObject,
+  range,
+  splitIntoChunks,
+  toCamelCase,
+} from '../../src/util';
 
 describe('Test utility functions', () => {
-  it('should convert string to camel case', () => {
-    expect(toCamelCase('')).toBe('');
-    expect(toCamelCase('Reached')).toBe('reached');
-    expect(toCamelCase('Cumulative reach')).toBe('cumulativeReach');
-    expect(toCamelCase('Double  space')).toBe('doubleSpace');
-    expect(toCamelCase('  leading space')).toBe('leadingSpace');
-    expect(toCamelCase('trailing space  ')).toBe('trailingSpace');
-    expect(toCamelCase('  both ends  ')).toBe('bothEnds');
-    expect(toCamelCase('with three words')).toBe('withThreeWords');
-    expect(toCamelCase('Mixed CASE')).toBe('mixedCase');
-    expect(toCamelCase('Another Test CASE')).toBe('anotherTestCase');
-    expect(toCamelCase('version 1.0')).toBe('version1.0');
-    expect(toCamelCase('2fast 2furious')).toBe('2fast2furious');
+  describe('mapToObject', () => {
+    it('converts a simple Map<string, number> to an object', () => {
+      const map = new Map<string, number>([
+        ['a', 1],
+        ['b', 2],
+      ]);
+      const obj = mapToObject(map);
+      expect(obj).toEqual({ a: 1, b: 2 });
+    });
+
+    it('converts a Map of union string keys to correctly typed object', () => {
+      type TableName = 'planLocation' | 'planYear';
+      type TableRecord = { id: number; planId: number };
+
+      const records: Record<TableName, TableRecord[]> = {
+        planLocation: [{ id: 1, planId: 100 }],
+        planYear: [{ id: 2, planId: 200 }],
+      };
+
+      const map = new Map<TableName, TableRecord[]>([
+        ['planLocation', records.planLocation],
+        ['planYear', records.planYear],
+      ]);
+
+      const obj = mapToObject(map);
+
+      expect(obj).toEqual(records);
+      // Type check: obj should be `{ planLocation: TableRecord[], planYear: TableRecord[] }`
+      obj satisfies Record<TableName, TableRecord[]>; // Should not produce a TypeScript error
+    });
+
+    it('returns an empty object when given an empty map', () => {
+      const map = new Map<string, number>();
+      const obj = mapToObject(map);
+      expect(obj).toEqual({});
+    });
+
+    it('preserves non-string keys like numbers and symbols', () => {
+      const sym = Symbol('key');
+      const map = new Map<PropertyKey, string>([
+        [1, 'one'],
+        ['two', '2'],
+        [sym, 'symbol'],
+      ]);
+
+      const obj = mapToObject(map);
+      expect(obj[1]).toBe('one');
+      expect(obj['two']).toBe('2');
+      expect(obj[sym]).toBe('symbol');
+    });
+  });
+
+  describe('toCamelCase', () => {
+    it('should convert string to camel case', () => {
+      expect(toCamelCase('')).toBe('');
+      expect(toCamelCase('Reached')).toBe('reached');
+      expect(toCamelCase('Cumulative reach')).toBe('cumulativeReach');
+      expect(toCamelCase('Double  space')).toBe('doubleSpace');
+      expect(toCamelCase('  leading space')).toBe('leadingSpace');
+      expect(toCamelCase('trailing space  ')).toBe('trailingSpace');
+      expect(toCamelCase('  both ends  ')).toBe('bothEnds');
+      expect(toCamelCase('with three words')).toBe('withThreeWords');
+      expect(toCamelCase('Mixed CASE')).toBe('mixedCase');
+      expect(toCamelCase('Another Test CASE')).toBe('anotherTestCase');
+      expect(toCamelCase('version 1.0')).toBe('version1.0');
+      expect(toCamelCase('2fast 2furious')).toBe('2fast2furious');
+    });
   });
 
   describe('range', () => {
