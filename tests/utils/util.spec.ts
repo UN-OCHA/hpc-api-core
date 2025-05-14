@@ -1,4 +1,7 @@
 import {
+  areSetsEqual,
+  extendedJsonParse,
+  extendedJsonStringify,
   mapToObject,
   range,
   splitIntoChunks,
@@ -138,6 +141,240 @@ describe('Test utility functions', () => {
         ['a', 'b'],
         ['c', 'd'],
       ]);
+    });
+  });
+
+  describe('areSetsEqual', () => {
+    it('should return true for two empty sets', () => {
+      expect(areSetsEqual(new Set(), new Set())).toBe(true);
+    });
+
+    it('should return true for sets with same elements in different order', () => {
+      expect(areSetsEqual(new Set([1, 2, 3]), new Set([3, 2, 1]))).toBe(true);
+    });
+
+    it('should return false for sets with different elements', () => {
+      expect(areSetsEqual(new Set([1, 2]), new Set([2, 3]))).toBe(false);
+    });
+
+    it('should return false if sets have different sizes', () => {
+      expect(areSetsEqual(new Set([1]), new Set([1, 2]))).toBe(false);
+    });
+
+    it('should return false if only one set is empty', () => {
+      expect(areSetsEqual(new Set(), new Set([1]))).toBe(false);
+    });
+
+    it('should return true for sets with same string elements', () => {
+      expect(areSetsEqual(new Set(['a', 'b']), new Set(['b', 'a']))).toBe(true);
+    });
+
+    it('should return true for sets with same object references', () => {
+      const obj1 = { x: 1 };
+      const obj2 = { y: 2 };
+      const setA = new Set([obj1, obj2]);
+      const setB = new Set([obj2, obj1]);
+      expect(areSetsEqual(setA, setB)).toBe(true);
+    });
+
+    it('should return false for sets with different object references', () => {
+      const setA = new Set([{ x: 1 }]);
+      const setB = new Set([{ x: 1 }]);
+      expect(areSetsEqual(setA, setB)).toBe(false); // Different object identities
+    });
+  });
+
+  describe('extendedJsonStringify', () => {
+    it('should serialize a Map', () => {
+      const input = new Map([
+        ['a', 1],
+        ['b', 2],
+      ]);
+
+      const json = extendedJsonStringify(input);
+      const parsed = JSON.parse(json);
+
+      expect(parsed).toEqual({
+        __serialized_type__: 'Map',
+        value: [
+          ['a', 1],
+          ['b', 2],
+        ],
+      });
+    });
+
+    it('should serialize a Set', () => {
+      const input = new Set([1, 2, 2, 3]);
+      const json = extendedJsonStringify(input);
+      const parsed = JSON.parse(json);
+
+      expect(parsed).toEqual({
+        __serialized_type__: 'Set',
+        value: [1, 2, 3],
+      });
+    });
+
+    it('should serialize a nested structure with Map and Set', () => {
+      const input = {
+        name: 'example',
+        data: new Map([['key', new Set([1, 2])]]),
+      };
+
+      const json = extendedJsonStringify(input);
+      const parsed = JSON.parse(json);
+
+      expect(parsed).toEqual({
+        name: 'example',
+        data: {
+          __serialized_type__: 'Map',
+          value: [
+            [
+              'key',
+              {
+                __serialized_type__: 'Set',
+                value: [1, 2],
+              },
+            ],
+          ],
+        },
+      });
+    });
+
+    it('should serialize a regular object without changes', () => {
+      const input = { key: 'value', num: 42 };
+      const json = extendedJsonStringify(input);
+      const parsed = JSON.parse(json);
+
+      expect(parsed).toEqual(input);
+    });
+  });
+
+  describe('extendedJsonParse', () => {
+    describe('extendedJsonParse with plain JSON.stringify()', () => {
+      it('should deserialize a serialized Map', () => {
+        const serialized = JSON.stringify({
+          __serialized_type__: 'Map',
+          value: [['x', 10]],
+        });
+
+        const result = extendedJsonParse(serialized);
+
+        expect(result).toBeInstanceOf(Map);
+        expect((result as Map<string, number>).get('x')).toBe(10);
+      });
+
+      it('should deserialize a serialized Set', () => {
+        const serialized = JSON.stringify({
+          __serialized_type__: 'Set',
+          value: [1, 2, 3],
+        });
+
+        const result = extendedJsonParse(serialized);
+
+        expect(result).toBeInstanceOf(Set);
+        expect([...(result as Set<number>)]).toEqual([1, 2, 3]);
+      });
+
+      it('should deserialize a nested structure with Map and Set', () => {
+        const input = {
+          name: 'nested',
+          data: {
+            __serialized_type__: 'Map',
+            value: [
+              [
+                'k',
+                {
+                  __serialized_type__: 'Set',
+                  value: [5, 6],
+                },
+              ],
+            ],
+          },
+        };
+
+        const serialized = JSON.stringify(input);
+        const result = extendedJsonParse(serialized) as any;
+
+        expect(result.name).toBe('nested');
+        expect(result.data).toBeInstanceOf(Map);
+
+        const nestedSet = result.data.get('k');
+        expect(nestedSet).toBeInstanceOf(Set);
+        expect([...nestedSet]).toEqual([5, 6]);
+      });
+
+      it('should parse a regular JSON string without changes', () => {
+        const input = { x: 100, y: false };
+        const json = JSON.stringify(input);
+        const result = extendedJsonParse(json);
+
+        expect(result).toEqual(input);
+      });
+    });
+
+    describe('extendedJsonParse with extendedJsonStringify', () => {
+      it('should correctly round-trip a Map', () => {
+        const input = new Map<string, string | number>([
+          ['username', 'alice'],
+          ['id', 42],
+        ]);
+
+        const json = extendedJsonStringify(input);
+        const result = extendedJsonParse(json);
+
+        expect(result).toBeInstanceOf(Map);
+        expect((result as Map<string, unknown>).get('username')).toBe('alice');
+        expect((result as Map<string, unknown>).get('id')).toBe(42);
+      });
+
+      it('should correctly round-trip a Set', () => {
+        const input = new Set(['read', 'write', 'delete']);
+
+        const json = extendedJsonStringify(input);
+        const result = extendedJsonParse(json) as Set<string>;
+
+        expect(result).toBeInstanceOf(Set);
+        expect(areSetsEqual(input, result)).toBe(true);
+      });
+
+      it('should correctly round-trip an object containing Map and Set', () => {
+        const input = {
+          roles: new Set(['admin', 'editor']),
+          metadata: new Map<string, string | number>([
+            ['createdBy', 'system'],
+            ['version', 3],
+          ]),
+        };
+
+        const json = extendedJsonStringify(input);
+        const result = extendedJsonParse(json);
+
+        expect(typeof result).toBe('object');
+        expect(result).not.toBeNull();
+
+        const typedResult = result as {
+          roles: Set<string>;
+          metadata: Map<string, unknown>;
+        };
+
+        expect(typedResult.roles).toBeInstanceOf(Set);
+        expect(typedResult.metadata).toBeInstanceOf(Map);
+        expect(areSetsEqual(typedResult.roles, input.roles)).toBe(true);
+        expect(typedResult.metadata.get('createdBy')).toBe('system');
+        expect(typedResult.metadata.get('version')).toBe(3);
+      });
+
+      it('should correctly round-trip a plain object without Map or Set', () => {
+        const input = {
+          status: 'active',
+          retries: 5,
+        };
+
+        const json = extendedJsonStringify(input);
+        const result = extendedJsonParse(json);
+
+        expect(result).toEqual(input);
+      });
     });
   });
 });
