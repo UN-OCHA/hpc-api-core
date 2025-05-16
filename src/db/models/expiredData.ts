@@ -3,7 +3,7 @@ import { DATE } from '../util/datatypes';
 import { defineRawModel } from '../util/raw-model';
 
 const EXPIRED_DATA_TYPE = {
-  solr: null,
+  flow: null,
 };
 
 const EXPIRED_OBJECT_TYPE = {
