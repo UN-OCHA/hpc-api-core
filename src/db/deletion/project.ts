@@ -20,11 +20,14 @@ export const deleteProjectById = async (
     throw new NotFoundError(`No project with ID ${projectToDelete}`);
   }
 
+  if (project.latestVersionId === null) {
+    throw new PreconditionFailedError(
+      `Project with ID ${project.id} has no latest version ID`
+    );
+  }
+
   // Cannot delete already published project
-  if (
-    project.latestVersionId !== null &&
-    project.currentPublishedVersionId === project.latestVersionId
-  ) {
+  if (project.currentPublishedVersionId === project.latestVersionId) {
     throw new PreconditionFailedError(
       `Latest version of project with ID ${project.id} has already been published`
     );
@@ -160,8 +163,19 @@ export const deleteProjectById = async (
     });
 
     // Delete weak references
+
     await database.expiredData.destroy({
       where: { objectType: 'project', objectId: project.id },
+      trx,
+    });
+
+    // References to projectVersion in categoryRef aren't being
+    // used anymore, so, remove this if data ever gets cleaned up
+    await database.categoryRef.destroy({
+      where: {
+        objectType: 'projectVersion',
+        objectID: project.latestVersionId,
+      },
       trx,
     });
 
