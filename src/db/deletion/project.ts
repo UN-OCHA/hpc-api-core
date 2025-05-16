@@ -63,6 +63,23 @@ export const deleteProjectById = async (
       trx,
     });
 
+    /**
+     * Related tables are purged through `ON DELETE CASCADE` foreign key constraints:
+     * - `projectVersionAttachment`
+     * - `projectLocations`
+     * - `budgetSegment`
+     *   - `budgetSegmentBreakdown`
+     *     - `budgetSegmentBreakdownEntity`
+     * - `projectVersionHistory`
+     * - `projectContact`
+     * - `projectVersionPlanEntity`
+     * - `projectVersionOrganization`
+     * - `projectVersionPlan`
+     *   - `projectVersionField`
+     *   - `projectVersionComment`
+     * - `projectGlobalClusters`
+     * - `projectVersionGoverningEntity`
+     */
     await database.projectVersion.destroy({
       where: { id: currentLatestVersion.id },
       trx,
@@ -118,6 +135,25 @@ export const deleteProjectById = async (
       trx,
     });
 
+    /**
+     * Related tables are purged through `ON DELETE CASCADE` foreign key constraints:
+     *
+     * - `projectVersion`
+     *   - `projectVersionAttachment`
+     *   - `projectLocations`
+     *   - `budgetSegment`
+     *     - `budgetSegmentBreakdown`
+     *       - `budgetSegmentBreakdownEntity`
+     *   - `projectVersionHistory`
+     *   - `projectContact`
+     *   - `projectVersionPlanEntity`
+     *   - `projectVersionOrganization`
+     *   - `projectVersionPlan`
+     *     - `projectVersionField`
+     *     - `projectVersionComment`
+     *   - `projectGlobalClusters`
+     *   - `projectVersionGoverningEntity`
+     */
     await database.project.destroy({
       where: { id: project.id },
       trx,
