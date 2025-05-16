@@ -1,3 +1,6 @@
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/PathReporter';
 import type { FieldDefinition } from '../db/util/model-definition';
 
 /**
@@ -55,4 +58,53 @@ export const getTableColumns = <
   ];
 
   return columns;
+};
+
+/**
+ * Codec to represent built-in `Map` type.
+ *
+ * Be warned that `JSON.stringify()` and `JSON.parse()` don't support `Map` and this can
+ * lead to unexpected behavior if you use this codec in serialization/deserialization.
+ *
+ * ```ts
+ * // Will give you an empty object in string instead of serialized `Map`
+ * JSON.stringify(new Map([[1, 'value']])); // Produces '{}'
+ * ```
+ */
+export const map = <K, V>(
+  domain: t.Type<K>,
+  codomain: t.Type<V>,
+  name = `Map<${domain.name}, ${codomain.name}>`
+): t.Type<Map<K, V>> => {
+  return new t.Type(
+    name,
+    (u): u is Map<K, V> =>
+      u instanceof Map &&
+      [...u].every(([key, value]) => domain.is(key) && codomain.is(value)),
+    (u, c) => {
+      if (!(u instanceof Map)) {
+        return t.failure(u, c, 'Input is not a Map');
+      }
+
+      let validationResult;
+      let validationError: string | null = null;
+      for (const [key, value] of u) {
+        // Validate key
+        if (!isRight((validationResult = domain.validate(key, c)))) {
+          validationError = `Invalid type for key: '${key}'. Error: ${PathReporter.report(validationResult)}`;
+          break;
+        }
+        // Validate value
+        if (!isRight((validationResult = codomain.validate(value, c)))) {
+          validationError = `Invalid type for value at key: '${key}'. Error: ${PathReporter.report(validationResult)}`;
+          break;
+        }
+      }
+
+      return validationError !== null
+        ? t.failure(u, c, validationError)
+        : t.success(u as Map<K, V>);
+    },
+    t.identity
+  );
 };
