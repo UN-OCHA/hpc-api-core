@@ -35,6 +35,10 @@ export default class ContextProvider implements IContext {
     this.models = v4Models(this.conn);
   }
 
+  public async tearDownContext(): Promise<void> {
+    await this.conn.destroy();
+  }
+
   private async createDbTestConnection(): Promise<Knex> {
     return await createDbConnection({
       host: 'localhost',
