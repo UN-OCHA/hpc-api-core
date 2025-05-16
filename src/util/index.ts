@@ -345,7 +345,7 @@ export const splitIntoChunks = <T, N extends number>(
   );
 
 export const areSetsEqual = <T>(a: Set<T>, b: Set<T>): boolean =>
-  a.symmetricDifference(b).size === 0;
+  a.size === b.size && a.isSubsetOf(b);
 
 const SERIALIZABLE = t.union([
   t.type({
