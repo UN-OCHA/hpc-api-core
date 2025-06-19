@@ -55,17 +55,27 @@ export const deleteOrganizationById = async (
   });
 
   if (flows.length > 0 || projectVersions.length > 0) {
-    const flowIds = flows.map((flow) => flow.id).join(', ');
-    const projectVersionIds = projectVersions
-      .map((project) => project.projectVersionId)
-      .join(', ');
+    const formatIds = (ids: number[], limit: number = 10) => {
+      if (ids.length <= limit) {
+        return ids.join(', ');
+      }
+
+      const displayedIds = ids.slice(0, limit).join(', ');
+      const remainingCount = ids.length - limit;
+      return `${displayedIds} ... (+ ${remainingCount.toLocaleString()} more)`;
+    };
+
+    const flowIds = flows.map((flow) => flow.id);
+    const projectVersionIds = projectVersions.map(
+      (project) => project.projectVersionId
+    );
 
     let errorMessage = 'Cannot delete organization.';
     if (flows.length > 0) {
-      errorMessage += ` Associated flows: [${flowIds}].`;
+      errorMessage += ` Associated flows: [${formatIds(flowIds)}].`;
     }
     if (projectVersions.length > 0) {
-      errorMessage += ` Associated project versions: [${projectVersionIds}].`;
+      errorMessage += ` Associated project versions: [${formatIds(projectVersionIds)}].`;
     }
 
     throw new PreconditionFailedError(errorMessage);
