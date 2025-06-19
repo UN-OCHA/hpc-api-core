@@ -1,6 +1,7 @@
 import type { Knex } from 'knex';
 import type { Database } from '..';
-import { isDefined } from '../../util';
+import { splitIntoChunks } from '../../util';
+import { PG_MAX_QUERY_PARAMS } from '../../util/consts';
 import { NotFoundError, PreconditionFailedError } from '../../util/error';
 import type { FlowId } from '../models/flow';
 import type { OrganizationId } from '../models/organization';
@@ -72,17 +73,17 @@ export const deleteOrganizationById = async (
   // We double check in `flow` table, since flows can be soft deleted
   const flowVersions = (
     await Promise.all(
-      uniqueFlowVersions.map(({ id, versionID }) =>
-        database.flow.findOne({
-          where: {
-            id,
-            versionID,
-          },
-          trx,
-        })
+      splitIntoChunks(uniqueFlowVersions, PG_MAX_QUERY_PARAMS / 4).map(
+        (orConditions) =>
+          database.flow.find({
+            where: {
+              [database.Cond.OR]: orConditions,
+            },
+            trx,
+          })
       )
     )
-  ).filter(isDefined);
+  ).flat();
 
   const projectVersions = await database.projectVersionOrganization.find({
     where: { organizationId: organization.id },
