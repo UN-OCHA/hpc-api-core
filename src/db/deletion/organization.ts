@@ -83,10 +83,13 @@ export const deleteOrganizationById = async (
           })
       )
     )
-  ).flat();
+  )
+    .flat()
+    .toSorted((firstFlow, secondFlow) => secondFlow.id - firstFlow.id);
 
   const projectVersions = await database.projectVersionOrganization.find({
     where: { organizationId: organization.id },
+    orderBy: { column: 'projectVersionId', order: 'desc' },
     trx,
   });
 
