@@ -87,13 +87,30 @@ export const deleteOrganizationById = async (
     .flat()
     .toSorted((firstFlow, secondFlow) => secondFlow.id - firstFlow.id);
 
-  const projectVersions = await database.projectVersionOrganization.find({
-    where: { organizationId: organization.id },
-    orderBy: { column: 'projectVersionId', order: 'desc' },
+  const projectVersionOrganizations =
+    await database.projectVersionOrganization.find({
+      where: { organizationId: organization.id },
+      orderBy: { column: 'projectVersionId', order: 'desc' },
+      trx,
+    });
+  // Since we display only first 10 IDs, we want to get project IDs instead of
+  // project version IDs, thus we are being efficient and only getting first 10
+  // project IDs. The remaining project version IDs are just kept for the count
+  const first10ProjectVersions = projectVersionOrganizations.slice(0, 10);
+  const restProjectVersions = projectVersionOrganizations.slice(10);
+  const projectVersions = await database.projectVersion.find({
+    where: {
+      id: {
+        [database.Op.IN]: first10ProjectVersions.map(
+          (pvo) => pvo.projectVersionId
+        ),
+      },
+    },
+    orderBy: { column: 'projectId', order: 'desc' },
     trx,
   });
 
-  if (flowVersions.length > 0 || projectVersions.length > 0) {
+  if (flowVersions.length > 0 || projectVersionOrganizations.length > 0) {
     const formatIds = (ids: string[], limit: number = 10) => {
       if (ids.length <= limit) {
         return ids.join(', ');
@@ -105,16 +122,18 @@ export const deleteOrganizationById = async (
     };
 
     const flows = flowVersions.map((flow) => `${flow.id} v${flow.versionID}`);
-    const projectVersionIds = projectVersions.map((project) =>
-      project.projectVersionId.toString()
-    );
+    const projectIds = [
+      ...projectVersions.map((pv) => pv.projectId.toString()),
+      // As said above, for the remaining count, we use project version IDs
+      ...restProjectVersions.map((pvo) => pvo.projectVersionId.toString()),
+    ];
 
     let errorMessage = 'Cannot delete organization.';
-    if (flowVersions.length > 0) {
+    if (flows.length > 0) {
       errorMessage += ` Associated flow versions: [${formatIds(flows)}].`;
     }
-    if (projectVersions.length > 0) {
-      errorMessage += ` Associated project versions: [${formatIds(projectVersionIds)}].`;
+    if (projectIds.length > 0) {
+      errorMessage += ` Associated projects: [${formatIds(projectIds)}].`;
     }
 
     throw new PreconditionFailedError(errorMessage);
