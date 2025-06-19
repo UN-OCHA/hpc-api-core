@@ -2,7 +2,45 @@ import type { Knex } from 'knex';
 import type { Database } from '..';
 import { isDefined } from '../../util';
 import { NotFoundError, PreconditionFailedError } from '../../util/error';
+import type { FlowId } from '../models/flow';
 import type { OrganizationId } from '../models/organization';
+
+/**
+ * Since organization can appear on both source and destination side of same
+ * flow, we only are interested in flows where it appears on any side
+ */
+const getUniqueFlowVersions = async (
+  organizationId: OrganizationId,
+  database: Database,
+  trx: Knex.Transaction
+) => {
+  const flowObjects = await database.flowObject.find({
+    where: {
+      objectType: {
+        [database.Op.IN]: ['organization', 'anonymizedOrganization'],
+      },
+      objectID: organizationId,
+    },
+    trx,
+  });
+
+  type Key = `${FlowId}-v${number}`;
+  const seen = new Set<Key>();
+
+  return flowObjects
+    .map((fo) => ({
+      id: fo.flowID,
+      versionID: fo.versionID,
+    }))
+    .filter((flow) => {
+      const key: Key = `${flow.id}-v${flow.versionID}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+};
 
 /**
  * Organizations are soft deleted in the database. This method gives
@@ -26,22 +64,19 @@ export const deleteOrganizationById = async (
     );
   }
 
-  const flowObjects = await database.flowObject.find({
-    where: {
-      objectType: {
-        [database.Op.IN]: ['organization', 'anonymizedOrganization'],
-      },
-      objectID: organization.id,
-    },
-    trx,
-  });
-  const flows = (
+  const uniqueFlowVersions = await getUniqueFlowVersions(
+    organization.id,
+    database,
+    trx
+  );
+  // We double check in `flow` table, since flows can be soft deleted
+  const flowVersions = (
     await Promise.all(
-      flowObjects.map((fo) =>
+      uniqueFlowVersions.map(({ id, versionID }) =>
         database.flow.findOne({
           where: {
-            id: fo.flowID,
-            versionID: fo.versionID,
+            id,
+            versionID,
           },
           trx,
         })
@@ -54,8 +89,8 @@ export const deleteOrganizationById = async (
     trx,
   });
 
-  if (flows.length > 0 || projectVersions.length > 0) {
-    const formatIds = (ids: number[], limit: number = 10) => {
+  if (flowVersions.length > 0 || projectVersions.length > 0) {
+    const formatIds = (ids: string[], limit: number = 10) => {
       if (ids.length <= limit) {
         return ids.join(', ');
       }
@@ -65,14 +100,14 @@ export const deleteOrganizationById = async (
       return `${displayedIds} ... (+ ${remainingCount.toLocaleString()} more)`;
     };
 
-    const flowIds = flows.map((flow) => flow.id);
-    const projectVersionIds = projectVersions.map(
-      (project) => project.projectVersionId
+    const flows = flowVersions.map((flow) => `${flow.id} v${flow.versionID}`);
+    const projectVersionIds = projectVersions.map((project) =>
+      project.projectVersionId.toString()
     );
 
     let errorMessage = 'Cannot delete organization.';
-    if (flows.length > 0) {
-      errorMessage += ` Associated flows: [${formatIds(flowIds)}].`;
+    if (flowVersions.length > 0) {
+      errorMessage += ` Associated flow versions: [${formatIds(flows)}].`;
     }
     if (projectVersions.length > 0) {
       errorMessage += ` Associated project versions: [${formatIds(projectVersionIds)}].`;
