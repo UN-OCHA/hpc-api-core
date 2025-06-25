@@ -193,6 +193,7 @@ export const calculatePermissionsFromRolesGrant = async <
         global.add(P.global.VIEW_CATEGORIES);
         global.add(P.global.DELETE_UPLOADED_FILE);
         global.add(P.global.CREATE_ORGANIZATIONS);
+        global.add(P.global.EDIT_ANY_ORGANIZATION);
         global.add(P.global.DELETE_ANY_ORGANIZATION);
       } else if (role === 'projectsAdmin') {
         // New Permissions
@@ -222,6 +223,7 @@ export const calculatePermissionsFromRolesGrant = async <
       if (role === 'operationLead') {
         global.add(P.global.VIEW_ASSIGNED_OPERATION_METADATA);
         global.add(P.global.CREATE_ORGANIZATIONS);
+        global.add(P.global.EDIT_ANY_ORGANIZATION);
         operationSet.add(P.operation.CREATE_CLUSTER);
         operationSet.add(P.operation.EDIT_ASSIGNMENT_RAW_DATA);
         operationSet.add(P.operation.MODIFY_CLUSTER_ACCESS_AND_PERMISSIONS);
