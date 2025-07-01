@@ -48,7 +48,6 @@ number of reasons:
   Without the use of hooks and joins, then we'd be using the sequelize library
   for little more than a query building library (and to define the schema).
   Given that:
-
   - Defining the model/schema has to be done in migrations anyway
     (so is effectively duplicated)
   - Sequelize model definitions don't provide any static-type checking
@@ -141,13 +140,11 @@ technical debt, and prevent it's accumulation in the future by:
 
   To do this, our model library is written in a way that allows specific tables
   to:
-
   - overwrite their implementation of certain functions
   - hide certain functions that should never be directly accessed
   - introduce functions specific to that model
 
   For example:
-
   - the util `sequelize-model` builds on-top of `raw-model` to:
     - add `createdAt`, `updatedAt` and `deletedAt` fields do model definitions.
     - overwrite the behavior of `create` and `update` to update the above
@@ -205,7 +202,6 @@ But in short, you need to do the following:
 
 - Create a new module in `src/db/models` with the same
   name that the table will have. Inside this module:
-
   - Specify a branded ID type:
 
     ```ts
