@@ -23,7 +23,7 @@ describe('prepareCondition', () => {
         id: undefined,
       })
     );
-    expect(() => q.toQuery()).toThrowError('Unexpected undefined value for id');
+    expect(() => q.toQuery()).toThrow('Unexpected undefined value for id');
   });
 
   it('single property equality', () => {
