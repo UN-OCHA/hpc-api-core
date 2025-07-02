@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.8",
+    "@types/node": "^24.0.10",
     "@types/pg": "^8.15.4",
     "@unocha/hpc-repo-tools": "^7.0.0",
     "eslint": "^9.23.0",
