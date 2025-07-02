@@ -33,6 +33,7 @@ export const AUTH_PERMISSIONS = {
      */
     VIEW_ASSIGNED_OPERATION_METADATA: 'viewPermittedOperationMetadata',
     CREATE_ORGANIZATIONS: 'canCreateOrganizations',
+    EDIT_ANY_ORGANIZATION: 'canEditAnyOrganization',
     DELETE_ANY_ORGANIZATION: 'canDeleteAnyOrganization',
     /**
      * Can edit the raw data of any assignment that is a form
