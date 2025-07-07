@@ -15,6 +15,7 @@ export type ReportFileId = Brand<
 export const REPORT_FILE_TYPE = t.keyof({
   file: null,
   url: null,
+  URL: null,
 });
 
 export const REPORT_FILE_ID = brandedType<number, ReportFileId>(t.number);
