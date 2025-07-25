@@ -6,7 +6,8 @@ import {
   type FieldsWithId,
   type ModelWithIdInitializer,
 } from './id-model';
-import { type FieldDefinition } from './model-definition';
+import { type FieldDefinition, type UserDataOf } from './model-definition';
+import { type DestroyFn } from './raw-model';
 
 const VERSIONED_FIELDS = {
   nonNullWithDefault: {
@@ -42,23 +43,45 @@ export type FieldsWithVersioned<
  * This definition function extends the given table definition with columns that
  * are present on all models defined by the function `versionLib.versionModel`.
  */
-export const defineLegacyVersionedModel = <
-  F extends FieldDefinition,
-  IDField extends string &
-    (keyof F['generated'] | keyof F['generatedCompositeKey']),
-  SoftDeletionEnabled extends boolean,
->(opts: {
-  tableName: string;
-  fields: F;
-  idField: IDField;
-  softDeletionEnabled: SoftDeletionEnabled;
-}): ModelWithIdInitializer<
-  FieldsWithVersioned<F, SoftDeletionEnabled>,
-  IDField
-> => {
-  const fields: ExtendedFields<F> = merge({}, opts.fields, VERSIONED_FIELDS);
-  return defineIDModel({
-    ...opts,
-    fields,
-  });
-};
+export const defineLegacyVersionedModel =
+  <
+    F extends FieldDefinition,
+    IDField extends string &
+      (keyof F['generated'] | keyof F['generatedCompositeKey']),
+    SoftDeletionEnabled extends boolean,
+  >(opts: {
+    tableName: string;
+    fields: F;
+    idField: IDField;
+    softDeletionEnabled: SoftDeletionEnabled;
+  }): ModelWithIdInitializer<
+    FieldsWithVersioned<F, SoftDeletionEnabled>,
+    IDField
+  > =>
+  (masterConn, replicaConn) => {
+    const fields: ExtendedFields<F> = merge({}, opts.fields, VERSIONED_FIELDS);
+
+    const model = defineIDModel({
+      ...opts,
+      fields,
+    })(masterConn, replicaConn);
+
+    const destroy: DestroyFn<
+      FieldsWithVersioned<F, SoftDeletionEnabled>
+    > = async (args) => {
+      const values = {
+        currentVersion: false,
+        latestVersion: false,
+        latestTaggedVersion: false,
+      } as Partial<UserDataOf<FieldsWithVersioned<F, SoftDeletionEnabled>>>;
+
+      await model.update({
+        ...args,
+        values,
+      });
+
+      return await model.destroy(args);
+    };
+
+    return { ...model, destroy };
+  };

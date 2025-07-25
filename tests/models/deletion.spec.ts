@@ -73,4 +73,46 @@ describe('Deletion', () => {
       })
     ).toBeNull();
   });
+
+  it('should set false to version fields', async () => {
+    const { id: planId } = await context.models.plan.create({
+      restricted: false,
+      isReleased: false,
+    });
+    const { id: attachmentPrototypeId } =
+      await context.models.attachmentPrototype.create({
+        planId,
+        refCode: 'test',
+        type: 'caseLoad',
+        value: {
+          entities: [],
+          hasMeasures: 0,
+          name: {
+            en: 'test',
+          },
+        },
+      });
+    const { id } = await context.models.attachment.create({
+      type: 'caseLoad',
+      planId,
+      attachmentPrototypeId,
+      objectType: 'plan',
+      objectId: planId,
+      currentVersion: true,
+      latestVersion: true,
+      latestTaggedVersion: true,
+    });
+
+    expect(await context.models.attachment.destroy({ where: { id } })).toBe(1);
+
+    const deletedAttachment = await context.models.attachment.findOne({
+      where: { id },
+      includeDeleted: true,
+    });
+
+    expect(deletedAttachment?.deletedAt).not.toBeNull();
+    expect(deletedAttachment?.currentVersion).toBe(false);
+    expect(deletedAttachment?.latestVersion).toBe(false);
+    expect(deletedAttachment?.latestTaggedVersion).toBe(false);
+  });
 });
