@@ -52,9 +52,9 @@ describe('Deletion', () => {
 
   it('should hard delete a record with forceHardDeletion', async () => {
     const { id } = await context.models.lookup.create({
-      input: 'input',
+      input: 'input2',
       inputField: 'DONOR',
-      output: 'output',
+      output: 'output2',
       outputField: 'LOCATION',
     });
 
