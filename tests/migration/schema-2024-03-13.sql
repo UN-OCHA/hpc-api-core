@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.8
--- Dumped by pg_dump version 14.8
+-- Dumped from database version 14.17
+-- Dumped by pg_dump version 14.17
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -65,7 +65,7 @@ CREATE TYPE public."enum_authTarget_type" AS ENUM (
 --
 
 CREATE TYPE public.enum_expired_data_type AS ENUM (
-    'flow'
+    'solr'
 );
 
 
@@ -266,7 +266,7 @@ CREATE TABLE public.attachment (
     "latestVersion" boolean DEFAULT false NOT NULL,
     "latestTaggedVersion" boolean DEFAULT false NOT NULL,
     "versionTags" character varying(8)[] DEFAULT (ARRAY[]::character varying[])::character varying(8)[],
-    "planId" integer
+    "planId" integer NOT NULL
 );
 
 
@@ -641,8 +641,7 @@ CREATE TABLE public.category (
     "group" character varying(255) NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    code character varying(255),
-    "includeTotals" boolean
+    code character varying(255)
 );
 
 
@@ -796,6 +795,19 @@ CREATE SEQUENCE public."conditionField_id_seq"
 --
 
 ALTER SEQUENCE public."conditionField_id_seq" OWNED BY public."conditionField".id;
+
+
+--
+-- Name: configurationField; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."configurationField" (
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "deletedAt" timestamp with time zone
+);
 
 
 --
@@ -1046,20 +1058,6 @@ CREATE TABLE public."endpointUsage" (
 
 
 --
--- Name: entitiesAssociation; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."entitiesAssociation" (
-    "parentId" integer NOT NULL,
-    "parentType" character varying(255) NOT NULL,
-    "childId" integer NOT NULL,
-    "childType" character varying(255) NOT NULL,
-    "createdAt" timestamp with time zone NOT NULL,
-    "updatedAt" timestamp with time zone NOT NULL
-);
-
-
---
 -- Name: entityCategories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1222,7 +1220,8 @@ CREATE TABLE public."externalReference" (
     "externalRecordDate" timestamp with time zone NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    "importInformation" json
+    "importInformation" json,
+    hash character varying(255)
 );
 
 
@@ -1477,7 +1476,6 @@ CREATE TABLE public."globalCluster" (
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     "parentId" integer,
-    "defaultIconId" character varying(255),
     "displayFTSSummariesFromYear" integer
 );
 
@@ -1981,18 +1979,6 @@ ALTER SEQUENCE public."iatiTransaction_id_seq" OWNED BY public."iatiTransaction"
 
 
 --
--- Name: icon; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.icon (
-    id character varying(255) NOT NULL,
-    svg bytea,
-    "createdAt" timestamp with time zone NOT NULL,
-    "updatedAt" timestamp with time zone NOT NULL
-);
-
-
---
 -- Name: job; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2073,7 +2059,8 @@ CREATE TABLE public.location (
     pcode character varying(255),
     status character varying(255) NOT NULL,
     "validOn" bigint,
-    "itosSync" boolean DEFAULT true NOT NULL
+    "itosSync" boolean DEFAULT true NOT NULL,
+    "isRegion" boolean DEFAULT false NOT NULL
 );
 
 
@@ -2146,7 +2133,8 @@ CREATE TABLE public.measurement (
     "currentVersion" boolean DEFAULT false NOT NULL,
     "latestVersion" boolean DEFAULT false NOT NULL,
     "latestTaggedVersion" boolean DEFAULT false NOT NULL,
-    "versionTags" character varying(8)[] DEFAULT (ARRAY[]::character varying[])::character varying(8)[]
+    "versionTags" character varying(8)[] DEFAULT (ARRAY[]::character varying[])::character varying(8)[],
+    "isCommentPublic" boolean DEFAULT false NOT NULL
 );
 
 
@@ -2318,7 +2306,7 @@ CREATE TABLE public.organization (
     name character varying(255) NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    abbreviation character varying(255),
+    abbreviation character varying(255) NOT NULL,
     url text,
     "parentID" integer,
     "nativeName" character varying(255),
@@ -2530,7 +2518,9 @@ CREATE TABLE public.plan (
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     restricted boolean NOT NULL,
-    "revisionState" character varying(255)
+    "revisionState" character varying(255),
+    "isReleased" boolean DEFAULT false NOT NULL,
+    "releasedDate" timestamp with time zone
 );
 
 
@@ -2579,7 +2569,8 @@ CREATE TABLE public."planEntity" (
     "currentVersion" boolean DEFAULT false NOT NULL,
     "latestVersion" boolean DEFAULT false NOT NULL,
     "latestTaggedVersion" boolean DEFAULT false NOT NULL,
-    "versionTags" character varying(8)[] DEFAULT (ARRAY[]::character varying[])::character varying(8)[]
+    "versionTags" character varying(8)[] DEFAULT (ARRAY[]::character varying[])::character varying(8)[],
+    "parentGoverningEntityId" integer
 );
 
 
@@ -2772,7 +2763,24 @@ CREATE TABLE public."planVersion" (
     "updatedAt" timestamp with time zone NOT NULL,
     "lastPublishedReportingPeriodId" integer,
     "clusterSelectionType" character varying(255),
-    "visibilityPreferences" jsonb DEFAULT '{"isDisaggregationForCaseloads": true, "isDisaggregationForIndicators": true}'::jsonb NOT NULL
+    "visibilityPreferences" jsonb DEFAULT '{"isForNewHPCProjects": false, "isDisaggregationForCaseloads": true, "isDisaggregationForIndicators": true}'::jsonb NOT NULL,
+    "shortName" character varying(255),
+    "pdfPublishDate" date,
+    subtitle character varying(255),
+    "isPartOfGHO" boolean DEFAULT false NOT NULL,
+    "focusLocationId" integer
+);
+
+
+--
+-- Name: planVersionOrganization; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."planVersionOrganization" (
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "organizationId" integer NOT NULL,
+    "planVersionId" integer NOT NULL
 );
 
 
@@ -3462,6 +3470,50 @@ CREATE SEQUENCE public.role_id_seq
 --
 
 ALTER SEQUENCE public.role_id_seq OWNED BY public.role.id;
+
+
+--
+-- Name: serviceModality; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."serviceModality" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: serviceModalityAssociation; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."serviceModalityAssociation" (
+    "serviceModalityId" integer NOT NULL,
+    "governingEntityId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: serviceModality_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."serviceModality_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: serviceModality_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public."serviceModality_id_seq" OWNED BY public."serviceModality".id;
 
 
 --
@@ -4259,6 +4311,13 @@ ALTER TABLE ONLY public."rolePermittedAction" ALTER COLUMN id SET DEFAULT nextva
 
 
 --
+-- Name: serviceModality id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."serviceModality" ALTER COLUMN id SET DEFAULT nextval('public."serviceModality_id_seq"'::regclass);
+
+
+--
 -- Name: tag id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4491,6 +4550,14 @@ ALTER TABLE ONLY public."conditionField"
 
 
 --
+-- Name: configurationField configurationField_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."configurationField"
+    ADD CONSTRAINT "configurationField_pkey" PRIMARY KEY (name);
+
+
+--
 -- Name: currency currency_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4576,14 +4643,6 @@ ALTER TABLE ONLY public."endpointTrace"
 
 ALTER TABLE ONLY public."endpointUsage"
     ADD CONSTRAINT "endpointUsage_pkey" PRIMARY KEY (path, method);
-
-
---
--- Name: entitiesAssociation entitiesAssociation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."entitiesAssociation"
-    ADD CONSTRAINT "entitiesAssociation_pkey" PRIMARY KEY ("parentId", "childId");
 
 
 --
@@ -4835,14 +4894,6 @@ ALTER TABLE ONLY public."iatiTransaction"
 
 
 --
--- Name: icon icon_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.icon
-    ADD CONSTRAINT icon_pkey PRIMARY KEY (id);
-
-
---
 -- Name: jobAssociation jobAssociation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5056,6 +5107,14 @@ ALTER TABLE ONLY public."planEntity"
 
 ALTER TABLE ONLY public."planLocation"
     ADD CONSTRAINT "planLocation_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: planVersionOrganization planOrganizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."planVersionOrganization"
+    ADD CONSTRAINT "planOrganizations_pkey" PRIMARY KEY ("planVersionId", "organizationId");
 
 
 --
@@ -5339,6 +5398,22 @@ ALTER TABLE ONLY public.role
 
 
 --
+-- Name: serviceModalityAssociation serviceModalityAssociation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."serviceModalityAssociation"
+    ADD CONSTRAINT "serviceModalityAssociation_pkey" PRIMARY KEY ("serviceModalityId", "governingEntityId");
+
+
+--
+-- Name: serviceModality serviceModality_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."serviceModality"
+    ADD CONSTRAINT "serviceModality_pkey" PRIMARY KEY (id);
+
+
+--
 -- Name: tag tag_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5360,6 +5435,22 @@ ALTER TABLE ONLY public.tag
 
 ALTER TABLE ONLY public.task
     ADD CONSTRAINT task_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: lookup unique_lookup_combination; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lookup
+    ADD CONSTRAINT unique_lookup_combination UNIQUE (input, "inputField", output, "outputField");
+
+
+--
+-- Name: category unique_name_group; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.category
+    ADD CONSTRAINT unique_name_group UNIQUE (name, "group");
 
 
 --
@@ -5760,20 +5851,6 @@ CREATE INDEX "endpointLog_entity_index" ON public."endpointLog" USING btree ("en
 --
 
 CREATE INDEX "endpointLog_participantId_idx" ON public."endpointLog" USING btree ("participantId");
-
-
---
--- Name: entitiesAssociation_child_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX "entitiesAssociation_child_index" ON public."entitiesAssociation" USING btree ("childId", "childType");
-
-
---
--- Name: entitiesAssociation_parent_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX "entitiesAssociation_parent_index" ON public."entitiesAssociation" USING btree ("parentId", "parentType");
 
 
 --
@@ -6958,7 +7035,7 @@ ALTER TABLE ONLY public."attachmentPrototype"
 --
 
 ALTER TABLE ONLY public."attachmentVersion"
-    ADD CONSTRAINT "attachmentVersion_attachmentId_fkey" FOREIGN KEY ("attachmentId") REFERENCES public.attachment(id);
+    ADD CONSTRAINT "attachmentVersion_attachmentId_fkey" FOREIGN KEY ("attachmentId") REFERENCES public.attachment(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -6974,7 +7051,7 @@ ALTER TABLE ONLY public.attachment
 --
 
 ALTER TABLE ONLY public.attachment
-    ADD CONSTRAINT "attachment_planId_fkey" FOREIGN KEY ("planId") REFERENCES public.plan(id);
+    ADD CONSTRAINT "attachment_planId_fkey" FOREIGN KEY ("planId") REFERENCES public.plan(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7474,6 +7551,14 @@ ALTER TABLE ONLY public.organization
 
 
 --
+-- Name: organization organization_parentID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.organization
+    ADD CONSTRAINT "organization_parentID_fkey" FOREIGN KEY ("parentID") REFERENCES public.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: participantCountry participantCountry_locationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7494,7 +7579,7 @@ ALTER TABLE ONLY public."participantCountry"
 --
 
 ALTER TABLE ONLY public."participantOrganization"
-    ADD CONSTRAINT "participantOrganization_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public.organization(id);
+    ADD CONSTRAINT "participantOrganization_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public.organization(id) ON DELETE CASCADE;
 
 
 --
@@ -7554,6 +7639,14 @@ ALTER TABLE ONLY public."planEntity"
 
 
 --
+-- Name: planEntity planEntity_parentGoverningEntityId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."planEntity"
+    ADD CONSTRAINT "planEntity_parentGoverningEntityId_fkey" FOREIGN KEY ("parentGoverningEntityId") REFERENCES public."governingEntity"(id) ON DELETE CASCADE;
+
+
+--
 -- Name: planEntity planEntity_planId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7594,11 +7687,35 @@ ALTER TABLE ONLY public."planTag"
 
 
 --
+-- Name: planVersionOrganization planVersionOrganization_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."planVersionOrganization"
+    ADD CONSTRAINT "planVersionOrganization_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public.organization(id) ON DELETE CASCADE;
+
+
+--
+-- Name: planVersionOrganization planVersionOrganization_planVersionId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."planVersionOrganization"
+    ADD CONSTRAINT "planVersionOrganization_planVersionId_fkey" FOREIGN KEY ("planVersionId") REFERENCES public."planVersion"(id) ON DELETE CASCADE;
+
+
+--
 -- Name: planVersion planVersion_currentReportingPeriodId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."planVersion"
     ADD CONSTRAINT "planVersion_currentReportingPeriodId_fkey" FOREIGN KEY ("currentReportingPeriodId") REFERENCES public."planReportingPeriod"(id);
+
+
+--
+-- Name: planVersion planVersion_focusLocationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."planVersion"
+    ADD CONSTRAINT "planVersion_focusLocationId_fkey" FOREIGN KEY ("focusLocationId") REFERENCES public.location(id);
 
 
 --
@@ -7983,6 +8100,22 @@ ALTER TABLE ONLY public."rolePermittedAction"
 
 ALTER TABLE ONLY public."rolePermittedAction"
     ADD CONSTRAINT "rolePermittedAction_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES public.role(id);
+
+
+--
+-- Name: serviceModalityAssociation serviceModalityAssociation_governingEntityId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."serviceModalityAssociation"
+    ADD CONSTRAINT "serviceModalityAssociation_governingEntityId_fkey" FOREIGN KEY ("governingEntityId") REFERENCES public."governingEntity"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: serviceModalityAssociation serviceModalityAssociation_serviceModalityId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."serviceModalityAssociation"
+    ADD CONSTRAINT "serviceModalityAssociation_serviceModalityId_fkey" FOREIGN KEY ("serviceModalityId") REFERENCES public."serviceModality"(id) ON DELETE CASCADE;
 
 
 --
