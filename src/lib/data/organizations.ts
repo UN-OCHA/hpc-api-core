@@ -1,4 +1,5 @@
 import type { Database } from '../../db';
+import type { CategoryId } from '../../db/models/category';
 import type { OrganizationId } from '../../db/models/organization';
 import type { InstanceDataOfModel } from '../../db/util/raw-model';
 import {
@@ -82,4 +83,30 @@ export const getOrganizationsInfo = async (
       level,
     };
   });
+};
+
+export const getOrganizationTypes = async (database: Database) => {
+  const categories = await database.category.find({
+    where: {
+      group: 'organizationType',
+    },
+  });
+
+  const categoriesById = organizeObjectsByUniqueProperty(categories, 'id');
+
+  return categories
+    .filter(
+      (c): c is typeof c & { parentID: CategoryId } => c.parentID !== null
+    )
+    .map((c) => {
+      const parent = categoriesById.get(c.parentID);
+      if (!parent) {
+        // This should never happen
+        throw new Error(`Parent category ${c.parentID} not found`);
+      }
+      return {
+        organizationType: parent.name,
+        organizationSubType: c.name,
+      };
+    });
 };
