@@ -108,3 +108,24 @@ export const EMPTY_TUPLE = new t.Type<EmptyTuple>(
   },
   t.identity
 );
+
+/**
+ * Converts array of string literals into `io-ts` codec that validates them.
+ * Think of it as a way to convert array of string values into a Typescript
+ * type that represents a union of those string literals.
+ *
+ * @param keys - A readonly tuple of string literals.
+ * @returns A `t.keyof` codec representing the union of string literals.
+ *
+ * @example
+ * const baseOnlyModels = ['planLocation', 'planYear'] as const;
+ * const codec = createKeyofCodec(baseOnlyModels);
+ * type CodecAsType = t.TypeOf<typeof codec>;
+ * // `CodecAsType` will be `"planLocation" | "planYear"`
+ */
+export const createKeyofCodec = <K extends readonly string[]>(
+  keys: K
+): t.Type<K[number]> =>
+  t.keyof(
+    Object.fromEntries(keys.map((k) => [k, null])) as Record<K[number], null>
+  );
