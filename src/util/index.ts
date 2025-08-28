@@ -235,7 +235,7 @@ export const mapToObject = <K extends PropertyKey, V>(
   map: Map<K, V>
 ): { [P in K]: V } => {
   const obj = {} as { [P in K]: V };
-  for (const [key, value] of map.entries()) {
+  for (const [key, value] of map) {
     obj[key] = value;
   }
   return obj;
