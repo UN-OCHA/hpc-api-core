@@ -1,11 +1,10 @@
 import * as t from 'io-ts';
 import { URL } from 'node:url';
-
 import { type Context } from '../lib/context';
 import { ForbiddenError } from '../util/error';
 import { HashTableCache } from './cache';
 
-const HID_ACCOUNT_INFO = t.type({
+const USER_INFO = t.type({
   sub: t.string,
   name: t.string,
   email: t.string,
@@ -14,19 +13,19 @@ const HID_MESSAGE = t.type({
   message: t.string,
 });
 
-export type HIDInfo = t.TypeOf<typeof HID_ACCOUNT_INFO>;
+export type UserInfo = t.TypeOf<typeof USER_INFO>;
 
-export type HIDResponse =
+export type OAuthResponse =
   | {
       type: 'success';
-      info: HIDInfo;
+      info: UserInfo;
     }
   | {
       type: 'forbidden';
       message: string;
     };
 
-export const HID_CACHE = new HashTableCache<HIDResponse>({
+export const HID_CACHE = new HashTableCache<OAuthResponse>({
   cacheItemLifetimeMs: 5 * 60 * 1000, // 5 minutes
 });
 
@@ -36,7 +35,7 @@ export const HID_CACHE = new HashTableCache<HIDResponse>({
  */
 export const getHidInfo = async (
   context: Context
-): Promise<HIDInfo | undefined> => {
+): Promise<UserInfo | undefined> => {
   const { config, token } = context;
 
   if (!token) {
@@ -69,10 +68,10 @@ export const getHidInfo = async (
       }
     }
     const data = await res.json();
-    if (!HID_ACCOUNT_INFO.is(data)) {
+    if (!USER_INFO.is(data)) {
       throw new Error('Got invalid data from HID');
     }
-    const info: HIDInfo = {
+    const info: UserInfo = {
       sub: data.sub,
       name: data.name,
       email: data.email,
