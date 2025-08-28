@@ -15,7 +15,7 @@ import { type Context } from '../lib/context';
 import { type SharedLogContext } from '../lib/logging';
 import { organizeObjectsByUniqueProperty } from '../util';
 import { createBrandedValue } from '../util/types';
-import * as hid from './hid';
+import { getHidInfo } from './oauth-providers';
 import {
   AUTH_PERMISSIONS,
   hasRequiredPermissions,
@@ -113,8 +113,7 @@ export const getLoggedInParticipant = async (
   const { models } = context;
 
   const tokenPromise = getParticipantFromToken(context);
-  const hidPromise = hid
-    .getHidInfo(context)
+  const hidPromise = getHidInfo(context)
     .then((hidInfo) => ({ result: 'success' as const, hidInfo }))
     .catch((error) => ({ result: 'error' as const, error }));
 
