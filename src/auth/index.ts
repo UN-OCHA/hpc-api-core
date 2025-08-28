@@ -15,7 +15,11 @@ import { type Context } from '../lib/context';
 import { type SharedLogContext } from '../lib/logging';
 import { organizeObjectsByUniqueProperty } from '../util';
 import { createBrandedValue } from '../util/types';
-import { getHidInfo } from './oauth-providers';
+import {
+  getEntraInfo,
+  getHidInfo,
+  isMicrosoftEntraIDToken,
+} from './oauth-providers';
 import {
   AUTH_PERMISSIONS,
   hasRequiredPermissions,
@@ -110,65 +114,73 @@ export const getLoggedInParticipant = async (
   context: Context,
   processInvite?: ProcessInviteFn
 ): Promise<Participant | undefined> => {
-  const { models } = context;
+  const { models, token } = context;
 
-  const tokenPromise = getParticipantFromToken(context);
-  const hidPromise = getHidInfo(context)
-    .then((hidInfo) => ({ result: 'success' as const, hidInfo }))
-    .catch((error) => ({ result: 'error' as const, error }));
+  const isEntraIDToken = token !== null && isMicrosoftEntraIDToken(token);
 
-  // Check if we have our own token before we check HID
-  const tokenParticipant = await tokenPromise;
+  // Check if we have our own token before we check HID/Entra ID
+  const tokenParticipant = await getParticipantFromToken(context);
   if (tokenParticipant) {
     return tokenParticipant;
   }
 
-  // We don't have our own token, check HID
-  const hidInfoResult = await hidPromise;
-  if (hidInfoResult.result === 'error') {
-    throw hidInfoResult.error;
+  // We don't have our own token, check HID/Microsoft Entra ID
+  const oauthInfo = isEntraIDToken ? getEntraInfo : getHidInfo;
+  const oauthResult = await oauthInfo(context)
+    .then((response) => ({ result: 'success' as const, response }))
+    .catch((error) => ({ result: 'error' as const, error }));
+  if (oauthResult.result === 'error') {
+    throw oauthResult.error;
   }
-  const { hidInfo } = hidInfoResult;
-  if (!hidInfo?.sub) {
+  const { response } = oauthResult;
+  if (!response) {
     return undefined;
   }
 
+  const { sub, email, name } = response;
+  const subProperty = isEntraIDToken ? 'entraId' : 'hidSub';
+
   let participant = await models.participant.findOne({
-    where: { hidSub: hidInfo.sub },
+    where: { [subProperty]: sub },
   });
 
   if (!participant) {
-    // Create a new participant for this HID account
+    if (isEntraIDToken) {
+      // Check if there's a participant with this email
+      // address already, presumably created via HID
+      participant = await models.participant.findOne({
+        where: { email },
+      });
+
+      if (participant) {
+        await models.participant.update({
+          values: { entraId: sub },
+          where: { id: participant.id },
+        });
+      }
+    }
+
+    // Create a new participant for this HID/Entra ID account
     // and transfer over all invites
-    participant = await models.participant.create({
-      email: hidInfo.email,
-      name: hidInfo.name,
-      hidSub: hidInfo.sub,
+    participant ??= await models.participant.create({
+      email,
+      name,
+      [subProperty]: sub,
     });
 
-    await activateInvitesForEmail(
-      participant,
-      hidInfo.email,
-      context,
-      processInvite
-    );
+    await activateInvitesForEmail(participant, email, context, processInvite);
   }
   // If the users' email address has changed
   // Update the user's email and activate any invites
-  else if (participant.email !== hidInfo.email) {
+  else if (participant.email !== email) {
     participant = (
       await models.participant.update({
-        values: { email: hidInfo.email },
-        where: { hidSub: hidInfo.sub },
+        values: { email },
+        where: { [subProperty]: sub },
       })
     )[0];
 
-    await activateInvitesForEmail(
-      participant,
-      hidInfo.email,
-      context,
-      processInvite
-    );
+    await activateInvitesForEmail(participant, email, context, processInvite);
   }
 
   return participant;
