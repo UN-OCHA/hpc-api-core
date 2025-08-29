@@ -235,7 +235,7 @@ export const mapToObject = <K extends PropertyKey, V>(
   map: Map<K, V>
 ): { [P in K]: V } => {
   const obj = {} as { [P in K]: V };
-  for (const [key, value] of map.entries()) {
+  for (const [key, value] of map) {
     obj[key] = value;
   }
   return obj;
@@ -330,6 +330,25 @@ export const toCamelCase = (originalString: string) =>
         : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     )
     .join('');
+
+/**
+ * Count the occurrences of each number in an array of numbers.
+ *
+ * @param numbers The array of numbers.
+ * @returns An array of tuples, where the first element of each tuple is the number, and
+ * the second element is the count of that number in the array.
+ */
+export const countOccurrences = <T extends number>(
+  numbers: readonly T[]
+): ReadonlyArray<readonly [T, number]> => {
+  const map = new Map<T, number>();
+
+  for (const num of numbers) {
+    map.set(num, (map.get(num) ?? 0) + 1);
+  }
+
+  return [...map];
+};
 
 export const range = <N extends number>(
   size: NonNegativeInteger<N>,
