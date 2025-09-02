@@ -24,6 +24,7 @@ export const JOB_TYPE = {
   locationImport: null,
   projectExcelGeneration: null,
   projectPdfGeneration: null,
+  importExcelBridge: null,
 };
 
 const JOB_METADATA_LOCATION_IMPORT = t.type({
@@ -62,11 +63,24 @@ const JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND = t.type({
   dataFileHash: t.string,
 });
 
+export const JOB_METADATA_IMPORT_EXCEL_BRIDGE = t.type({
+  fileName: t.string,
+  startedBy: PARTICIPANT_ID,
+  processed: t.number,
+  total: t.number,
+  failures: t.array(t.string),
+});
+
+export type JobMetadataImportExcelBridge = t.TypeOf<
+  typeof JOB_METADATA_IMPORT_EXCEL_BRIDGE
+>;
+
 const JOB_METADATA = t.union([
   JOB_METADATA_LOCATION_IMPORT,
   JOB_METADATA_PROJECT_EXCEL,
   JOB_METADATA_PROJECT_PDF,
   JOB_METADATA_CONFIRMABLE_ADMIN_COMMAND,
+  JOB_METADATA_IMPORT_EXCEL_BRIDGE,
 ]);
 
 export default defineIDModel({
