@@ -162,11 +162,14 @@ export const getLoggedInParticipant = async (
 
     // Create a new participant for this HID/Entra ID account
     // and transfer over all invites
-    participant ??= await models.participant.create({
-      email,
-      name,
-      [subProperty]: sub,
-    });
+    participant ??= await models.participant.create(
+      {
+        email,
+        name,
+        [subProperty]: sub,
+      },
+      { onConflict: { columns: [subProperty], merge: ['email', 'name'] } }
+    );
 
     await activateInvitesForEmail(participant, email, context, processInvite);
   }
