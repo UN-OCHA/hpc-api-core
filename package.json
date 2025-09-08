@@ -1,6 +1,6 @@
 {
   "name": "@unocha/hpc-api-core",
-  "version": "14.8.1",
+  "version": "15.0.0",
   "description": "Core libraries supporting HPC.Tools API Backend",
   "license": "Apache-2.0",
   "private": false,
@@ -13,8 +13,8 @@
     "lint": "yarn lint-prettier && yarn lint-eslint"
   },
   "engines": {
-    "node": ">=20.19.0 || >=22.14.0",
-    "npm": ">=9.6.5 || >=10.9.0 || >=11.3.0",
+    "node": ">=22.18.0",
+    "npm": ">=10.9.3 || >=11.5.0",
     "yarn": ">=1.22.22"
   },
   "dependencies": {
