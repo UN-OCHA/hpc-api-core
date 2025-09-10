@@ -20,6 +20,7 @@ export default defineIDModel({
     },
     optional: {
       hidSub: { kind: 'checked', type: t.string },
+      entraId: { kind: 'checked', type: t.string },
       email: { kind: 'checked', type: t.string },
       name: { kind: 'checked', type: t.string },
       internalUse: { kind: 'checked', type: t.string },

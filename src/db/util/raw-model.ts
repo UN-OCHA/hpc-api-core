@@ -12,9 +12,22 @@ import type {
 } from './model-definition';
 import { dataValidator } from './validation';
 
+type OnConflict<F extends FieldDefinition> =
+  | {
+      columns: Array<keyof UserDataOf<F>>;
+      merge: Array<keyof UserDataOf<F>>;
+      ignore?: never;
+    }
+  | {
+      columns: Array<keyof UserDataOf<F>>;
+      ignore: true;
+      merge?: never;
+    };
+
 export type CreateFn<F extends FieldDefinition> = (
   data: UserDataOf<F>,
   opts?: {
+    onConflict?: OnConflict<F>;
     trx?: Knex.Transaction;
   }
 ) => Promise<InstanceDataOf<F>>;
@@ -172,7 +185,17 @@ export const defineRawModel =
       const builder = options?.trx
         ? masterTable().transacting(options.trx)
         : masterTable();
-      const res = await builder.insert([data] as any).returning('*');
+      const insert = builder.insert([data] as any);
+      if (options?.onConflict) {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { columns, ignore, merge } = options.onConflict;
+        insert
+          .onConflict(columns as any)
+          [
+            ignore ? 'ignore' : 'merge'
+          ]((merge?.length ? merge : undefined) as any);
+      }
+      const res = await insert.returning('*');
       return validateAndFilter(res[0]);
     };
 
