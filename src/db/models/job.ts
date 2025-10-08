@@ -69,6 +69,8 @@ export const JOB_METADATA_IMPORT_EXCEL_BRIDGE = t.type({
   processed: t.number,
   total: t.number,
   failures: t.array(t.string),
+  totalCreated: t.number,
+  totalSkipped: t.number,
 });
 
 export type JobMetadataImportExcelBridge = t.TypeOf<
