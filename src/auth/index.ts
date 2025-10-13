@@ -145,19 +145,18 @@ export const getLoggedInParticipant = async (
   });
 
   if (!participant) {
-    if (isEntraIDToken) {
-      // Check if there's a participant with this email
-      // address already, presumably created via HID
-      participant = await models.participant.findOne({
-        where: { email },
-      });
+    // Check if there's a participant with this email address already
+    participant = await models.participant.findOne({
+      where: { email },
+    });
 
-      if (participant) {
-        await models.participant.update({
-          values: { entraId: sub },
-          where: { id: participant.id },
-        });
-      }
+    if (participant) {
+      const otherSubProperty = isEntraIDToken ? 'hidSub' : 'entraId';
+
+      await models.participant.update({
+        values: { [otherSubProperty]: sub },
+        where: { id: participant.id },
+      });
     }
 
     // Create a new participant for this HID/Entra ID account
