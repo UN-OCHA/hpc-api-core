@@ -151,10 +151,8 @@ export const getLoggedInParticipant = async (
     });
 
     if (participant) {
-      const otherSubProperty = isEntraIDToken ? 'hidSub' : 'entraId';
-
       await models.participant.update({
-        values: { [otherSubProperty]: sub },
+        values: { [subProperty]: sub },
         where: { id: participant.id },
       });
     }
