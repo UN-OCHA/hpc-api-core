@@ -34,28 +34,32 @@ export const HID_CACHE = new HashTableCache<OAuthResponse>({
 
 // Entra ID types and cache
 
-const ENTRA_ID_JWT = t.type({
-  // Standard JWT fields
-  iss: t.string,
-  sub: t.string,
-  aud: t.union([t.string, t.array(t.string)]),
-  exp: t.number,
-  nbf: t.number,
-  iat: t.number,
+const ENTRA_ID_JWT = t.intersection([
+  t.type({
+    // Standard JWT fields
+    iss: t.string,
+    sub: t.string,
+    aud: t.union([t.string, t.array(t.string)]),
+    exp: t.number,
+    nbf: t.number,
+    iat: t.number,
 
-  // Microsoft Entra ID specific fields
-  app_displayname: t.string,
-  appid: t.string,
-  oid: t.string,
-  sid: t.string,
-  tid: t.string,
-  // User info
-  name: t.string,
-  family_name: t.string,
-  given_name: t.string,
-  unique_name: t.string,
-  ipaddr: t.string,
-});
+    // Microsoft Entra ID specific fields
+    app_displayname: t.string,
+    appid: t.string,
+    oid: t.string,
+    sid: t.string,
+    tid: t.string,
+    // User info
+    name: t.string,
+    unique_name: t.string,
+    ipaddr: t.string,
+  }),
+  t.partial({
+    family_name: t.string,
+    given_name: t.string,
+  }),
+]);
 
 const MS_GRAPH_API_RESPONSE = t.type({
   /**
