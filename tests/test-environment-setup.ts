@@ -4,6 +4,10 @@ beforeAll(async () => {
   await ContextProvider.Instance.setUpContext();
 });
 
+afterAll(async () => {
+  await ContextProvider.Instance.tearDownContext();
+});
+
 afterEach(async () => {
   const context = ContextProvider.Instance;
 
